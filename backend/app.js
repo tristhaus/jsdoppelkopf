@@ -1,3 +1,4 @@
+const path = require('node:path')
 const config = require('./utils/config')
 const logger = require('./utils/logger')
 const gamesRouter = require('./controllers/games')
@@ -18,7 +19,11 @@ if (process.env.NODE_ENV === 'test') {
     app.use('/api/testing', testingRouter)
 }
 
-app.use(express.static('build'))
+app.use('/static', express.static(path.join(__dirname, './build/static')))
+app.get('*', (req, res) => {
+    res.sendFile('index.html', { root: path.join(__dirname, './build') })
+})
+
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 

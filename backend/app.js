@@ -1,6 +1,6 @@
 const config = require('./utils/config')
 const logger = require('./utils/logger')
-const demoRouter = require('./controllers/demo')
+const gamesRouter = require('./controllers/games')
 const middleware = require('./utils/middleware')
 
 const express = require('express')
@@ -11,7 +11,7 @@ app.use(cors())
 app.use(express.json())
 app.use(middleware.requestLogger)
 
-app.use('/api/demo', demoRouter)
+app.use('/api/game', gamesRouter)
 
 if (process.env.NODE_ENV === 'test') {
     const testingRouter = require('./controllers/testing')

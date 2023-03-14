@@ -1,6 +1,7 @@
 const gamesRouter = require('express').Router()
 const Game = require('../models/game')
 const logger = require('../utils/logger')
+const { validatePlayerSet } = require('../logic/game')
 
 const dataVersion = 1
 
@@ -17,6 +18,12 @@ const generateId = () => {
 
 gamesRouter.post('/', async (request, response, next) => {
     try {
+        const playersSet = request.body
+
+        if (!validatePlayerSet(playersSet)) {
+            throw { name: 'ValidationError', message: 'invalid playersSet' }
+        }
+
         const readerId = generateId()
         const writerId = generateId()
 
@@ -25,7 +32,8 @@ gamesRouter.post('/', async (request, response, next) => {
                 readerId,
                 writerId,
                 dataVersion,
-                creationDate: Date.now()
+                creationDate: Date.now(),
+                data: [playersSet],
             })
 
         const result = await game.save()

@@ -4,6 +4,25 @@ const Game = require('../models/game')
 
 const api = supertest(app)
 
+const validPlayersSet = {
+    kind: 'playersSet',
+    playerNames: [
+        'A',
+        'B',
+        'C',
+        'D',
+        'E',
+        'F',
+        'G'
+    ],
+    dealerName: 'C',
+    sitOutScheme: [
+        2,
+        4
+    ],
+    previousDealerName: 'C'
+}
+
 beforeAll(async () => {
     await Game.deleteMany({})
 })
@@ -11,7 +30,7 @@ beforeAll(async () => {
 describe('game API', () => {
 
     test('POST creates new game', async () => {
-        const response = await api.post('/api/game')
+        const response = await api.post('/api/game').send(validPlayersSet)
 
         expect(response.status).toBe(201)
         expect(response.body).toBeDefined()
@@ -19,8 +38,32 @@ describe('game API', () => {
         expect(response.body.readerId).toBeDefined()
     })
 
+    test('POST does not create new game when playersSet is invalid', async () => {
+        const response = await api.post('/api/game').send({
+            kind: 'playersSet',
+            playerNames: [
+                'A',
+                'B',
+                'C',
+                'D',
+                'E',
+                'F',
+                'G'
+            ],
+            dealerName: 'Invalid Dealer Name',
+            sitOutScheme: [
+                2,
+                4
+            ],
+            previousDealerName: 'C'
+        })
+
+        expect(response.status).toBe(400)
+        expect(response.body).toBeDefined()
+    })
+
     test('Game is accessible to readers by reader ID', async () => {
-        const creationResponse = await api.post('/api/game')
+        const creationResponse = await api.post('/api/game').send(validPlayersSet)
 
         expect(creationResponse.status).toBe(201)
         expect(creationResponse.body).toBeDefined()
@@ -36,7 +79,7 @@ describe('game API', () => {
     })
 
     test('Game is not accessible to readers by writer ID', async () => {
-        const creationResponse = await api.post('/api/game')
+        const creationResponse = await api.post('/api/game').send(validPlayersSet)
 
         expect(creationResponse.status).toBe(201)
         expect(creationResponse.body).toBeDefined()
@@ -50,7 +93,7 @@ describe('game API', () => {
     })
 
     test('Game is accessible to writers by writer ID', async () => {
-        const creationResponse = await api.post('/api/game')
+        const creationResponse = await api.post('/api/game').send(validPlayersSet)
 
         expect(creationResponse.status).toBe(201)
         expect(creationResponse.body).toBeDefined()
@@ -66,7 +109,7 @@ describe('game API', () => {
     })
 
     test('Game is not accessible to writers by reader ID', async () => {
-        const creationResponse = await api.post('/api/game')
+        const creationResponse = await api.post('/api/game').send(validPlayersSet)
 
         expect(creationResponse.status).toBe(201)
         expect(creationResponse.body).toBeDefined()

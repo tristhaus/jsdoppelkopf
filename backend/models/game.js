@@ -5,6 +5,7 @@ const gameSchema = new mongoose.Schema({
     writerId: String,
     dataVersion: Number,
     creationDate: Number,
+    data: [mongoose.Mixed],
 })
 
 gameSchema.set('toJSON', {

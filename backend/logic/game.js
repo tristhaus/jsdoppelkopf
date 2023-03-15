@@ -1,13 +1,52 @@
+const lodash = require('lodash')
+
 const isString = candidate => {
     return (typeof candidate === 'string' || candidate instanceof String)
 }
 
+const determineDealer = data => {
+    // STOPGAP: this logic is only true as long as we have no 'deal' entries
+    return lodash.findLast(data, entry => entry.kind === 'playersSet').dealerName
+}
+
+const calculatePlayerData = data => {
+
+    const relevantPlayersSetIndex = lodash.findLastIndex(data, entry => entry.kind === 'playersSet')
+    const relevantPlayersSet = data[relevantPlayersSetIndex]
+    const numberOfPresentPlayers = relevantPlayersSet.playerNames.length
+    const dealerName = relevantPlayersSet.dealerName
+    const dealerIndex = lodash.indexOf(relevantPlayersSet.playerNames, dealerName)
+
+    const presentPlayers = relevantPlayersSet
+        .playerNames
+        .map(name => { return { name, present: true, playing: true } })
+
+    if (relevantPlayersSet.playerNames.length > 4) {
+        presentPlayers[dealerIndex].playing = false
+
+        relevantPlayersSet.sitOutScheme.forEach(element => {
+            presentPlayers[(dealerIndex + element) % numberOfPresentPlayers].playing = false
+        })
+    }
+
+    const absentPlayers = data
+        .filter(entry => entry.kind === 'playersSet')
+        .flatMap(playersSet => playersSet.playerNames)
+        .filter(name => !presentPlayers.some(presentPlayer => presentPlayer.name === name))
+        .map(name => { return { name, present: false, playing: false } })
+
+
+    const allPlayers = [...presentPlayers, ...absentPlayers]
+
+    return allPlayers
+}
+
 const validatePlayerSet = data => {
-    if (!data || data.kind !== 'playersSet' || !data.playerNames || !data.dealerName || !data.sitOutScheme || !data.previousDealerName) {
+    if (!data || data.kind !== 'playersSet' || !data.playerNames || !data.dealerName || !data.sitOutScheme) {
         return false
     }
 
-    if (!Array.isArray(data.playerNames) || !isString(data.dealerName) || !Array.isArray(data.sitOutScheme) || !isString(data.previousDealerName)) {
+    if (!Array.isArray(data.playerNames) || !isString(data.dealerName) || !Array.isArray(data.sitOutScheme)) {
         return false
     }
 
@@ -53,4 +92,18 @@ const validatePlayerSet = data => {
     return true
 }
 
-module.exports = { validatePlayerSet }
+const applyPlayersSet = (data, playersSet) => {
+
+    if (data.length === 1) {
+        return [{ previousDealerName: playersSet.dealerName, ...playersSet }]
+    }
+
+    return [...data, { previousDealerName: determineDealer(data), ...playersSet }]
+}
+
+module.exports = {
+    validatePlayerSet,
+    applyPlayersSet,
+    determineDealer,
+    calculatePlayerData,
+}

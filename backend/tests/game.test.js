@@ -1,4 +1,4 @@
-const { validatePlayerSet, determineDealer, calculatePlayerData } = require('../logic/game')
+const { validatePlayerSet, determineDealer, calculatePlayerData, validateDeal } = require('../logic/game')
 
 describe('validate PlayerSet', () => {
 
@@ -222,7 +222,7 @@ describe('determine dealer', () => {
         expect(dealer).toBe('B')
     })
 
-    test('finds dealer for more entries', async () => {
+    test('finds dealer after many deals', async () => {
         const playersSet1 = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D'],
@@ -230,27 +230,62 @@ describe('determine dealer', () => {
             sitOutScheme: []
         }
 
-        const mandatorySoloTrigger = {
-            kind: 'mandatorySoloTrigger',
+        const deal1 = {
+            kind: 'deal',
+            changes: [
+                {
+                    name: 'A',
+                    diff: 1
+                },
+                {
+                    name: 'B',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: -1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                }
+            ]
         }
 
         const playersSet2 = {
             kind: 'playersSet',
-            playerNames: ['A', 'B', 'C', 'D'],
-            dealerName: 'A',
+            playerNames: ['A', 'B', 'C', 'E'],
+            dealerName: 'E',
             sitOutScheme: []
         }
 
-        const validation1 = validatePlayerSet(playersSet1)
-        expect(validation1).toBe(true)
+        const deal2 = {
+            kind: 'deal',
+            changes: [
+                {
+                    name: 'A',
+                    diff: 1
+                },
+                {
+                    name: 'B',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: -1
+                },
+                {
+                    name: 'E',
+                    diff: -1
+                }
+            ]
+        }
 
-        const validation2 = validatePlayerSet(playersSet1)
-        expect(validation2).toBe(true)
+        const data = [playersSet1, deal1, deal1, deal1, playersSet2, deal2, deal2, deal2, deal2, deal2, deal2]
 
-        const dealer = determineDealer([playersSet1, mandatorySoloTrigger, playersSet2, mandatorySoloTrigger])
-        expect(dealer).toBe('A')
+        const dealer = determineDealer(data)
+        expect(dealer).toBe('B')
     })
-
 })
 
 describe('calculate player data', () => {
@@ -319,7 +354,7 @@ describe('calculate player data', () => {
         const playersSet = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
-            dealerName: 'B',
+            dealerName: 'D',
             sitOutScheme: [2, 4]
         }
 
@@ -328,11 +363,11 @@ describe('calculate player data', () => {
         const playerData = calculatePlayerData(data)
         expect(playerData[0].name).toBe('A')
         expect(playerData[0].present).toBe(true)
-        expect(playerData[0].playing).toBe(true)
+        expect(playerData[0].playing).toBe(false)
 
         expect(playerData[1].name).toBe('B')
         expect(playerData[1].present).toBe(true)
-        expect(playerData[1].playing).toBe(false)
+        expect(playerData[1].playing).toBe(true)
 
         expect(playerData[2].name).toBe('C')
         expect(playerData[2].present).toBe(true)
@@ -403,5 +438,402 @@ describe('calculate player data', () => {
         expect(playerData[5].name).toBe('A')
         expect(playerData[5].present).toBe(false)
         expect(playerData[5].playing).toBe(false)
+    })
+
+    test('4-d-5-dd: deals correctly used', async () => {
+        const playersSet1 = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D'],
+            dealerName: 'B',
+            sitOutScheme: []
+        }
+
+        const deal1 = {
+            kind: 'deal',
+            changes: [
+                {
+                    name: 'A',
+                    diff: 1
+                },
+                {
+                    name: 'B',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: -1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                }
+            ]
+        }
+
+        const playersSet2 = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D', 'E'],
+            dealerName: 'D',
+            sitOutScheme: []
+        }
+
+        const deal2 = {
+            kind: 'deal',
+            changes: [
+                {
+                    name: 'A',
+                    diff: 2
+                },
+                {
+                    name: 'B',
+                    diff: -2
+                },
+                {
+                    name: 'C',
+                    diff: 2
+                },
+                {
+                    name: 'E',
+                    diff: -2
+                }
+            ]
+        }
+
+        const deal3 = {
+            kind: 'deal',
+            changes: [
+                {
+                    name: 'A',
+                    diff: 3
+                },
+                {
+                    name: 'B',
+                    diff: 3
+                },
+                {
+                    name: 'C',
+                    diff: -3
+                },
+                {
+                    name: 'D',
+                    diff: -3
+                }
+            ]
+        }
+
+        const data = [playersSet1, deal1, playersSet2, deal2, deal3]
+
+        const dealer = determineDealer(data)
+        expect(dealer).toBe('A')
+
+        const playerData = calculatePlayerData(data)
+        expect(playerData[0].name).toBe('A')
+        expect(playerData[0].present).toBe(true)
+        expect(playerData[0].playing).toBe(false)
+        expect(playerData[0].score).toBe(6)
+
+        expect(playerData[1].name).toBe('B')
+        expect(playerData[1].present).toBe(true)
+        expect(playerData[1].playing).toBe(true)
+        expect(playerData[1].score).toBe(2)
+
+        expect(playerData[2].name).toBe('C')
+        expect(playerData[2].present).toBe(true)
+        expect(playerData[2].playing).toBe(true)
+        expect(playerData[2].score).toBe(-2)
+
+        expect(playerData[3].name).toBe('D')
+        expect(playerData[3].present).toBe(true)
+        expect(playerData[3].playing).toBe(true)
+        expect(playerData[3].score).toBe(-4)
+
+        expect(playerData[4].name).toBe('E')
+        expect(playerData[4].present).toBe(true)
+        expect(playerData[4].playing).toBe(true)
+        expect(playerData[4].score).toBe(-2)
+    })
+})
+
+describe('validate deal', () => {
+
+    test('correct deal is validated', async () => {
+
+        const playersSet = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D', 'E', 'F'],
+            dealerName: 'B',
+            sitOutScheme: [3]
+        }
+
+        const data = [playersSet]
+
+        {
+            const candidate = {
+                kind: 'deal',
+                changes: [
+                    {
+                        name: 'A',
+                        diff: 1
+                    },
+                    {
+                        name: 'C',
+                        diff: 1
+                    },
+                    {
+                        name: 'D',
+                        diff: -1
+                    },
+                    {
+                        name: 'F',
+                        diff: -1
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(true)
+        }
+    })
+
+    test('standalone validations work without data', async () => {
+
+        const data = null
+
+        {
+            const candidate = {
+                kind: 'not a deal',
+                changes: [
+                    {
+                        name: 'A',
+                        diff: 1
+                    },
+                    {
+                        name: 'C',
+                        diff: 1
+                    },
+                    {
+                        name: 'D',
+                        diff: -1
+                    },
+                    {
+                        name: 'F',
+                        diff: -1
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(false)
+        }
+
+        {
+            const candidate = {
+                kind: 'deal',
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(false)
+        }
+
+        {
+            const candidate = {
+                kind: 'deal',
+                changes: 1337
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(false)
+        }
+
+        {
+            const candidate = {
+                kind: 'deal',
+                changes: [
+                    {
+                        name: 1337,
+                        diff: 1
+                    },
+                    {
+                        name: 'C',
+                        diff: 1
+                    },
+                    {
+                        name: 'D',
+                        diff: -1
+                    },
+                    {
+                        name: 'F',
+                        diff: -1
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(false)
+        }
+
+        {
+            const candidate = {
+                kind: 'deal',
+                changes: [
+                    {
+                        name: 'A',
+                        diff: 1
+                    },
+                    {
+                        name: 'C',
+                        diff: '1337'
+                    },
+                    {
+                        name: 'D',
+                        diff: -1
+                    },
+                    {
+                        name: 'F',
+                        diff: -1
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(false)
+        }
+
+        {
+            const candidate = {
+                kind: 'deal',
+                changes: [
+                    {
+                        name: 'A',
+                        diff: 1
+                    },
+                    {
+                        name: 'C',
+                        diff: 1.5
+                    },
+                    {
+                        name: 'D',
+                        diff: -1
+                    },
+                    {
+                        name: 'F',
+                        diff: -1
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(false)
+        }
+    })
+
+    test('standalone validation of zero-sum condition works', async () => {
+
+        const data = null
+
+        {
+            const candidate = {
+                kind: 'deal',
+                changes: [
+                    {
+                        name: 'A',
+                        diff: 100000
+                    },
+                    {
+                        name: 'C',
+                        diff: 1
+                    },
+                    {
+                        name: 'D',
+                        diff: -1
+                    },
+                    {
+                        name: 'F',
+                        diff: -1
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(false)
+        }
+    })
+
+    test('duplicate player fails', async () => {
+
+        const playersSet = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D', 'E', 'F'],
+            dealerName: 'B',
+            sitOutScheme: [3]
+        }
+
+        const data = [playersSet]
+
+        {
+            const candidate = {
+                kind: 'deal',
+                changes: [
+                    {
+                        name: 'A',
+                        diff: 1
+                    },
+                    {
+                        name: 'C',
+                        diff: 1
+                    },
+                    {
+                        name: 'A',
+                        diff: -1
+                    },
+                    {
+                        name: 'F',
+                        diff: -1
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(false)
+        }
+    })
+
+    test('non-active player fails', async () => {
+
+        const playersSet = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D', 'E', 'F'],
+            dealerName: 'B',
+            sitOutScheme: [3]
+        }
+
+        const data = [playersSet]
+
+        {
+            const candidate = {
+                kind: 'deal',
+                changes: [
+                    {
+                        name: 'A',
+                        diff: 1
+                    },
+                    {
+                        name: 'C',
+                        diff: 1
+                    },
+                    {
+                        name: 'E',
+                        diff: -1
+                    },
+                    {
+                        name: 'F',
+                        diff: -1
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(false)
+        }
     })
 })

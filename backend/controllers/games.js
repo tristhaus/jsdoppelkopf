@@ -1,7 +1,7 @@
 const gamesRouter = require('express').Router()
 const Game = require('../models/game')
 const logger = require('../utils/logger')
-const { validatePlayerSet, applyPlayersSet, determineDealer, calculatePlayerData } = require('../logic/game')
+const { validatePlayerSet, applyPlayersSet, determineDealer, validateDeal, applyDeal, calculatePlayerData } = require('../logic/game')
 
 const dataVersion = 1
 
@@ -91,6 +91,37 @@ gamesRouter.post('/write/:writerId/playersset', async (request, response, next) 
         }
 
         const newData = applyPlayersSet(game.data, playersSet)
+
+        game.data = newData
+        game.markModified('data')
+
+        const result = await game.save()
+
+        const apiModel = createApiModel(result)
+        apiModel.writerId = game.writerId
+
+        response.status(200).json(apiModel)
+    } catch (error) {
+        next(error)
+    }
+})
+
+gamesRouter.post('/write/:writerId/deal', async (request, response, next) => {
+    try {
+        const game = await Game.findOne({ writerId: request.params.writerId })
+
+        if (!game) {
+            logger.error(`game with writerId '${request.params.writerId}' not found`)
+            response.status(404).send({ error: `writerId not found: ${request.params.writerId}` })
+        }
+
+        const deal = request.body
+
+        if (!validateDeal(game.data, deal)) {
+            throw { name: 'ValidationError', message: 'invalid deal' }
+        }
+
+        const newData = applyDeal(game.data, deal)
 
         game.data = newData
         game.markModified('data')

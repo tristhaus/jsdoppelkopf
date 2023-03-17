@@ -18,6 +18,75 @@ const determineDealer = data => {
     return relevantPlayersSet.playerNames[currentDealerIndex]
 }
 
+const constructBockHelper = data => {
+
+    const maximumAllowedBock = 3
+
+    let gameIndex = 0
+    let numberOfPresentPlayers = 0
+    const bockHelper = []
+
+    data.forEach(entry => {
+
+        if (entry.kind === 'deal') {
+            for (let event = 0; event < entry.events; event++) {
+
+                let endIndexOfThisBock = gameIndex + 1 + numberOfPresentPlayers
+
+                for (let i = gameIndex + 1; i < endIndexOfThisBock; i++) {
+
+                    if ((bockHelper[i] ?? 0) < maximumAllowedBock) {
+                        bockHelper[i] = (bockHelper[i] ?? 0) + 1
+                    }
+                    else {
+                        endIndexOfThisBock++
+                    }
+                }
+            }
+
+            gameIndex++
+        }
+        else if (entry.kind === 'playersSet') {
+            numberOfPresentPlayers = entry.playerNames.length
+        }
+        else if (entry.kind === 'mandatorySoloTrigger') {
+            const mandatorySoloRound = Array(numberOfPresentPlayers)
+            mandatorySoloRound.fill(0)
+            bockHelper.splice(gameIndex, 0, ...mandatorySoloRound)
+        }
+    })
+
+    return bockHelper
+}
+
+const getMultiplier = (bockHelper, gameIndex) => {
+    switch (bockHelper[gameIndex]) {
+        default:
+            return 1
+        case 1:
+            return 2
+        case 2:
+            return 4
+        case 3:
+            return 8
+    }
+}
+
+const isMandatorySolo = data => {
+    const relevantPlayersSetIndex = lodash.findLastIndex(data, entry => entry.kind === 'playersSet')
+
+    if (relevantPlayersSetIndex === -1) {
+        return false
+    }
+
+    const relevantPlayersSet = data[relevantPlayersSetIndex]
+    const numberOfPresentPlayers = relevantPlayersSet.playerNames.length
+
+    const relevantRecentEntries = data.slice(-numberOfPresentPlayers)
+
+    return relevantRecentEntries.some(entry => entry.kind === 'mandatorySoloTrigger')
+}
+
 const calculatePlayerData = data => {
 
     const relevantPlayersSetIndex = lodash.findLastIndex(data, entry => entry.kind === 'playersSet')
@@ -44,23 +113,30 @@ const calculatePlayerData = data => {
         .filter(name => !presentPlayers.some(presentPlayer => presentPlayer.name === name))
         .map(name => { return { name, present: false, playing: false } })
 
-
     const allPlayers = [...presentPlayers, ...absentPlayers]
+
+    const bockHelper = constructBockHelper(data)
 
     allPlayers.forEach(player => player.score = 0)
 
+    let gameIndex = 0
+
     data.forEach(entry => {
         if (entry.kind === 'deal') {
+            const multiplier = getMultiplier(bockHelper, gameIndex)
+
             entry.changes.forEach(change => {
-                allPlayers.find(player => player.name === change.name).score += change.diff
+                allPlayers.find(player => player.name === change.name).score += change.diff * multiplier
             })
+
+            gameIndex++
         }
     })
 
     return allPlayers
 }
 
-const validatePlayerSet = playersSet => {
+const validatePlayerSet = (data, playersSet) => {
     if (!playersSet || playersSet.kind !== 'playersSet' || !playersSet.playerNames || !playersSet.dealerName || !playersSet.sitOutScheme) {
         return false
     }
@@ -108,6 +184,10 @@ const validatePlayerSet = playersSet => {
         return false
     }
 
+    if (isMandatorySolo(data)) {
+        return false
+    }
+
     return true
 }
 
@@ -122,7 +202,7 @@ const applyPlayersSet = (data, playersSet) => {
 
 const validateDeal = (data, deal) => {
 
-    if (!deal || deal.kind !== 'deal' || !deal.changes) {
+    if (!deal || deal.kind !== 'deal' || !deal.changes || !Object.prototype.hasOwnProperty.call(deal, 'events') || !Number.isInteger(deal.events) || deal.events < 0) {
         return false
     }
 
@@ -154,11 +234,32 @@ const applyDeal = (data, deal) => {
     return [...data, deal]
 }
 
+const validateMandatorySoloTrigger = (data, mandatorySoloTrigger) => {
+
+    if (!mandatorySoloTrigger || mandatorySoloTrigger.kind !== 'mandatorySoloTrigger') {
+        return false
+    }
+
+    if (isMandatorySolo(data)) {
+        return false
+    }
+
+    return true
+}
+
+const applyMandatorySoloTrigger = (data, mandatorySoloTrigger) => {
+    return [...data, mandatorySoloTrigger]
+}
+
 module.exports = {
-    determineDealer,
-    validatePlayerSet,
-    applyPlayersSet,
-    validateDeal,
     applyDeal,
+    applyMandatorySoloTrigger,
+    applyPlayersSet,
     calculatePlayerData,
+    constructBockHelper,
+    determineDealer,
+    getMultiplier,
+    validateDeal,
+    validateMandatorySoloTrigger,
+    validatePlayerSet,
 }

@@ -1,36 +1,36 @@
-const { validatePlayerSet, determineDealer, calculatePlayerData, validateDeal } = require('../logic/game')
+const { calculatePlayerData, constructBockHelper, determineDealer, getMultiplier, validateDeal, validateMandatorySoloTrigger, validatePlayerSet, } = require('../logic/game')
 
 describe('validate PlayerSet', () => {
 
-    test('valid 4 player example passes', async () => {
+    test('valid 4 player example passes', () => {
         const candidate = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D'],
             dealerName: 'A',
             sitOutScheme: []
         }
-        const result = validatePlayerSet(candidate)
+        const result = validatePlayerSet([], candidate)
         expect(result).toBe(true)
     })
 
-    test('null data, wrong kind or missing member fail', async () => {
+    test('null data, wrong kind or missing member fail', () => {
         {
-            const result = validatePlayerSet(null)
+            const result = validatePlayerSet([], null)
             expect(result).toBe(false)
         }
 
         {
-            const result = validatePlayerSet({ kind: 'mandatorySolo' })
+            const result = validatePlayerSet([], { kind: 'mandatorySoloTrigger' })
             expect(result).toBe(false)
         }
 
         {
-            const result = validatePlayerSet({ someData: 'isThere' })
+            const result = validatePlayerSet([], { someData: 'isThere' })
             expect(result).toBe(false)
         }
     })
 
-    test('wrong types fail', async () => {
+    test('wrong types fail', () => {
         {
             const candidate = {
                 kind: 'playersSet',
@@ -39,7 +39,7 @@ describe('validate PlayerSet', () => {
                 sitOutScheme: [],
                 previousDealerName: 'A',
             }
-            const result = validatePlayerSet(candidate)
+            const result = validatePlayerSet([], candidate)
             expect(result).toBe(false)
         }
 
@@ -51,7 +51,7 @@ describe('validate PlayerSet', () => {
                 sitOutScheme: [],
                 previousDealerName: 'A',
             }
-            const result = validatePlayerSet(candidate)
+            const result = validatePlayerSet([], candidate)
             expect(result).toBe(false)
         }
 
@@ -63,12 +63,12 @@ describe('validate PlayerSet', () => {
                 sitOutScheme: 1337,
                 previousDealerName: 'A',
             }
-            const result = validatePlayerSet(candidate)
+            const result = validatePlayerSet([], candidate)
             expect(result).toBe(false)
         }
     })
 
-    test('too few players fails', async () => {
+    test('too few players fails', () => {
         const candidate = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C'],
@@ -76,11 +76,11 @@ describe('validate PlayerSet', () => {
             sitOutScheme: [],
             previousDealerName: 'A',
         }
-        const result = validatePlayerSet(candidate)
+        const result = validatePlayerSet([], candidate)
         expect(result).toBe(false)
     })
 
-    test('too many players fails', async () => {
+    test('too many players fails', () => {
         const candidate = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
@@ -88,11 +88,11 @@ describe('validate PlayerSet', () => {
             sitOutScheme: [2, 4, 6],
             previousDealerName: 'A',
         }
-        const result = validatePlayerSet(candidate)
+        const result = validatePlayerSet([], candidate)
         expect(result).toBe(false)
     })
 
-    test('wrong type in player names fails', async () => {
+    test('wrong type in player names fails', () => {
         const candidate = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D', 'E', 1337, 'G'],
@@ -100,11 +100,11 @@ describe('validate PlayerSet', () => {
             sitOutScheme: [2, 4, 6],
             previousDealerName: 'A',
         }
-        const result = validatePlayerSet(candidate)
+        const result = validatePlayerSet([], candidate)
         expect(result).toBe(false)
     })
 
-    test('duplicate player name fails', async () => {
+    test('duplicate player name fails', () => {
         const candidate = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D', 'A'],
@@ -112,11 +112,11 @@ describe('validate PlayerSet', () => {
             sitOutScheme: [],
             previousDealerName: 'A',
         }
-        const result = validatePlayerSet(candidate)
+        const result = validatePlayerSet([], candidate)
         expect(result).toBe(false)
     })
 
-    test('wrong type in sit out scheme fails', async () => {
+    test('wrong type in sit out scheme fails', () => {
         const candidate = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
@@ -124,11 +124,11 @@ describe('validate PlayerSet', () => {
             sitOutScheme: [2, 'fail', 6],
             previousDealerName: 'A',
         }
-        const result = validatePlayerSet(candidate)
+        const result = validatePlayerSet([], candidate)
         expect(result).toBe(false)
     })
 
-    test('incorrect length of sit out scheme fails', async () => {
+    test('incorrect length of sit out scheme fails', () => {
         {
             const candidate = {
                 kind: 'playersSet',
@@ -137,7 +137,7 @@ describe('validate PlayerSet', () => {
                 sitOutScheme: [2, 4, 6],
                 previousDealerName: 'A',
             }
-            const result = validatePlayerSet(candidate)
+            const result = validatePlayerSet([], candidate)
             expect(result).toBe(false)
         }
 
@@ -149,12 +149,12 @@ describe('validate PlayerSet', () => {
                 sitOutScheme: [2],
                 previousDealerName: 'A',
             }
-            const result = validatePlayerSet(candidate)
+            const result = validatePlayerSet([], candidate)
             expect(result).toBe(false)
         }
     })
 
-    test('invalid sit out scheme fails', async () => {
+    test('invalid sit out scheme fails', () => {
         {
             const candidate = {
                 kind: 'playersSet',
@@ -163,7 +163,7 @@ describe('validate PlayerSet', () => {
                 sitOutScheme: [2, 7],
                 previousDealerName: 'A',
             }
-            const result = validatePlayerSet(candidate)
+            const result = validatePlayerSet([], candidate)
             expect(result).toBe(false)
         }
 
@@ -175,7 +175,7 @@ describe('validate PlayerSet', () => {
                 sitOutScheme: [-1, 2],
                 previousDealerName: 'A',
             }
-            const result = validatePlayerSet(candidate)
+            const result = validatePlayerSet([], candidate)
             expect(result).toBe(false)
         }
 
@@ -187,12 +187,12 @@ describe('validate PlayerSet', () => {
                 sitOutScheme: [2, 2],
                 previousDealerName: 'A',
             }
-            const result = validatePlayerSet(candidate)
+            const result = validatePlayerSet([], candidate)
             expect(result).toBe(false)
         }
     })
 
-    test('dealer not among players fails', async () => {
+    test('dealer not among players fails', () => {
         const candidate = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D'],
@@ -200,14 +200,62 @@ describe('validate PlayerSet', () => {
             sitOutScheme: [],
             previousDealerName: 'A',
         }
-        const result = validatePlayerSet(candidate)
+        const result = validatePlayerSet([], candidate)
+        expect(result).toBe(false)
+    })
+
+    test('during mandatory solo, playersSet fails', () => {
+
+        const playersSet = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D'],
+            dealerName: 'A',
+            sitOutScheme: [],
+        }
+
+        const mandatorySoloTrigger = {
+            kind: 'mandatorySoloTrigger',
+        }
+
+        const deal = {
+            kind: 'deal',
+            events: 0,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 3
+                },
+                {
+                    name: 'B',
+                    diff: -1
+                },
+                {
+                    name: 'C',
+                    diff: -1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                }
+            ]
+        }
+
+        const data = [playersSet, mandatorySoloTrigger, deal]
+
+        const candidate = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D', 'E'],
+            dealerName: 'A',
+            sitOutScheme: [],
+        }
+        const result = validatePlayerSet(data, candidate)
         expect(result).toBe(false)
     })
 })
 
 describe('determine dealer', () => {
 
-    test('finds dealer trivially', async () => {
+    test('finds dealer trivially', () => {
         const playersSet = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D'],
@@ -215,14 +263,14 @@ describe('determine dealer', () => {
             sitOutScheme: []
         }
 
-        const validation = validatePlayerSet(playersSet)
+        const validation = validatePlayerSet([], playersSet)
         expect(validation).toBe(true)
 
         const dealer = determineDealer([playersSet])
         expect(dealer).toBe('B')
     })
 
-    test('finds dealer after many deals', async () => {
+    test('finds dealer after many deals', () => {
         const playersSet1 = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D'],
@@ -232,6 +280,7 @@ describe('determine dealer', () => {
 
         const deal1 = {
             kind: 'deal',
+            events: 0,
             changes: [
                 {
                     name: 'A',
@@ -261,6 +310,7 @@ describe('determine dealer', () => {
 
         const deal2 = {
             kind: 'deal',
+            events: 0,
             changes: [
                 {
                     name: 'A',
@@ -290,7 +340,7 @@ describe('determine dealer', () => {
 
 describe('calculate player data', () => {
 
-    test('4: everyone plays', async () => {
+    test('4: everyone plays', () => {
         const playersSet = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D'],
@@ -318,7 +368,7 @@ describe('calculate player data', () => {
         expect(playerData[3].playing).toBe(true)
     })
 
-    test('5: dealer sits out', async () => {
+    test('5: dealer sits out', () => {
         const playersSet = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D', 'E'],
@@ -350,7 +400,7 @@ describe('calculate player data', () => {
         expect(playerData[4].playing).toBe(true)
     })
 
-    test('7: sit out scheme applied', async () => {
+    test('7: sit out scheme applied', () => {
         const playersSet = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
@@ -390,7 +440,7 @@ describe('calculate player data', () => {
         expect(playerData[6].playing).toBe(true)
     })
 
-    test('4-6-5: one player absent', async () => {
+    test('4-6-5: one player absent', () => {
         const playersSet1 = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D'],
@@ -440,7 +490,7 @@ describe('calculate player data', () => {
         expect(playerData[5].playing).toBe(false)
     })
 
-    test('4-d-5-dd: deals correctly used', async () => {
+    test('4-d-5-dd: deals correctly used', () => {
         const playersSet1 = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D'],
@@ -450,6 +500,7 @@ describe('calculate player data', () => {
 
         const deal1 = {
             kind: 'deal',
+            events: 0,
             changes: [
                 {
                     name: 'A',
@@ -479,6 +530,7 @@ describe('calculate player data', () => {
 
         const deal2 = {
             kind: 'deal',
+            events: 0,
             changes: [
                 {
                     name: 'A',
@@ -501,6 +553,7 @@ describe('calculate player data', () => {
 
         const deal3 = {
             kind: 'deal',
+            events: 0,
             changes: [
                 {
                     name: 'A',
@@ -556,7 +609,7 @@ describe('calculate player data', () => {
 
 describe('validate deal', () => {
 
-    test('correct deal is validated', async () => {
+    test('correct deal is validated', () => {
 
         const playersSet = {
             kind: 'playersSet',
@@ -570,6 +623,7 @@ describe('validate deal', () => {
         {
             const candidate = {
                 kind: 'deal',
+                events: 0,
                 changes: [
                     {
                         name: 'A',
@@ -595,13 +649,14 @@ describe('validate deal', () => {
         }
     })
 
-    test('standalone validations work without data', async () => {
+    test('standalone validations work without data', () => {
 
         const data = null
 
         {
             const candidate = {
                 kind: 'not a deal',
+                events: 0,
                 changes: [
                     {
                         name: 'A',
@@ -629,6 +684,7 @@ describe('validate deal', () => {
         {
             const candidate = {
                 kind: 'deal',
+                events: 0,
             }
 
             const result = validateDeal(data, candidate)
@@ -638,6 +694,35 @@ describe('validate deal', () => {
         {
             const candidate = {
                 kind: 'deal',
+                events: 'so many',
+                changes: [
+                    {
+                        name: 'A',
+                        diff: 1
+                    },
+                    {
+                        name: 'C',
+                        diff: 1
+                    },
+                    {
+                        name: 'D',
+                        diff: -1
+                    },
+                    {
+                        name: 'F',
+                        diff: -1
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(false)
+        }
+
+        {
+            const candidate = {
+                kind: 'deal',
+                events: 0,
                 changes: 1337
             }
 
@@ -648,6 +733,7 @@ describe('validate deal', () => {
         {
             const candidate = {
                 kind: 'deal',
+                events: 0,
                 changes: [
                     {
                         name: 1337,
@@ -675,6 +761,7 @@ describe('validate deal', () => {
         {
             const candidate = {
                 kind: 'deal',
+                events: 0,
                 changes: [
                     {
                         name: 'A',
@@ -702,6 +789,7 @@ describe('validate deal', () => {
         {
             const candidate = {
                 kind: 'deal',
+                events: 0,
                 changes: [
                     {
                         name: 'A',
@@ -727,13 +815,14 @@ describe('validate deal', () => {
         }
     })
 
-    test('standalone validation of zero-sum condition works', async () => {
+    test('standalone validation of zero-sum condition works', () => {
 
         const data = null
 
         {
             const candidate = {
                 kind: 'deal',
+                events: 0,
                 changes: [
                     {
                         name: 'A',
@@ -759,7 +848,7 @@ describe('validate deal', () => {
         }
     })
 
-    test('duplicate player fails', async () => {
+    test('duplicate player fails', () => {
 
         const playersSet = {
             kind: 'playersSet',
@@ -773,6 +862,7 @@ describe('validate deal', () => {
         {
             const candidate = {
                 kind: 'deal',
+                events: 0,
                 changes: [
                     {
                         name: 'A',
@@ -798,7 +888,7 @@ describe('validate deal', () => {
         }
     })
 
-    test('non-active player fails', async () => {
+    test('non-active player fails', () => {
 
         const playersSet = {
             kind: 'playersSet',
@@ -812,6 +902,7 @@ describe('validate deal', () => {
         {
             const candidate = {
                 kind: 'deal',
+                events: 0,
                 changes: [
                     {
                         name: 'A',
@@ -835,5 +926,403 @@ describe('validate deal', () => {
             const result = validateDeal(data, candidate)
             expect(result).toBe(false)
         }
+    })
+})
+
+describe('calculate bock', () => {
+
+    test('getMultiplier can handle sparse array bockHelper', () => {
+
+        const bockHelper = []
+
+        bockHelper[1] = 0
+        bockHelper[2] = 1
+        bockHelper[3] = 2
+        bockHelper[4] = 3
+
+        expect(getMultiplier(bockHelper, 0)).toBe(1)
+        expect(getMultiplier(bockHelper, 1)).toBe(1)
+        expect(getMultiplier(bockHelper, 2)).toBe(2)
+        expect(getMultiplier(bockHelper, 3)).toBe(4)
+        expect(getMultiplier(bockHelper, 4)).toBe(8)
+    })
+
+    test('bockHelper is constructed correctly: simple', () => {
+
+        const playersSet = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D'],
+            dealerName: 'A',
+            sitOutScheme: []
+        }
+
+        const dealNoEvent = {
+            kind: 'deal',
+            events: 0,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 1
+                },
+                {
+                    name: 'B',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: -1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                }
+            ]
+        }
+
+        const dealTwoEvents = {
+            kind: 'deal',
+            events: 2,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 1
+                },
+                {
+                    name: 'B',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: -1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                }
+            ]
+        }
+
+        const data = [playersSet, dealNoEvent, dealNoEvent, dealTwoEvents, dealNoEvent]
+
+        const bockHelper = constructBockHelper(data)
+
+        expect(getMultiplier(bockHelper, 0)).toBe(1)
+        expect(getMultiplier(bockHelper, 1)).toBe(1)
+        expect(getMultiplier(bockHelper, 2)).toBe(1)
+        expect(getMultiplier(bockHelper, 3)).toBe(4)
+        expect(getMultiplier(bockHelper, 4)).toBe(4)
+        expect(getMultiplier(bockHelper, 5)).toBe(4)
+        expect(getMultiplier(bockHelper, 6)).toBe(4)
+        expect(getMultiplier(bockHelper, 7)).toBe(1)
+        expect(getMultiplier(bockHelper, 8)).toBe(1)
+    })
+
+    test('bockHelper is constructed correctly: change players', () => {
+
+        const playersSet1 = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D'],
+            dealerName: 'A',
+            sitOutScheme: []
+        }
+
+        const dealTwoEvents = {
+            kind: 'deal',
+            events: 2,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 1
+                },
+                {
+                    name: 'B',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: -1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                }
+            ]
+        }
+
+        const playersSet2 = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D', 'E', 'F'],
+            dealerName: 'B',
+            sitOutScheme: [2]
+        }
+
+        const dealOneEvent = {
+            kind: 'deal',
+            events: 1,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: 1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                },
+                {
+                    name: 'F',
+                    diff: -1
+                }
+            ]
+        }
+
+        const data = [playersSet1, dealTwoEvents, playersSet2, dealOneEvent]
+
+        const bockHelper = constructBockHelper(data)
+
+        expect(getMultiplier(bockHelper, 0)).toBe(1)
+        expect(getMultiplier(bockHelper, 1)).toBe(4)
+        expect(getMultiplier(bockHelper, 2)).toBe(4 * 2)
+        expect(getMultiplier(bockHelper, 3)).toBe(4 * 2)
+        expect(getMultiplier(bockHelper, 4)).toBe(4 * 2)
+        expect(getMultiplier(bockHelper, 5)).toBe(1 * 2)
+        expect(getMultiplier(bockHelper, 6)).toBe(1 * 2)
+        expect(getMultiplier(bockHelper, 7)).toBe(1 * 2)
+        expect(getMultiplier(bockHelper, 8)).toBe(1)
+    })
+
+    test('bockHelper is constructed correctly: overload', () => {
+
+        const playersSet = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D'],
+            dealerName: 'A',
+            sitOutScheme: []
+        }
+
+        const dealNoEvent = {
+            kind: 'deal',
+            events: 0,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 1
+                },
+                {
+                    name: 'B',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: -1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                }
+            ]
+        }
+
+        const dealTwoEvents = {
+            kind: 'deal',
+            events: 2,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 1
+                },
+                {
+                    name: 'B',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: -1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                }
+            ]
+        }
+
+        const data = [playersSet, dealTwoEvents, dealNoEvent, dealTwoEvents]
+
+        const bockHelper = constructBockHelper(data)
+
+        expect(getMultiplier(bockHelper, 0)).toBe(1)
+        expect(getMultiplier(bockHelper, 1)).toBe(4)
+        expect(getMultiplier(bockHelper, 2)).toBe(4)
+        expect(getMultiplier(bockHelper, 3)).toBe(4 * 2)
+        expect(getMultiplier(bockHelper, 4)).toBe(4 * 2)
+        expect(getMultiplier(bockHelper, 5)).toBe(1 * 2 * 2)
+        expect(getMultiplier(bockHelper, 6)).toBe(1 * 2 * 2)
+        expect(getMultiplier(bockHelper, 7)).toBe(1 * 1 * 2)
+        expect(getMultiplier(bockHelper, 8)).toBe(1 * 1 * 2)
+        expect(getMultiplier(bockHelper, 9)).toBe(1)
+    })
+
+    test('bockHelper is constructed correctly: mandatory solo trigger', () => {
+
+        const playersSet = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D'],
+            dealerName: 'A',
+            sitOutScheme: []
+        }
+
+        const dealNoEvent = {
+            kind: 'deal',
+            events: 0,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 1
+                },
+                {
+                    name: 'B',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: -1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                }
+            ]
+        }
+
+        const dealTwoEvents = {
+            kind: 'deal',
+            events: 2,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 1
+                },
+                {
+                    name: 'B',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: -1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                }
+            ]
+        }
+
+        const mandatorySoloTrigger = {
+            kind: 'mandatorySoloTrigger',
+        }
+
+        const data = [playersSet, dealTwoEvents, dealNoEvent, dealTwoEvents, dealNoEvent, mandatorySoloTrigger]
+
+        const bockHelper = constructBockHelper(data)
+
+        expect(getMultiplier(bockHelper, 0)).toBe(1)
+        expect(getMultiplier(bockHelper, 1)).toBe(4)
+        expect(getMultiplier(bockHelper, 2)).toBe(4)
+        expect(getMultiplier(bockHelper, 3)).toBe(4 * 2)
+
+        // the mandatory solo round
+        expect(getMultiplier(bockHelper, 4)).toBe(1)
+        expect(getMultiplier(bockHelper, 5)).toBe(1)
+        expect(getMultiplier(bockHelper, 6)).toBe(1)
+        expect(getMultiplier(bockHelper, 7)).toBe(1)
+
+        // back to normal games
+        expect(getMultiplier(bockHelper, 8)).toBe(4 * 2)
+        expect(getMultiplier(bockHelper, 9)).toBe(1 * 2 * 2)
+        expect(getMultiplier(bockHelper, 10)).toBe(1 * 2 * 2)
+        expect(getMultiplier(bockHelper, 11)).toBe(1 * 1 * 2)
+        expect(getMultiplier(bockHelper, 12)).toBe(1 * 1 * 2)
+        expect(getMultiplier(bockHelper, 13)).toBe(1)
+    })
+})
+
+describe('validate mandatorySoloTrigger', () => {
+
+    test('correct mandatorySoloTrigger is validated', () => {
+
+        const playersSet = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D', 'E', 'F'],
+            dealerName: 'B',
+            sitOutScheme: [3]
+        }
+
+        const data = [playersSet]
+
+        const candidate = {
+            kind: 'mandatorySoloTrigger',
+        }
+
+        const result = validateMandatorySoloTrigger(data, candidate)
+        expect(result).toBe(true)
+    })
+
+    test('standalone validation works without data', () => {
+
+        const data = null
+
+        {
+            const candidate = {
+                kind: 'deal',
+            }
+
+            const result = validateMandatorySoloTrigger(data, candidate)
+            expect(result).toBe(false)
+        }
+    })
+
+    test('too early trigger is handled', () => {
+
+        const playersSet = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D'],
+            dealerName: 'A',
+            sitOutScheme: []
+        }
+
+        const mandatorySoloTrigger = {
+            kind: 'mandatorySoloTrigger',
+        }
+
+        const deal = {
+            kind: 'deal',
+            events: 0,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 1
+                },
+                {
+                    name: 'B',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: -1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                }
+            ]
+        }
+
+        const data = [playersSet, mandatorySoloTrigger, deal, deal]
+
+        const result = validateMandatorySoloTrigger(data, mandatorySoloTrigger)
+        expect(result).toBe(false)
     })
 })

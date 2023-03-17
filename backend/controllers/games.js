@@ -1,7 +1,7 @@
 const gamesRouter = require('express').Router()
 const Game = require('../models/game')
 const logger = require('../utils/logger')
-const { validatePlayerSet, applyPlayersSet, determineDealer, validateDeal, applyDeal, calculatePlayerData } = require('../logic/game')
+const { applyDeal, applyMandatorySoloTrigger, applyPlayersSet, calculatePlayerData, determineDealer, validateDeal, validateMandatorySoloTrigger, validatePlayerSet, } = require('../logic/game')
 
 const dataVersion = 1
 
@@ -29,7 +29,7 @@ gamesRouter.post('/', async (request, response, next) => {
     try {
         const playersSet = request.body
 
-        if (!validatePlayerSet(playersSet)) {
+        if (!validatePlayerSet([], playersSet)) {
             throw { name: 'ValidationError', message: 'invalid playersSet' }
         }
 
@@ -77,17 +77,18 @@ gamesRouter.get('/write/:writerId', async (request, response, next) => {
 
 gamesRouter.post('/write/:writerId/playersset', async (request, response, next) => {
     try {
-        const playersSet = request.body
-
-        if (!validatePlayerSet(playersSet)) {
-            throw { name: 'ValidationError', message: 'invalid playersSet' }
-        }
 
         const game = await Game.findOne({ writerId: request.params.writerId })
 
         if (!game) {
             logger.error(`game with writerId '${request.params.writerId}' not found`)
             response.status(404).send({ error: `writerId not found: ${request.params.writerId}` })
+        }
+
+        const playersSet = request.body
+
+        if (!validatePlayerSet(game.data, playersSet)) {
+            throw { name: 'ValidationError', message: 'invalid playersSet' }
         }
 
         const newData = applyPlayersSet(game.data, playersSet)
@@ -122,6 +123,37 @@ gamesRouter.post('/write/:writerId/deal', async (request, response, next) => {
         }
 
         const newData = applyDeal(game.data, deal)
+
+        game.data = newData
+        game.markModified('data')
+
+        const result = await game.save()
+
+        const apiModel = createApiModel(result)
+        apiModel.writerId = game.writerId
+
+        response.status(200).json(apiModel)
+    } catch (error) {
+        next(error)
+    }
+})
+
+gamesRouter.post('/write/:writerId/mandatorysolotrigger', async (request, response, next) => {
+    try {
+        const game = await Game.findOne({ writerId: request.params.writerId })
+
+        if (!game) {
+            logger.error(`game with writerId '${request.params.writerId}' not found`)
+            response.status(404).send({ error: `writerId not found: ${request.params.writerId}` })
+        }
+
+        const mandatorySoloTrigger = request.body
+
+        if (!validateMandatorySoloTrigger(game.data, mandatorySoloTrigger)) {
+            throw { name: 'ValidationError', message: 'invalid deal' }
+        }
+
+        const newData = applyMandatorySoloTrigger(game.data, mandatorySoloTrigger)
 
         game.data = newData
         game.markModified('data')

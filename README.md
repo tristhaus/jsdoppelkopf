@@ -1,3 +1,13 @@
+# JSDoppelkopf
+
+Copyright tristhaus 2023 and later.
+
+A program to note down the scores in a game of Doppelkopf following the house rules of a group of friends.
+
+## License
+
+All source code licensed under the MIT license (see LICENSE for terms).
+
 ## Template: Frontend
 
  * (axios)[https://www.npmjs.com/package/axios] Copyright (c) 2014-present Matt Zabriskie & Collaborators
@@ -219,14 +229,15 @@ used under the Apache 2.0 license:
 
 This template is based on (create-react-app)[https://www.npmjs.com/package/create-react-app], version 5.0.1
 
-## Template: Backend
+## Attributions: Backend
 
- * (bcrypt)[https://www.npmjs.com/package/bcrypt] Copyright (c) 2010 Nicholas Campbell
+Packages used:
+
  * (cors)[https://www.npmjs.com/package/cors] Copyright (c) 2013 Troy Goode <troygoode@gmail.com>,
  * (cross-env)[https://www.npmjs.com/package/cross-env] Copyright (c) 2017 Kent C. Dodds
  * (dot-env)[https://www.npmjs.com/package/dot-env] Copyright (c) supershabam
  * (express)[https://www.npmjs.com/package/express] Copyright (c) 2009-2014 TJ Holowaychuk <tj@vision-media.ca>, Copyright (c) 2013-2014 Roman Shtylman <shtylman+expressjs@gmail.com>, Copyright (c) 2014-2015 Douglas Christopher Wilson <doug@somethingdoug.com>
- * (jsonwebtoken)[https://www.npmjs.com/package/jsonwebtoken] Copyright (c) 2015 Auth0, Inc. <support@auth0.com> (http://auth0.com)
+ * (lodash)[https://www.npmjs.com/package/lodash] Copyright JS Foundation and other contributors <https://js.foundation/> 
  * (mongoose)[https://www.npmjs.com/package/mongoose] Copyright (c) 2010-2013 LearnBoost dev@learnboost.com Copyright (c) 2013-2021 Automattic
  * (eslint)[https://www.npmjs.com/package/eslint] Copyright OpenJS Foundation and other contributors, (www.openjsf.org)
  * (jest)[https://www.npmjs.com/package/jest] Copyright (c) Facebook, Inc. and its affiliates

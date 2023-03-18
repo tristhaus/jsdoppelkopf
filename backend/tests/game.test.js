@@ -1,4 +1,4 @@
-const { calculatePlayerData, constructBockHelper, determineDealer, getMultiplier, validateDeal, validateMandatorySoloTrigger, validatePlayerSet, } = require('../logic/game')
+const { calculatePlayerData, constructBockHelper, determineDealer, getMultiplier, pointDifferenceToCents, validateDeal, validateMandatorySoloTrigger, validatePlayerSet, } = require('../logic/game')
 
 describe('validate PlayerSet', () => {
 
@@ -584,26 +584,31 @@ describe('calculate player data', () => {
         expect(playerData[0].present).toBe(true)
         expect(playerData[0].playing).toBe(false)
         expect(playerData[0].score).toBe(6)
+        expect(playerData[0].cents).toBe(0)
 
         expect(playerData[1].name).toBe('B')
         expect(playerData[1].present).toBe(true)
         expect(playerData[1].playing).toBe(true)
         expect(playerData[1].score).toBe(2)
+        expect(playerData[1].cents).toBe(2)
 
         expect(playerData[2].name).toBe('C')
         expect(playerData[2].present).toBe(true)
         expect(playerData[2].playing).toBe(true)
         expect(playerData[2].score).toBe(-2)
+        expect(playerData[2].cents).toBe(4)
 
         expect(playerData[3].name).toBe('D')
         expect(playerData[3].present).toBe(true)
         expect(playerData[3].playing).toBe(true)
         expect(playerData[3].score).toBe(-4)
+        expect(playerData[3].cents).toBe(5)
 
         expect(playerData[4].name).toBe('E')
         expect(playerData[4].present).toBe(true)
         expect(playerData[4].playing).toBe(true)
         expect(playerData[4].score).toBe(-2)
+        expect(playerData[4].cents).toBe(4)
     })
 })
 
@@ -1324,5 +1329,20 @@ describe('validate mandatorySoloTrigger', () => {
 
         const result = validateMandatorySoloTrigger(data, mandatorySoloTrigger)
         expect(result).toBe(false)
+    })
+})
+
+describe('convert point difference to cents', () => {
+
+    test('calculation works as expected', () => {
+
+        const result = pointDifferenceToCents(4)
+        expect(result).toBe(2)
+    })
+
+    test('calculation uses truncation', () => {
+
+        const result = pointDifferenceToCents(7)
+        expect(result).toBe(3)
     })
 })

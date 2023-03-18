@@ -276,36 +276,43 @@ describe('game API', () => {
         expect(playerData[0].present).toBe(true)
         expect(playerData[0].playing).toBe(false)
         expect(playerData[0].score).toBe(1)
+        expect(playerData[0].cents).toBe(0)
 
         expect(playerData[1].name).toBe('B')
         expect(playerData[1].present).toBe(true)
         expect(playerData[1].playing).toBe(true)
         expect(playerData[1].score).toBe(1)
+        expect(playerData[1].cents).toBe(0)
 
         expect(playerData[2].name).toBe('C')
         expect(playerData[2].present).toBe(true)
         expect(playerData[2].playing).toBe(true)
         expect(playerData[2].score).toBe(0)
+        expect(playerData[2].cents).toBe(0)
 
         expect(playerData[3].name).toBe('D')
         expect(playerData[3].present).toBe(true)
         expect(playerData[3].playing).toBe(false)
         expect(playerData[3].score).toBe(-1)
+        expect(playerData[3].cents).toBe(1)
 
         expect(playerData[4].name).toBe('E')
         expect(playerData[4].present).toBe(true)
         expect(playerData[4].playing).toBe(true)
         expect(playerData[4].score).toBe(0)
+        expect(playerData[4].cents).toBe(0)
 
         expect(playerData[5].name).toBe('F')
         expect(playerData[5].present).toBe(true)
         expect(playerData[5].playing).toBe(false)
         expect(playerData[5].score).toBe(-1)
+        expect(playerData[5].cents).toBe(1)
 
         expect(playerData[6].name).toBe('G')
         expect(playerData[6].present).toBe(true)
         expect(playerData[6].playing).toBe(true)
         expect(playerData[6].score).toBe(0)
+        expect(playerData[6].cents).toBe(0)
     })
 
     test('POST deal validates deal and fails', async () => {
@@ -403,18 +410,23 @@ describe('game API', () => {
 
             expect(playerData[0].name).toBe('A')
             expect(playerData[0].score).toBe(0)
+            expect(playerData[0].cents).toBe(0)
 
             expect(playerData[1].name).toBe('B')
             expect(playerData[1].score).toBe(1)
+            expect(playerData[1].cents).toBe(0)
 
             expect(playerData[2].name).toBe('C')
             expect(playerData[2].score).toBe(1)
+            expect(playerData[2].cents).toBe(0)
 
             expect(playerData[3].name).toBe('D')
             expect(playerData[3].score).toBe(-1)
+            expect(playerData[3].cents).toBe(1)
 
             expect(playerData[4].name).toBe('E')
             expect(playerData[4].score).toBe(-1)
+            expect(playerData[4].cents).toBe(1)
         }
 
         const deal2 = {
@@ -452,18 +464,23 @@ describe('game API', () => {
 
             expect(playerData[0].name).toBe('A')
             expect(playerData[0].score).toBe(-12)
+            expect(playerData[0].cents).toBe(12)
 
             expect(playerData[1].name).toBe('B')
             expect(playerData[1].score).toBe(1)
+            expect(playerData[1].cents).toBe(6)
 
             expect(playerData[2].name).toBe('C')
             expect(playerData[2].score).toBe(13)
+            expect(playerData[2].cents).toBe(0)
 
             expect(playerData[3].name).toBe('D')
             expect(playerData[3].score).toBe(11)
+            expect(playerData[3].cents).toBe(1)
 
             expect(playerData[4].name).toBe('E')
             expect(playerData[4].score).toBe(-13)
+            expect(playerData[4].cents).toBe(13)
         }
 
         const mandatorySoloTrigger = {
@@ -512,18 +529,23 @@ describe('game API', () => {
 
             expect(playerData[0].name).toBe('A')
             expect(playerData[0].score).toBe(-17)
+            expect(playerData[0].cents).toBe(21)
 
             expect(playerData[1].name).toBe('B')
             expect(playerData[1].score).toBe(-4)
+            expect(playerData[1].cents).toBe(15)
 
             expect(playerData[2].name).toBe('C')
             expect(playerData[2].score).toBe(13)
+            expect(playerData[2].cents).toBe(6)
 
             expect(playerData[3].name).toBe('D')
             expect(playerData[3].score).toBe(26)
+            expect(playerData[3].cents).toBe(0)
 
             expect(playerData[4].name).toBe('E')
             expect(playerData[4].score).toBe(-18)
+            expect(playerData[4].cents).toBe(22)
         }
     })
 

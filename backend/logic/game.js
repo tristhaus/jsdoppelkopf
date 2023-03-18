@@ -1,4 +1,5 @@
 const lodash = require('lodash')
+const config = require('../utils/config')
 
 const isString = candidate => {
     return (typeof candidate === 'string' || candidate instanceof String)
@@ -87,6 +88,10 @@ const isMandatorySolo = data => {
     return relevantRecentEntries.some(entry => entry.kind === 'mandatorySoloTrigger')
 }
 
+const pointDifferenceToCents = difference => {
+    return Number(BigInt.asIntN(64, BigInt(difference) * BigInt(config.POINT_TO_CENT_NUMERATOR) / BigInt(config.POINT_TO_CENT_DENOMINATOR)))
+}
+
 const calculatePlayerData = data => {
 
     const relevantPlayersSetIndex = lodash.findLastIndex(data, entry => entry.kind === 'playersSet')
@@ -131,6 +136,12 @@ const calculatePlayerData = data => {
 
             gameIndex++
         }
+    })
+
+    const leaderScore = Math.max(...allPlayers.map(player => player.score))
+
+    allPlayers.forEach(player => {
+        player.cents = pointDifferenceToCents(leaderScore - player.score)
     })
 
     return allPlayers
@@ -259,6 +270,7 @@ module.exports = {
     constructBockHelper,
     determineDealer,
     getMultiplier,
+    pointDifferenceToCents,
     validateDeal,
     validateMandatorySoloTrigger,
     validatePlayerSet,

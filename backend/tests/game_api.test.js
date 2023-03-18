@@ -549,6 +549,319 @@ describe('game API', () => {
         }
     })
 
+    test('DELETE of entries is possible', async () => {
+        const playersSet = {
+            kind: 'playersSet',
+            playerNames: [
+                'A',
+                'B',
+                'C',
+                'D',
+                'E',
+            ],
+            dealerName: 'A',
+            sitOutScheme: []
+        }
+
+        const creationResponse = await api.post('/api/game').send(playersSet)
+
+        expect(creationResponse.status).toBe(201)
+        expect(creationResponse.body).toBeDefined()
+
+        expect(creationResponse.body.poppableEntry).toBe(null)
+
+        const writerId = creationResponse.body.writerId
+
+        const dealPath = `/api/game/write/${writerId}/deal`
+        const mandatorySoloTriggerPath = `/api/game/write/${writerId}/mandatorysolotrigger`
+        const popEntryPath = `/api/game/write/${writerId}/entry`
+
+        const deal1 = {
+            kind: 'deal',
+            events: 2,
+            changes: [
+                {
+                    name: 'B',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: 1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                },
+                {
+                    name: 'E',
+                    diff: -1
+                }
+            ],
+        }
+
+        const responseDeal1 = await api.post(dealPath).send(deal1)
+
+        expect(responseDeal1.status).toBe(200)
+        expect(responseDeal1.body).toBeDefined()
+
+        expect(responseDeal1.body.dealerName).toBe('B')
+        expect(responseDeal1.body.poppableEntry).toBe('deal')
+
+        {
+            const playerData = responseDeal1.body.playerData
+
+            expect(playerData[0].name).toBe('A')
+            expect(playerData[0].score).toBe(0)
+            expect(playerData[0].cents).toBe(0)
+
+            expect(playerData[1].name).toBe('B')
+            expect(playerData[1].score).toBe(1)
+            expect(playerData[1].cents).toBe(0)
+
+            expect(playerData[2].name).toBe('C')
+            expect(playerData[2].score).toBe(1)
+            expect(playerData[2].cents).toBe(0)
+
+            expect(playerData[3].name).toBe('D')
+            expect(playerData[3].score).toBe(-1)
+            expect(playerData[3].cents).toBe(1)
+
+            expect(playerData[4].name).toBe('E')
+            expect(playerData[4].score).toBe(-1)
+            expect(playerData[4].cents).toBe(1)
+        }
+
+        const deal2 = {
+            kind: 'deal',
+            events: 0,
+            changes: [
+                {
+                    name: 'A',
+                    diff: -3
+                },
+                {
+                    name: 'C',
+                    diff: 3
+                },
+                {
+                    name: 'D',
+                    diff: 3
+                },
+                {
+                    name: 'E',
+                    diff: -3
+                }
+            ],
+        }
+
+        const responseDeal2 = await api.post(dealPath).send(deal2)
+
+        expect(responseDeal2.status).toBe(200)
+        expect(responseDeal2.body).toBeDefined()
+
+        expect(responseDeal2.body.dealerName).toBe('C')
+        expect(responseDeal2.body.poppableEntry).toBe('deal')
+
+        {
+            const playerData = responseDeal2.body.playerData
+
+            expect(playerData[0].name).toBe('A')
+            expect(playerData[0].score).toBe(-12)
+            expect(playerData[0].cents).toBe(12)
+
+            expect(playerData[1].name).toBe('B')
+            expect(playerData[1].score).toBe(1)
+            expect(playerData[1].cents).toBe(6)
+
+            expect(playerData[2].name).toBe('C')
+            expect(playerData[2].score).toBe(13)
+            expect(playerData[2].cents).toBe(0)
+
+            expect(playerData[3].name).toBe('D')
+            expect(playerData[3].score).toBe(11)
+            expect(playerData[3].cents).toBe(1)
+
+            expect(playerData[4].name).toBe('E')
+            expect(playerData[4].score).toBe(-13)
+            expect(playerData[4].cents).toBe(13)
+        }
+
+        const mandatorySoloTrigger = {
+            kind: 'mandatorySoloTrigger',
+        }
+
+        const responseMandatorySoloTrigger = await api.post(mandatorySoloTriggerPath).send(mandatorySoloTrigger)
+
+        expect(responseMandatorySoloTrigger.status).toBe(200)
+        expect(responseMandatorySoloTrigger.body).toBeDefined()
+
+        expect(responseMandatorySoloTrigger.body.dealerName).toBe('C')
+        expect(responseMandatorySoloTrigger.body.poppableEntry).toBe('mandatorySoloTrigger')
+
+        const deal3 = {
+            kind: 'deal',
+            events: 0,
+            changes: [
+                {
+                    name: 'A',
+                    diff: -5
+                },
+                {
+                    name: 'B',
+                    diff: -5
+                },
+                {
+                    name: 'D',
+                    diff: 15
+                },
+                {
+                    name: 'E',
+                    diff: -5
+                }
+            ],
+        }
+
+        const responseDeal3 = await api.post(dealPath).send(deal3)
+
+        expect(responseDeal3.status).toBe(200)
+        expect(responseDeal3.body).toBeDefined()
+
+        expect(responseDeal3.body.dealerName).toBe('D')
+        expect(responseDeal3.body.poppableEntry).toBe('deal')
+
+        {
+            const playerData = responseDeal3.body.playerData
+
+            expect(playerData[0].name).toBe('A')
+            expect(playerData[0].score).toBe(-17)
+            expect(playerData[0].cents).toBe(21)
+
+            expect(playerData[1].name).toBe('B')
+            expect(playerData[1].score).toBe(-4)
+            expect(playerData[1].cents).toBe(15)
+
+            expect(playerData[2].name).toBe('C')
+            expect(playerData[2].score).toBe(13)
+            expect(playerData[2].cents).toBe(6)
+
+            expect(playerData[3].name).toBe('D')
+            expect(playerData[3].score).toBe(26)
+            expect(playerData[3].cents).toBe(0)
+
+            expect(playerData[4].name).toBe('E')
+            expect(playerData[4].score).toBe(-18)
+            expect(playerData[4].cents).toBe(22)
+        }
+
+        const responseDeleteToDeal2 = await api.delete(popEntryPath)
+
+        expect(responseDeleteToDeal2.status).toBe(200)
+        expect(responseDeleteToDeal2.body).toBeDefined()
+
+        expect(responseDeleteToDeal2.body.dealerName).toBe('C')
+        expect(responseDeleteToDeal2.body.poppableEntry).toBe('mandatorySoloTrigger')
+
+        {
+            const playerData = responseDeleteToDeal2.body.playerData
+
+            expect(playerData[0].name).toBe('A')
+            expect(playerData[0].score).toBe(-12)
+            expect(playerData[0].cents).toBe(12)
+
+            expect(playerData[1].name).toBe('B')
+            expect(playerData[1].score).toBe(1)
+            expect(playerData[1].cents).toBe(6)
+
+            expect(playerData[2].name).toBe('C')
+            expect(playerData[2].score).toBe(13)
+            expect(playerData[2].cents).toBe(0)
+
+            expect(playerData[3].name).toBe('D')
+            expect(playerData[3].score).toBe(11)
+            expect(playerData[3].cents).toBe(1)
+
+            expect(playerData[4].name).toBe('E')
+            expect(playerData[4].score).toBe(-13)
+            expect(playerData[4].cents).toBe(13)
+        }
+
+        const responseDeleteMandatorySolo = await api.delete(popEntryPath)
+
+        expect(responseDeleteMandatorySolo.status).toBe(200)
+        expect(responseDeleteMandatorySolo.body).toBeDefined()
+
+        expect(responseDeleteMandatorySolo.body.dealerName).toBe('C')
+        expect(responseDeleteMandatorySolo.body.poppableEntry).toBe('deal')
+
+        const responseDeleteToDeal1 = await api.delete(popEntryPath)
+
+        expect(responseDeleteToDeal1.status).toBe(200)
+        expect(responseDeleteToDeal1.body).toBeDefined()
+
+        expect(responseDeleteToDeal1.body.dealerName).toBe('B')
+        expect(responseDeleteToDeal1.body.poppableEntry).toBe('deal')
+
+        {
+            const playerData = responseDeleteToDeal1.body.playerData
+
+            expect(playerData[0].name).toBe('A')
+            expect(playerData[0].score).toBe(0)
+            expect(playerData[0].cents).toBe(0)
+
+            expect(playerData[1].name).toBe('B')
+            expect(playerData[1].score).toBe(1)
+            expect(playerData[1].cents).toBe(0)
+
+            expect(playerData[2].name).toBe('C')
+            expect(playerData[2].score).toBe(1)
+            expect(playerData[2].cents).toBe(0)
+
+            expect(playerData[3].name).toBe('D')
+            expect(playerData[3].score).toBe(-1)
+            expect(playerData[3].cents).toBe(1)
+
+            expect(playerData[4].name).toBe('E')
+            expect(playerData[4].score).toBe(-1)
+            expect(playerData[4].cents).toBe(1)
+        }
+
+        const responseDeleteToInitialPlayersSet = await api.delete(popEntryPath)
+
+        expect(responseDeleteToInitialPlayersSet.status).toBe(200)
+        expect(responseDeleteToInitialPlayersSet.body).toBeDefined()
+
+        expect(responseDeleteToInitialPlayersSet.body.poppableEntry).toBe(null)
+    })
+
+    test('DELETE of first entry is not possible', async () => {
+        const playersSet = {
+            kind: 'playersSet',
+            playerNames: [
+                'A',
+                'B',
+                'C',
+                'D',
+                'E',
+            ],
+            dealerName: 'A',
+            sitOutScheme: []
+        }
+
+        const creationResponse = await api.post('/api/game').send(playersSet)
+
+        expect(creationResponse.status).toBe(201)
+        expect(creationResponse.body).toBeDefined()
+
+        expect(creationResponse.body.poppableEntry).toBe(null)
+
+        const writerId = creationResponse.body.writerId
+
+        const popEntryPath = `/api/game/write/${writerId}/entry`
+
+        const response = await api.delete(popEntryPath)
+        expect(response.status).toBe(400)
+    })
+
     test('Game is accessible to readers by reader ID', async () => {
         const creationResponse = await api.post('/api/game').send(testData.validPlayersSet)
 

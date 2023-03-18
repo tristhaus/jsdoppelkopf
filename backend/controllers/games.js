@@ -22,6 +22,7 @@ const createApiModel = game => {
         creationDate: game.creationDate,
         dealerName: determineDealer(game.data),
         playerData: calculatePlayerData(game.data),
+        poppableEntry: game.data.length > 1 ? game.data[game.data.length - 1].kind : null,
     }
 }
 
@@ -154,6 +155,36 @@ gamesRouter.post('/write/:writerId/mandatorysolotrigger', async (request, respon
         }
 
         const newData = applyMandatorySoloTrigger(game.data, mandatorySoloTrigger)
+
+        game.data = newData
+        game.markModified('data')
+
+        const result = await game.save()
+
+        const apiModel = createApiModel(result)
+        apiModel.writerId = game.writerId
+
+        response.status(200).json(apiModel)
+    } catch (error) {
+        next(error)
+    }
+})
+
+gamesRouter.delete('/write/:writerId/entry', async (request, response, next) => {
+    try {
+        const game = await Game.findOne({ writerId: request.params.writerId })
+
+        if (!game) {
+            logger.error(`game with writerId '${request.params.writerId}' not found`)
+            response.status(404).send({ error: `writerId not found: ${request.params.writerId}` })
+        }
+
+        if (game.data.length === 1) {
+            logger.error(`unable to pop entry on game with writerId '${request.params.writerId}'`)
+            response.status(400).send({ error: 'unable to pop entry' })
+        }
+
+        const newData = game.data.slice(0, -1)
 
         game.data = newData
         game.markModified('data')

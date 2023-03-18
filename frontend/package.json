@@ -1,7 +1,7 @@
 {
-  "name": "template-frontend",
+  "name": "jsdoppelkopf-frontend",
   "version": "0.0.1",
-  "description": "My heroku-valid template for the frontend",
+  "description": "JSDoppelkopf frontend",
   "private": true,
   "dependencies": {
     "axios": "^0.27.2",

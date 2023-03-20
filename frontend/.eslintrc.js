@@ -12,14 +12,14 @@ module.exports = {
     'overrides': [
     ],
     'parserOptions': {
-        "ecmaFeatures": {
-            "jsx": true
+        'ecmaFeatures': {
+            'jsx': true
         },
         'ecmaVersion': 'latest',
         'sourceType': 'module'
     },
-    "plugins": [
-        "react", "jest"
+    'plugins': [
+        'react', 'jest'
     ],
     'rules': {
         'indent': [
@@ -50,9 +50,9 @@ module.exports = {
         'react/prop-types': 0,
         'react/react-in-jsx-scope': 0,
     },
-    "settings": {
-        "react": {
-            "version": "detect"
+    'settings': {
+        'react': {
+            'version': 'detect'
         }
     }
 }

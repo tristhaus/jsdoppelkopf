@@ -1,6 +1,7 @@
 const gamesRouter = require('express').Router()
 const Game = require('../models/game')
 const logger = require('../utils/logger')
+const config = require('../utils/config')
 const { applyDeal, applyMandatorySoloTrigger, applyPlayersSet, calculatePlayerData, determineDealer, validateDeal, validateMandatorySoloTrigger, validatePlayerSet, } = require('../logic/game')
 
 const dataVersion = 1
@@ -18,6 +19,7 @@ const generateId = () => {
 
 const createApiModel = game => {
     return {
+        deploymentUrl: `${config.DEPLOYMENT_URL}`,
         readerId: game.readerId,
         creationDate: game.creationDate,
         dealerName: determineDealer(game.data),

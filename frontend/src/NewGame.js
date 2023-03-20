@@ -3,9 +3,17 @@ import { useState } from 'react'
 import Writer from './components/Writer'
 import Reader from './components/Reader'
 
-import gameService from './services/game'
+//import gameService from './services/game'
+import PlayerEntry from './components/PlayerEntry'
 
 const NewGame = () => {
+    const [showPlayerEntry, setShowPlayerEntry] = useState(false)
+
+    const [writerId] = useState(null)
+    const [readerId] = useState(null)
+    const [playerData] = useState(null)
+
+    /*
     const [writerId, setWriterId] = useState(null)
     const [readerId, setReaderId] = useState(null)
     const [playerData, setPlayerData] = useState(null)
@@ -23,12 +31,22 @@ const NewGame = () => {
             setPlayerData(response.playerData)
         }
     }
+    */
+
+    const setShowPlayerEntryTrue = () => {
+        setShowPlayerEntry(true)
+    }
+
+    const setShowPlayerEntryFalse = () => {
+        setShowPlayerEntry(false)
+    }
 
     const initial = () => (
         <div>
             <h2>JSDoppelkopf Initial</h2>
             <hr />
-            <button onClick={handleNewGameClick}>Start new game</button>
+            <button onClick={setShowPlayerEntryTrue}>Start new game</button>
+            {showPlayerEntry && (<PlayerEntry closeAction={setShowPlayerEntryFalse}/>)}
         </div>
     )
 

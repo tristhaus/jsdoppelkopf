@@ -5,7 +5,7 @@ import Writer from './Writer'
 
 import gameService from '../services/game'
 
-const WriterEntry = () => {
+const WriterLanding = () => {
 
     const inputWriterId = useParams().id
 
@@ -28,7 +28,7 @@ const WriterEntry = () => {
 
     const writer = () => (
         <div>
-            <h2>JSDoppelkopf Writer from WriterEntry</h2>
+            <h2>JSDoppelkopf Writer from WriterLanding</h2>
             <hr />
             <Writer writerId={writerId} readerId={readerId} playerData={playerData} />
         </div>
@@ -41,6 +41,6 @@ const WriterEntry = () => {
     return <div>Loading from writer ID ...</div>
 }
 
-WriterEntry.displayName = 'WriterEntry'
+WriterLanding.displayName = 'WriterLanding'
 
-export default WriterEntry
+export default WriterLanding

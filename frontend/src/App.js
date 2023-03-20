@@ -3,20 +3,18 @@ import {
     Routes, Route
 } from 'react-router-dom'
 
-import NewGame from './NewGame'
-import WriterEntry from './components/WriterEntry'
-import ReaderEntry from './components/ReaderEntry'
+import NewGameLanding from './components/NewGameLanding'
+import WriterLanding from './components/WriterLanding'
+import ReaderLanding from './components/ReaderLanding'
 
-const App = () => {
-    return (
-        <Router>
-            <Routes>
-                <Route path="/writer/:id" element={<WriterEntry />} />
-                <Route path="/:id" element={<ReaderEntry />} />
-                <Route path="/" element={<NewGame />} />
-            </Routes>
-        </Router>
-    )
-}
+const App = () => (
+    <Router>
+        <Routes>
+            <Route path="/writer/:id" element={<WriterLanding />} />
+            <Route path="/:id" element={<ReaderLanding />} />
+            <Route path="/" element={<NewGameLanding />} />
+        </Routes>
+    </Router>
+)
 
 export default App

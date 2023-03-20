@@ -5,7 +5,7 @@ import Reader from './Reader'
 
 import gameService from '../services/game'
 
-const ReaderEntry = () => {
+const ReaderLanding = () => {
 
     const inputReaderId = useParams().id
 
@@ -39,6 +39,6 @@ const ReaderEntry = () => {
     return <div>Loading from reader ID ...</div>
 }
 
-ReaderEntry.displayName = 'ReaderEntry'
+ReaderLanding.displayName = 'ReaderEntry'
 
-export default ReaderEntry
+export default ReaderLanding

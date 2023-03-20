@@ -187,7 +187,7 @@ const validatePlayerSet = (data, playersSet) => {
 
     const playerNamesSet = new Set(playersSet.playerNames)
 
-    if ([...playerNamesSet].length !== numberOfPlayers) {
+    if (playerNamesSet.size !== numberOfPlayers) {
         return false
     }
 

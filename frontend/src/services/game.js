@@ -1,24 +1,11 @@
 import axios from 'axios'
 const baseUrl = '/api/game'
 
-const startGame = async () => {
+const startGame = async playerInformation => {
 
     const playersSet = {
         kind: 'playersSet',
-        playerNames: [
-            'Player A',
-            'Player B',
-            'Player C',
-            'Player D',
-            'Player E',
-            'Player F',
-            'Player G'
-        ],
-        dealerName: 'Player C',
-        sitOutScheme: [
-            2,
-            4
-        ]
+        ...playerInformation,
     }
 
     const response = await axios.post(baseUrl, playersSet)

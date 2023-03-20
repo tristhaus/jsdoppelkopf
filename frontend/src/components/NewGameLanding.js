@@ -1,21 +1,24 @@
 import { useState } from 'react'
 
-import Writer from './components/Writer'
-import Reader from './components/Reader'
+import Writer from './Writer'
+import Reader from './Reader'
 
-import gameService from './services/game'
+import gameService from '../services/game'
+import PlayerEntry from './PlayerEntry'
 
-const NewGame = () => {
+const NewGameLanding = () => {
+    const [showPlayerEntry, setShowPlayerEntry] = useState(false)
+
     const [writerId, setWriterId] = useState(null)
     const [readerId, setReaderId] = useState(null)
     const [playerData, setPlayerData] = useState(null)
 
-    const handleNewGameClick = async () => {
+    const handleNewGameClick = async playerInformation => {
         setWriterId(null)
         setReaderId(null)
         setPlayerData(null)
 
-        const response = await gameService.startGame()
+        const response = await gameService.startGame(playerInformation)
 
         if (response) {
             setWriterId(response.writerId)
@@ -28,7 +31,8 @@ const NewGame = () => {
         <div>
             <h2>JSDoppelkopf Initial</h2>
             <hr />
-            <button onClick={handleNewGameClick}>Start new game</button>
+            <button onClick={() => setShowPlayerEntry(true)}>Neues Spiel beginnen</button>
+            {showPlayerEntry && (<PlayerEntry closeAction={() => setShowPlayerEntry(false)} submitAction={handleNewGameClick} />)}
         </div>
     )
 
@@ -59,4 +63,4 @@ const NewGame = () => {
     }
 }
 
-export default NewGame
+export default NewGameLanding

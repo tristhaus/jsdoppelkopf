@@ -1,0 +1,80 @@
+* {
+  font-family: Tahoma, 'Segoe UI', Geneva, Verdana, sans-serif;
+}
+
+.centering {
+  text-align: center;
+}
+
+.overlayButton {
+  padding: 5px 10px;
+  margin: 10px;
+}
+
+.overlayBox {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  width: 80vw;
+  height: 80vh;
+  border-radius: 4px;
+  z-index: 10;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border: 5px solid black;
+  padding: 10px;
+}
+
+.darkBG {
+  background-color: rgba(0, 0, 0, 0.2);
+  width: 100vw;
+  height: 100vh;
+  z-index: 9;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+}
+
+.overlayVertical {
+  padding: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.overlayContent {
+  padding: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.playerSelectionBox {
+  border: 3px solid black;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 5px;
+}
+
+.dealerRadioButton {
+  margin: 0px 20px 0px 10px
+}
+
+.deletePlayerButton {
+  margin: 0px 10px 0px 20px
+}
+
+.deletePlayerButton:disabled {
+  opacity: 50%;
+}
+
+.sitOutInput {
+  margin: 0px 10px 0px 10px;
+}

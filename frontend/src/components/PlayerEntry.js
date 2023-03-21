@@ -1,5 +1,32 @@
 import React, { useState } from 'react'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { PropTypes } from 'prop-types'
+
+const reorder = (list, startIndex, endIndex) => {
+    const result = Array.from(list)
+    const [removed] = result.splice(startIndex, 1)
+    result.splice(endIndex, 0, removed)
+    return result
+}
+
+const initialBoxes = [
+    {
+        key: 'Box-0',
+        name: 'some name 0',
+    },
+    {
+        key: 'Box-1',
+        name: 'some name 1',
+    },
+    {
+        key: 'Box-2',
+        name: 'some name 2',
+    },
+    {
+        key: 'Box-3',
+        name: 'some name 3',
+    },
+]
 
 const PlayerEntry = ({ closeAction }) => {
 
@@ -18,58 +45,25 @@ const PlayerEntry = ({ closeAction }) => {
     // TODO: find some control to move players - or use buttons, if necessary
     // TODO: center table, SO says it can be done
 
-    const [dragId, setDragId] = useState()
-    const [boxes, setBoxes] = useState([
-        {
-            id: 'Box-0',
-            order: 0
-        },
-        {
-            id: 'Box-1',
-            order: 1
-        },
-        {
-            id: 'Box-2',
-            order: 2
-        },
-        {
-            id: 'Box-3',
-            order: 3
-        },
-        {
-            id: 'Box-4',
-            order: 4
-        },
-        {
-            id: 'Box-5',
-            order: 5
+    /*
+                                        <input type="radio" name="players" value={box.id} />
+                                        <input type="text" />
+    */
+
+    const [boxes, setBoxes] = useState(initialBoxes)
+
+    const onDragEnd = result => {
+        if (!result.destination) {
+            return
         }
-    ])
 
-    const handleDrag = (ev) => {
-        setDragId(ev.currentTarget.id)
-    }
+        if (result.destination.index === result.source.index) {
+            return
+        }
 
-    const handleDrop = (ev) => {
-        const dragBox = boxes.find((box) => box.id === dragId)
-        const dropBox = boxes.find((box) => box.id === ev.currentTarget.id)
+        const newBoxes = reorder(boxes, result.source.index, result.destination.index)
 
-        const dragBoxOrder = dragBox.order
-        const dropBoxOrder = dropBox.order
-
-        const newBoxState = boxes.map((box) => {
-            if (box.id === dragId) {
-                box.order = dropBoxOrder
-            }
-
-            if (box.id === ev.currentTarget.id) {
-                box.order = dragBoxOrder
-            }
-
-            return box
-        })
-
-        setBoxes(newBoxState)
+        setBoxes(newBoxes)
     }
 
     return (
@@ -78,23 +72,31 @@ const PlayerEntry = ({ closeAction }) => {
             <div className="overlayBox">
                 <div className="overlayVertical">
                     <div className="overlayContent">
-                        {boxes
-                            .sort((a, b) => a.order - b.order)
-                            .map((box) => (
-                                <div
-                                    draggable={true}
-                                    id={box.id}
-                                    key={box.id}
-                                    onDragOver={(ev) => ev.preventDefault()}
-                                    onDragStart={handleDrag}
-                                    onDrop={handleDrop}
-                                    className="playerSelectionBox"
-                                >
-                                    something {box.id} <br />
-                                    <input type="radio" name="players" value={box.id} />
-                                    <input type="text" />
-                                </div>
-                            ))}
+                        <DragDropContext onDragEnd={onDragEnd}>
+                            <Droppable droppableId="list">
+                                {provided => (
+                                    <div
+                                        ref={provided.innerRef}
+                                        {...provided.droppableProps}
+                                        style={{ border: '1px solid #242424', opacity: 0.5, borderRadius: '5px' }}
+                                    >
+                                        {boxes && boxes.map((item, index) =>
+                                            <Draggable draggableId={item.key} key={item.key} index={index}>
+                                                {provided => (
+                                                    <div
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}
+                                                    >
+                                                        <p style={{ color: 'green' }}>{item.name}</p>
+                                                    </div>
+                                                )}
+                                            </Draggable>)}
+                                        {provided.placeholder}
+                                    </div>
+                                )}
+                            </Droppable>
+                        </DragDropContext>
                     </div>
                     <button className="overlayButton" onClick={cancelAction}>Cancel</button>
                     <button className="overlayButton" onClick={confirmAction}>OK</button>

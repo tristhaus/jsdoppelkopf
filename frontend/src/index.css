@@ -18,6 +18,7 @@
   display: flex;
   align-items: center;
   text-align: center;
+  justify-content: center;
   width: 80vw;
   height: 80vh;
   border-radius: 4px;
@@ -31,10 +32,6 @@
   padding: 10px;
 }
 
-.overlayContent {
-  padding: 10px;
-}
-
 .darkBG {
   background-color: rgba(0, 0, 0, 0.2);
   width: 100vw;
@@ -44,4 +41,19 @@
   left: 50%;
   transform: translate(-50%, -50%);
   position: absolute;
+}
+
+.overlayContent {
+  padding: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.playerSelectionBox {
+  border: 3px solid black;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 5px;
 }

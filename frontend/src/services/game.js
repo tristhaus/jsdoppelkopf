@@ -34,6 +34,61 @@ const getGameByWriterId = async writerId => {
     }
 }
 
+const addDealEntryByWriterId = async (writerId, changes, events) => {
+
+    const postWriteDeal = `${baseUrl}/write/${writerId}/deal`
+
+    const requestData = {
+        kind: 'deal',
+        events,
+        changes,
+    }
+
+    const response = await axios.post(postWriteDeal, requestData)
+
+    if (response.status === 200) {
+        return response.data
+    }
+    else {
+        console.error('game service error in getGameByWriterId', response)
+        return null
+    }
+}
+
+const addMandatorySoloEntryByWriterId = async writerId => {
+
+    const postWriteMandatorySolo = `${baseUrl}/write/${writerId}/mandatorysolotrigger`
+
+    const requestData = {
+        kind: 'mandatorySoloTrigger',
+    }
+
+    const response = await axios.post(postWriteMandatorySolo, requestData)
+
+    if (response.status === 200) {
+        return response.data
+    }
+    else {
+        console.error('game service error in getGameByWriterId', response)
+        return null
+    }
+}
+
+const popLastEntryOnGameByWriterId = async writerId => {
+
+    const deleteWriteEntry = `${baseUrl}/write/${writerId}/entry`
+
+    const response = await axios.delete(deleteWriteEntry)
+
+    if (response.status === 200) {
+        return response.data
+    }
+    else {
+        console.error('game service error in getGameByWriterId', response)
+        return null
+    }
+}
+
 const getGameByReaderId = async readerId => {
 
     const getRead = `${baseUrl}/${readerId}`
@@ -49,4 +104,11 @@ const getGameByReaderId = async readerId => {
     }
 }
 
-export default { getGameByReaderId, getGameByWriterId, startGame }
+export default {
+    addDealEntryByWriterId,
+    addMandatorySoloEntryByWriterId,
+    getGameByReaderId,
+    getGameByWriterId,
+    popLastEntryOnGameByWriterId,
+    startGame
+}

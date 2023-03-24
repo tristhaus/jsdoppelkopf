@@ -1,18 +1,22 @@
 import { PropTypes } from 'prop-types'
+import { Score } from './Score'
 
-const Writer = ({ writerId, readerId, playerData }) => {
+const Writer = ({ data, addDeal, addMandatorySoloTrigger, popLastEntry, }) => {
 
     return (
         <>
             <div>
-                <span>writerId: </span><span id="writer-writerId">{writerId}</span>
+                <span>writerId: </span><span id="writer-writerId">{data.writerId}</span>
             </div>
             <div>
-                <span>readerId: </span><span id="writer-readerId">{readerId}</span>
+                <span>readerId: </span><span id="writer-readerId">{data.readerId}</span>
             </div>
-            <div>
-                game: {`${playerData[0].name}, ${playerData[1].name}`}
-            </div>
+            <Score
+                data={data}
+                addDeal={addDeal}
+                addMandatorySoloTrigger={addMandatorySoloTrigger}
+                popLastEntry={popLastEntry}
+            />
         </>
     )
 }
@@ -21,9 +25,7 @@ Writer.displayName = 'Writer'
 
 Writer.propTypes = {
     demo: PropTypes.shape({
-        writerId: PropTypes.string.isRequired,
-        readerId: PropTypes.string.isRequired,
-        playerData: PropTypes.object.isRequired,
+        data: PropTypes.object.isRequired,
     }),
 }
 

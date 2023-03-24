@@ -1,6 +1,6 @@
 import { PropTypes } from 'prop-types'
 
-const Reader = ({ readerId, playerData }) => {
+const Reader = ({ readerId, data }) => {
 
     return (
         <>
@@ -8,7 +8,7 @@ const Reader = ({ readerId, playerData }) => {
                 <span>readerId: </span><span id="reader-readerId">{readerId}</span>
             </div>
             <div>
-                game: {`${playerData[0].name}, ${playerData[1].name}`}
+                game: {`${data.playerData[0].name}, ${data.playerData[1].name}`}
             </div>
         </>
     )

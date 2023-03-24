@@ -3,9 +3,11 @@ const Game = require('../models/game')
 const testingRouter = require('express').Router()
 
 testingRouter.post('/reset', async (request, response) => {
-    Game.deleteMany({})
+    const result = await Game.deleteMany({ dataVersion: 1 })
 
-    response.status(204).end()
+    console.log('/RESET', result)
+
+    response.status(200).json(result)
 })
 
 testingRouter.post('/setup', async (request, response) => {
@@ -13,7 +15,10 @@ testingRouter.post('/setup', async (request, response) => {
 
     const game = new Game(content)
 
-    await game.save()
+    game.markModified('data')
+    const result = await game.save()
+
+    console.log('/SETUP', result)
 
     response.status(204).end()
 })

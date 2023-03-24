@@ -10,7 +10,7 @@ const ReaderLanding = () => {
     const inputReaderId = useParams().id
 
     const [readerId, setReaderId] = useState(null)
-    const [playerData, setPlayerData] = useState(null)
+    const [data, setData] = useState(null)
 
     useEffect(() => {
         const func = async () => {
@@ -18,7 +18,7 @@ const ReaderLanding = () => {
 
             if (response) {
                 setReaderId(response.readerId)
-                setPlayerData(response.playerData)
+                setData(response)
             }
         }
         func()
@@ -28,11 +28,11 @@ const ReaderLanding = () => {
         <div>
             <h2>JSDoppelkopf Reader from ReaderEntry</h2>
             <hr />
-            <Reader readerId={readerId} playerData={playerData} />
+            <Reader readerId={readerId} data={data} />
         </div>
     )
 
-    if (readerId && playerData) {
+    if (readerId && data) {
         return reader()
     }
 

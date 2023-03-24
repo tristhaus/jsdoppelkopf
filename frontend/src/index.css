@@ -78,3 +78,58 @@
 .sitOutInput {
   margin: 0px 10px 0px 10px;
 }
+
+.playerName,
+.playerNameDealer {
+  justify-self: center;
+  padding: 0px 10px;
+  border-style: solid;
+  border-width: 5px;
+  border-radius: 5px;
+}
+
+.playerName {
+  border-color: rgba(0, 0, 0, 0.0);
+}
+
+.playerNameDealer {
+  border-color: orange;
+}
+
+.lastDeal,
+.currentDeal {
+  justify-self: center;
+}
+
+.mandatorySoloButton {
+  margin: 0px 10px;
+}
+
+.pflichtSolo,
+.dreifachbock,
+.doppelbock,
+.bock,
+.keinBock {
+  font-size: 1.5em;
+  margin: 0px 10px;
+}
+
+.pflichtSolo {
+  color: rgb(8, 69, 236);
+}
+
+.dreifachbock {
+  color: rgb(172, 20, 20);
+}
+
+.doppelbock {
+  color: rgb(216, 106, 3);
+}
+
+.bock {
+  color: rgb(25, 167, 48);
+}
+
+.keinBock {
+  color: black
+}

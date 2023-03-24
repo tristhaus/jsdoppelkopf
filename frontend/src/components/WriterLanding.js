@@ -9,32 +9,57 @@ const WriterLanding = () => {
 
     const inputWriterId = useParams().id
 
-    const [writerId, setWriterId] = useState(null)
-    const [readerId, setReaderId] = useState(null)
-    const [playerData, setPlayerData] = useState(null)
+    const [data, setData] = useState(null)
 
     useEffect(() => {
         const func = async () => {
             const response = await gameService.getGameByWriterId(inputWriterId)
 
             if (response) {
-                setWriterId(response.writerId)
-                setReaderId(response.readerId)
-                setPlayerData(response.playerData)
+                setData(response)
             }
         }
         func()
     }, [])
 
+    const addDeal = async (changes, events) => {
+        const response = await gameService.addDealEntryByWriterId(data.writerId, changes, events)
+
+        if (response) {
+            setData(response)
+        }
+    }
+
+    const addMandatorySoloTrigger = async () => {
+        const response = await gameService.addMandatorySoloEntryByWriterId(data.writerId)
+
+        if (response) {
+            setData(response)
+        }
+    }
+
+    const popLastEntry = async () => {
+        const response = await gameService.popLastEntryOnGameByWriterId(data.writerId)
+
+        if (response) {
+            setData(response)
+        }
+    }
+
     const writer = () => (
         <div>
             <h2>JSDoppelkopf Writer from WriterLanding</h2>
             <hr />
-            <Writer writerId={writerId} readerId={readerId} playerData={playerData} />
+            <Writer
+                data={data}
+                addDeal={addDeal}
+                addMandatorySoloTrigger={addMandatorySoloTrigger}
+                popLastEntry={popLastEntry}
+            />
         </div>
     )
 
-    if (writerId && readerId && playerData) {
+    if (data) {
         return writer()
     }
 

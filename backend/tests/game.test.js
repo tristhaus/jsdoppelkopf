@@ -1,4 +1,4 @@
-const { calculatePlayerData, constructBockHelper, determineDealer, getMultiplier, pointDifferenceToCents, validateDeal, validateMandatorySoloTrigger, validatePlayerSet, } = require('../logic/game')
+const { calculatePlayerData, createBockPreview, constructBockHelper, determineDealer, getMultiplier, pointDifferenceToCents, validateDeal, validateMandatorySoloTrigger, validatePlayerSet, } = require('../logic/game')
 
 describe('validate PlayerSet', () => {
 
@@ -350,7 +350,7 @@ describe('calculate player data', () => {
 
         const data = [playersSet]
 
-        const playerData = calculatePlayerData(data)
+        const { playerData } = calculatePlayerData(data)
         expect(playerData[0].name).toBe('A')
         expect(playerData[0].present).toBe(true)
         expect(playerData[0].playing).toBe(true)
@@ -378,7 +378,7 @@ describe('calculate player data', () => {
 
         const data = [playersSet]
 
-        const playerData = calculatePlayerData(data)
+        const { playerData } = calculatePlayerData(data)
         expect(playerData[0].name).toBe('A')
         expect(playerData[0].present).toBe(true)
         expect(playerData[0].playing).toBe(true)
@@ -410,7 +410,7 @@ describe('calculate player data', () => {
 
         const data = [playersSet]
 
-        const playerData = calculatePlayerData(data)
+        const { playerData } = calculatePlayerData(data)
         expect(playerData[0].name).toBe('A')
         expect(playerData[0].present).toBe(true)
         expect(playerData[0].playing).toBe(false)
@@ -464,7 +464,7 @@ describe('calculate player data', () => {
 
         const data = [playersSet1, playersSet2, playersSet3]
 
-        const playerData = calculatePlayerData(data)
+        const { playerData } = calculatePlayerData(data)
         expect(playerData[0].name).toBe('B')
         expect(playerData[0].present).toBe(true)
         expect(playerData[0].playing).toBe(false)
@@ -576,39 +576,172 @@ describe('calculate player data', () => {
 
         const data = [playersSet1, deal1, playersSet2, deal2, deal3]
 
-        const dealer = determineDealer(data)
-        expect(dealer).toBe('A')
-
-        const playerData = calculatePlayerData(data)
+        const { playerData, dealerName, totalCash, absentPlayerCents, } = calculatePlayerData(data)
         expect(playerData[0].name).toBe('A')
         expect(playerData[0].present).toBe(true)
         expect(playerData[0].playing).toBe(false)
         expect(playerData[0].score).toBe(6)
+        expect(playerData[0].lastDealDiff).toBe(3)
         expect(playerData[0].cents).toBe(0)
 
         expect(playerData[1].name).toBe('B')
         expect(playerData[1].present).toBe(true)
         expect(playerData[1].playing).toBe(true)
         expect(playerData[1].score).toBe(2)
+        expect(playerData[1].lastDealDiff).toBe(3)
         expect(playerData[1].cents).toBe(2)
 
         expect(playerData[2].name).toBe('C')
         expect(playerData[2].present).toBe(true)
         expect(playerData[2].playing).toBe(true)
         expect(playerData[2].score).toBe(-2)
+        expect(playerData[2].lastDealDiff).toBe(-3)
         expect(playerData[2].cents).toBe(4)
 
         expect(playerData[3].name).toBe('D')
         expect(playerData[3].present).toBe(true)
         expect(playerData[3].playing).toBe(true)
         expect(playerData[3].score).toBe(-4)
+        expect(playerData[3].lastDealDiff).toBe(-3)
         expect(playerData[3].cents).toBe(5)
 
         expect(playerData[4].name).toBe('E')
         expect(playerData[4].present).toBe(true)
         expect(playerData[4].playing).toBe(true)
         expect(playerData[4].score).toBe(-2)
+        expect(playerData[4].lastDealDiff).toBeNull()
         expect(playerData[4].cents).toBe(4)
+
+        expect(dealerName).toBe('A')
+
+        expect(totalCash).toBe(15 + 3 * 3)
+        expect(absentPlayerCents).toBe(3)
+    })
+
+    test('6a-d-6b-d: no players entirely absent', () => {
+        const playersSet1 = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D'],
+            dealerName: 'A',
+            sitOutScheme: []
+        }
+
+        const deal1 = {
+            kind: 'deal',
+            events: 0,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 4
+                },
+                {
+                    name: 'B',
+                    diff: 4
+                },
+                {
+                    name: 'C',
+                    diff: -4
+                },
+                {
+                    name: 'D',
+                    diff: -4
+                }
+            ]
+        }
+
+        const playersSet2 = {
+            kind: 'playersSet',
+            playerNames: ['E', 'F', 'G', 'H'],
+            dealerName: 'E',
+            sitOutScheme: []
+        }
+
+        const deal2 = {
+            kind: 'deal',
+            events: 0,
+            changes: [
+                {
+                    name: 'E',
+                    diff: 6
+                },
+                {
+                    name: 'F',
+                    diff: -6
+                },
+                {
+                    name: 'G',
+                    diff: 6
+                },
+                {
+                    name: 'H',
+                    diff: -6
+                }
+            ]
+        }
+
+        const data = [playersSet1, deal1, playersSet2, deal2]
+
+        const { playerData, dealerName, totalCash, absentPlayerCents, } = calculatePlayerData(data)
+        expect(playerData[0].name).toBe('E')
+        expect(playerData[0].present).toBe(true)
+        expect(playerData[0].playing).toBe(true)
+        expect(playerData[0].score).toBe(6)
+        expect(playerData[0].lastDealDiff).toBe(6)
+        expect(playerData[0].cents).toBe(0)
+
+        expect(playerData[1].name).toBe('F')
+        expect(playerData[1].present).toBe(true)
+        expect(playerData[1].playing).toBe(true)
+        expect(playerData[1].score).toBe(-6)
+        expect(playerData[1].lastDealDiff).toBe(-6)
+        expect(playerData[1].cents).toBe(6)
+
+        expect(playerData[2].name).toBe('G')
+        expect(playerData[2].present).toBe(true)
+        expect(playerData[2].playing).toBe(true)
+        expect(playerData[2].score).toBe(6)
+        expect(playerData[2].lastDealDiff).toBe(6)
+        expect(playerData[2].cents).toBe(0)
+
+        expect(playerData[3].name).toBe('H')
+        expect(playerData[3].present).toBe(true)
+        expect(playerData[3].playing).toBe(true)
+        expect(playerData[3].score).toBe(-6)
+        expect(playerData[3].lastDealDiff).toBe(-6)
+        expect(playerData[3].cents).toBe(6)
+
+        expect(playerData[4].name).toBe('A')
+        expect(playerData[4].present).toBe(false)
+        expect(playerData[4].playing).toBe(false)
+        expect(playerData[4].score).toBe(4)
+        expect(playerData[4].lastDealDiff).toBeNull()
+        expect(playerData[4].cents).toBe(1)
+
+        expect(playerData[5].name).toBe('B')
+        expect(playerData[5].present).toBe(false)
+        expect(playerData[5].playing).toBe(false)
+        expect(playerData[5].score).toBe(4)
+        expect(playerData[5].lastDealDiff).toBeNull()
+        expect(playerData[5].cents).toBe(1)
+
+        expect(playerData[6].name).toBe('C')
+        expect(playerData[6].present).toBe(false)
+        expect(playerData[6].playing).toBe(false)
+        expect(playerData[6].score).toBe(-4)
+        expect(playerData[6].lastDealDiff).toBeNull()
+        expect(playerData[6].cents).toBe(5)
+
+        expect(playerData[7].name).toBe('D')
+        expect(playerData[7].present).toBe(false)
+        expect(playerData[7].playing).toBe(false)
+        expect(playerData[7].score).toBe(-4)
+        expect(playerData[7].lastDealDiff).toBeNull()
+        expect(playerData[7].cents).toBe(5)
+
+        expect(dealerName).toBe('F')
+
+        expect(totalCash).toBe(24)
+        expect(absentPlayerCents).toBe(null)
     })
 })
 
@@ -952,7 +1085,7 @@ describe('calculate bock', () => {
         expect(getMultiplier(bockHelper, 4)).toBe(8)
     })
 
-    test('bockHelper is constructed correctly: simple', () => {
+    test('bockHelper, bockPreview logic correct: simple', () => {
 
         const playersSet = {
             kind: 'playersSet',
@@ -1020,9 +1153,21 @@ describe('calculate bock', () => {
         expect(getMultiplier(bockHelper, 6)).toBe(4)
         expect(getMultiplier(bockHelper, 7)).toBe(1)
         expect(getMultiplier(bockHelper, 8)).toBe(1)
+
+        const preview3 = createBockPreview(bockHelper, 3)
+
+        expect(preview3.single).toBe(0)
+        expect(preview3.double).toBe(4)
+        expect(preview3.triple).toBe(0)
+
+        const preview4 = createBockPreview(bockHelper, 4)
+
+        expect(preview4.single).toBe(0)
+        expect(preview4.double).toBe(3)
+        expect(preview4.triple).toBe(0)
     })
 
-    test('bockHelper is constructed correctly: change players', () => {
+    test('bockHelper, bockPreview logic correct: change players', () => {
 
         const playersSet1 = {
             kind: 'playersSet',
@@ -1097,9 +1242,27 @@ describe('calculate bock', () => {
         expect(getMultiplier(bockHelper, 6)).toBe(1 * 2)
         expect(getMultiplier(bockHelper, 7)).toBe(1 * 2)
         expect(getMultiplier(bockHelper, 8)).toBe(1)
+
+        const preview3 = createBockPreview(bockHelper, 3)
+
+        expect(preview3.single).toBe(3)
+        expect(preview3.double).toBe(0)
+        expect(preview3.triple).toBe(2)
+
+        const preview7 = createBockPreview(bockHelper, 7)
+
+        expect(preview7.single).toBe(1)
+        expect(preview7.double).toBe(0)
+        expect(preview7.triple).toBe(0)
+
+        const preview8 = createBockPreview(bockHelper, 8)
+
+        expect(preview8.single).toBe(0)
+        expect(preview8.double).toBe(0)
+        expect(preview8.triple).toBe(0)
     })
 
-    test('bockHelper is constructed correctly: overload', () => {
+    test('bockHelper, bockPreview logic correct: overload', () => {
 
         const playersSet = {
             kind: 'playersSet',
@@ -1168,9 +1331,21 @@ describe('calculate bock', () => {
         expect(getMultiplier(bockHelper, 7)).toBe(1 * 1 * 2)
         expect(getMultiplier(bockHelper, 8)).toBe(1 * 1 * 2)
         expect(getMultiplier(bockHelper, 9)).toBe(1)
+
+        const preview3 = createBockPreview(bockHelper, 3)
+
+        expect(preview3.single).toBe(2)
+        expect(preview3.double).toBe(2)
+        expect(preview3.triple).toBe(2)
+
+        const preview6 = createBockPreview(bockHelper, 6)
+
+        expect(preview6.single).toBe(2)
+        expect(preview6.double).toBe(1)
+        expect(preview6.triple).toBe(0)
     })
 
-    test('bockHelper is constructed correctly: mandatory solo trigger', () => {
+    test('bockHelper, bockPreview logic correct: mandatory solo trigger', () => {
 
         const playersSet = {
             kind: 'playersSet',
@@ -1251,6 +1426,12 @@ describe('calculate bock', () => {
         expect(getMultiplier(bockHelper, 11)).toBe(1 * 1 * 2)
         expect(getMultiplier(bockHelper, 12)).toBe(1 * 1 * 2)
         expect(getMultiplier(bockHelper, 13)).toBe(1)
+
+        const preview4 = createBockPreview(bockHelper, 4)
+
+        expect(preview4.single).toBe(2)
+        expect(preview4.double).toBe(2)
+        expect(preview4.triple).toBe(1)
     })
 })
 

@@ -23,37 +23,51 @@ const testData = {
         ]
     },
     validateResult: response => {
-        expect(response.body.dealerName).toBe('C')
 
-        const playerData = response.body.playerData
+        const { playerData, dealerName, bockPreview, isMandatorySolo, } = response.body
 
         expect(playerData[0].name).toBe('A')
         expect(playerData[0].present).toBe(true)
         expect(playerData[0].playing).toBe(true)
+        expect(playerData[0].lastDealDiff).toBeNull()
 
         expect(playerData[1].name).toBe('B')
         expect(playerData[1].present).toBe(true)
         expect(playerData[1].playing).toBe(true)
+        expect(playerData[1].lastDealDiff).toBeNull()
 
         expect(playerData[2].name).toBe('C')
         expect(playerData[2].present).toBe(true)
         expect(playerData[2].playing).toBe(false)
+        expect(playerData[2].lastDealDiff).toBeNull()
 
         expect(playerData[3].name).toBe('D')
         expect(playerData[3].present).toBe(true)
         expect(playerData[3].playing).toBe(true)
+        expect(playerData[3].lastDealDiff).toBeNull()
 
         expect(playerData[4].name).toBe('E')
         expect(playerData[4].present).toBe(true)
         expect(playerData[4].playing).toBe(false)
+        expect(playerData[4].lastDealDiff).toBeNull()
 
         expect(playerData[5].name).toBe('F')
         expect(playerData[5].present).toBe(true)
         expect(playerData[5].playing).toBe(true)
+        expect(playerData[5].lastDealDiff).toBeNull()
 
         expect(playerData[6].name).toBe('G')
         expect(playerData[6].present).toBe(true)
         expect(playerData[6].playing).toBe(false)
+        expect(playerData[6].lastDealDiff).toBeNull()
+
+        expect(dealerName).toBe('C')
+
+        expect(bockPreview.single).toBe(0)
+        expect(bockPreview.double).toBe(0)
+        expect(bockPreview.triple).toBe(0)
+
+        expect(isMandatorySolo).toBe(false)
     }
 }
 
@@ -271,49 +285,67 @@ describe('game API', () => {
 
         expect(response.body.dealerName).toBe('D')
 
-        const playerData = response.body.playerData
+        const { playerData, dealerName, bockPreview, isMandatorySolo, totalCash, absentPlayerCents } = response.body
 
         expect(playerData[0].name).toBe('A')
         expect(playerData[0].present).toBe(true)
         expect(playerData[0].playing).toBe(false)
         expect(playerData[0].score).toBe(1)
+        expect(playerData[0].lastDealDiff).toBe(1)
         expect(playerData[0].cents).toBe(0)
 
         expect(playerData[1].name).toBe('B')
         expect(playerData[1].present).toBe(true)
         expect(playerData[1].playing).toBe(true)
         expect(playerData[1].score).toBe(1)
+        expect(playerData[1].lastDealDiff).toBe(1)
         expect(playerData[1].cents).toBe(0)
 
         expect(playerData[2].name).toBe('C')
         expect(playerData[2].present).toBe(true)
         expect(playerData[2].playing).toBe(true)
         expect(playerData[2].score).toBe(0)
+        expect(playerData[2].lastDealDiff).toBeNull()
         expect(playerData[2].cents).toBe(0)
 
         expect(playerData[3].name).toBe('D')
         expect(playerData[3].present).toBe(true)
         expect(playerData[3].playing).toBe(false)
         expect(playerData[3].score).toBe(-1)
+        expect(playerData[3].lastDealDiff).toBe(-1)
         expect(playerData[3].cents).toBe(1)
 
         expect(playerData[4].name).toBe('E')
         expect(playerData[4].present).toBe(true)
         expect(playerData[4].playing).toBe(true)
         expect(playerData[4].score).toBe(0)
+        expect(playerData[4].lastDealDiff).toBeNull()
         expect(playerData[4].cents).toBe(0)
 
         expect(playerData[5].name).toBe('F')
         expect(playerData[5].present).toBe(true)
         expect(playerData[5].playing).toBe(false)
         expect(playerData[5].score).toBe(-1)
+        expect(playerData[5].lastDealDiff).toBe(-1)
         expect(playerData[5].cents).toBe(1)
 
         expect(playerData[6].name).toBe('G')
         expect(playerData[6].present).toBe(true)
         expect(playerData[6].playing).toBe(true)
         expect(playerData[6].score).toBe(0)
+        expect(playerData[6].lastDealDiff).toBeNull()
         expect(playerData[6].cents).toBe(0)
+
+        expect(dealerName).toBe('D')
+
+        expect(bockPreview.single).toBe(0)
+        expect(bockPreview.double).toBe(0)
+        expect(bockPreview.triple).toBe(0)
+
+        expect(isMandatorySolo).toBe(false)
+
+        expect(totalCash).toBe(2)
+        expect(absentPlayerCents).toBe(0)
     })
 
     test('POST deal validates deal and fails', async () => {
@@ -404,30 +436,44 @@ describe('game API', () => {
         expect(responseDeal1.status).toBe(200)
         expect(responseDeal1.body).toBeDefined()
 
-        expect(responseDeal1.body.dealerName).toBe('B')
-
         {
-            const playerData = responseDeal1.body.playerData
+            const { playerData, dealerName, bockPreview, isMandatorySolo, totalCash, absentPlayerCents, } = responseDeal1.body
 
             expect(playerData[0].name).toBe('A')
             expect(playerData[0].score).toBe(0)
+            expect(playerData[0].lastDealDiff).toBeNull()
             expect(playerData[0].cents).toBe(0)
 
             expect(playerData[1].name).toBe('B')
             expect(playerData[1].score).toBe(1)
+            expect(playerData[1].lastDealDiff).toBe(1)
             expect(playerData[1].cents).toBe(0)
 
             expect(playerData[2].name).toBe('C')
             expect(playerData[2].score).toBe(1)
+            expect(playerData[2].lastDealDiff).toBe(1)
             expect(playerData[2].cents).toBe(0)
 
             expect(playerData[3].name).toBe('D')
             expect(playerData[3].score).toBe(-1)
+            expect(playerData[3].lastDealDiff).toBe(-1)
             expect(playerData[3].cents).toBe(1)
 
             expect(playerData[4].name).toBe('E')
             expect(playerData[4].score).toBe(-1)
+            expect(playerData[4].lastDealDiff).toBe(-1)
             expect(playerData[4].cents).toBe(1)
+
+            expect(dealerName).toBe('B')
+
+            expect(bockPreview.single).toBe(0)
+            expect(bockPreview.double).toBe(5)
+            expect(bockPreview.triple).toBe(0)
+
+            expect(isMandatorySolo).toBe(false)
+
+            expect(totalCash).toBe(2)
+            expect(absentPlayerCents).toBe(0)
         }
 
         const deal2 = {
@@ -458,30 +504,44 @@ describe('game API', () => {
         expect(responseDeal2.status).toBe(200)
         expect(responseDeal2.body).toBeDefined()
 
-        expect(responseDeal2.body.dealerName).toBe('C')
-
         {
-            const playerData = responseDeal2.body.playerData
+            const { playerData, dealerName, bockPreview, isMandatorySolo, totalCash, absentPlayerCents, } = responseDeal2.body
 
             expect(playerData[0].name).toBe('A')
             expect(playerData[0].score).toBe(-12)
+            expect(playerData[0].lastDealDiff).toBe(-3)
             expect(playerData[0].cents).toBe(12)
 
             expect(playerData[1].name).toBe('B')
             expect(playerData[1].score).toBe(1)
+            expect(playerData[1].lastDealDiff).toBeNull()
             expect(playerData[1].cents).toBe(6)
 
             expect(playerData[2].name).toBe('C')
             expect(playerData[2].score).toBe(13)
+            expect(playerData[2].lastDealDiff).toBe(3)
             expect(playerData[2].cents).toBe(0)
 
             expect(playerData[3].name).toBe('D')
             expect(playerData[3].score).toBe(11)
+            expect(playerData[3].lastDealDiff).toBe(3)
             expect(playerData[3].cents).toBe(1)
 
             expect(playerData[4].name).toBe('E')
             expect(playerData[4].score).toBe(-13)
+            expect(playerData[4].lastDealDiff).toBe(-3)
             expect(playerData[4].cents).toBe(13)
+
+            expect(dealerName).toBe('C')
+
+            expect(bockPreview.single).toBe(0)
+            expect(bockPreview.double).toBe(4)
+            expect(bockPreview.triple).toBe(0)
+
+            expect(isMandatorySolo).toBe(false)
+
+            expect(totalCash).toBe(32 + 3 * 6)
+            expect(absentPlayerCents).toBe(6)
         }
 
         const mandatorySoloTrigger = {
@@ -494,6 +554,36 @@ describe('game API', () => {
         expect(responseMandatorySoloTrigger.body).toBeDefined()
 
         expect(responseMandatorySoloTrigger.body.dealerName).toBe('C')
+        expect(responseMandatorySoloTrigger.body.isMandatorySolo).toBe(true)
+
+        {
+            const { playerData, } = responseDeal2.body
+
+            expect(playerData[0].name).toBe('A')
+            expect(playerData[0].score).toBe(-12)
+            expect(playerData[0].lastDealDiff).toBe(-3)
+            expect(playerData[0].cents).toBe(12)
+
+            expect(playerData[1].name).toBe('B')
+            expect(playerData[1].score).toBe(1)
+            expect(playerData[1].lastDealDiff).toBeNull()
+            expect(playerData[1].cents).toBe(6)
+
+            expect(playerData[2].name).toBe('C')
+            expect(playerData[2].score).toBe(13)
+            expect(playerData[2].lastDealDiff).toBe(3)
+            expect(playerData[2].cents).toBe(0)
+
+            expect(playerData[3].name).toBe('D')
+            expect(playerData[3].score).toBe(11)
+            expect(playerData[3].lastDealDiff).toBe(3)
+            expect(playerData[3].cents).toBe(1)
+
+            expect(playerData[4].name).toBe('E')
+            expect(playerData[4].score).toBe(-13)
+            expect(playerData[4].lastDealDiff).toBe(-3)
+            expect(playerData[4].cents).toBe(13)
+        }
 
         const deal3 = {
             kind: 'deal',
@@ -523,30 +613,44 @@ describe('game API', () => {
         expect(responseDeal3.status).toBe(200)
         expect(responseDeal3.body).toBeDefined()
 
-        expect(responseDeal3.body.dealerName).toBe('D')
-
         {
-            const playerData = responseDeal3.body.playerData
+            const { playerData, dealerName, bockPreview, isMandatorySolo, totalCash, absentPlayerCents, } = responseDeal3.body
 
             expect(playerData[0].name).toBe('A')
             expect(playerData[0].score).toBe(-17)
+            expect(playerData[0].lastDealDiff).toBe(-5)
             expect(playerData[0].cents).toBe(21)
 
             expect(playerData[1].name).toBe('B')
             expect(playerData[1].score).toBe(-4)
+            expect(playerData[1].lastDealDiff).toBe(-5)
             expect(playerData[1].cents).toBe(15)
 
             expect(playerData[2].name).toBe('C')
             expect(playerData[2].score).toBe(13)
+            expect(playerData[2].lastDealDiff).toBeNull()
             expect(playerData[2].cents).toBe(6)
 
             expect(playerData[3].name).toBe('D')
             expect(playerData[3].score).toBe(26)
+            expect(playerData[3].lastDealDiff).toBe(15)
             expect(playerData[3].cents).toBe(0)
 
             expect(playerData[4].name).toBe('E')
             expect(playerData[4].score).toBe(-18)
+            expect(playerData[4].lastDealDiff).toBe(-5)
             expect(playerData[4].cents).toBe(22)
+
+            expect(dealerName).toBe('D')
+
+            expect(bockPreview.single).toBe(0)
+            expect(bockPreview.double).toBe(4)
+            expect(bockPreview.triple).toBe(0)
+
+            expect(isMandatorySolo).toBe(true)
+
+            expect(totalCash).toBe(64 + 3 * 13)
+            expect(absentPlayerCents).toBe(13)
         }
     })
 
@@ -605,31 +709,46 @@ describe('game API', () => {
         expect(responseDeal1.status).toBe(200)
         expect(responseDeal1.body).toBeDefined()
 
-        expect(responseDeal1.body.dealerName).toBe('B')
         expect(responseDeal1.body.poppableEntry).toBe('deal')
 
         {
-            const playerData = responseDeal1.body.playerData
+            const { playerData, dealerName, bockPreview, isMandatorySolo, totalCash, absentPlayerCents, } = responseDeal1.body
 
             expect(playerData[0].name).toBe('A')
             expect(playerData[0].score).toBe(0)
+            expect(playerData[0].lastDealDiff).toBeNull()
             expect(playerData[0].cents).toBe(0)
 
             expect(playerData[1].name).toBe('B')
             expect(playerData[1].score).toBe(1)
+            expect(playerData[1].lastDealDiff).toBe(1)
             expect(playerData[1].cents).toBe(0)
 
             expect(playerData[2].name).toBe('C')
             expect(playerData[2].score).toBe(1)
+            expect(playerData[2].lastDealDiff).toBe(1)
             expect(playerData[2].cents).toBe(0)
 
             expect(playerData[3].name).toBe('D')
             expect(playerData[3].score).toBe(-1)
+            expect(playerData[3].lastDealDiff).toBe(-1)
             expect(playerData[3].cents).toBe(1)
 
             expect(playerData[4].name).toBe('E')
             expect(playerData[4].score).toBe(-1)
+            expect(playerData[4].lastDealDiff).toBe(-1)
             expect(playerData[4].cents).toBe(1)
+
+            expect(dealerName).toBe('B')
+
+            expect(bockPreview.single).toBe(0)
+            expect(bockPreview.double).toBe(5)
+            expect(bockPreview.triple).toBe(0)
+
+            expect(isMandatorySolo).toBe(false)
+
+            expect(totalCash).toBe(2)
+            expect(absentPlayerCents).toBe(0)
         }
 
         const deal2 = {
@@ -660,31 +779,46 @@ describe('game API', () => {
         expect(responseDeal2.status).toBe(200)
         expect(responseDeal2.body).toBeDefined()
 
-        expect(responseDeal2.body.dealerName).toBe('C')
         expect(responseDeal2.body.poppableEntry).toBe('deal')
 
         {
-            const playerData = responseDeal2.body.playerData
+            const { playerData, dealerName, bockPreview, isMandatorySolo, totalCash, absentPlayerCents, } = responseDeal2.body
 
             expect(playerData[0].name).toBe('A')
             expect(playerData[0].score).toBe(-12)
+            expect(playerData[0].lastDealDiff).toBe(-3)
             expect(playerData[0].cents).toBe(12)
 
             expect(playerData[1].name).toBe('B')
             expect(playerData[1].score).toBe(1)
+            expect(playerData[1].lastDealDiff).toBeNull()
             expect(playerData[1].cents).toBe(6)
 
             expect(playerData[2].name).toBe('C')
             expect(playerData[2].score).toBe(13)
+            expect(playerData[2].lastDealDiff).toBe(3)
             expect(playerData[2].cents).toBe(0)
 
             expect(playerData[3].name).toBe('D')
             expect(playerData[3].score).toBe(11)
+            expect(playerData[3].lastDealDiff).toBe(3)
             expect(playerData[3].cents).toBe(1)
 
             expect(playerData[4].name).toBe('E')
             expect(playerData[4].score).toBe(-13)
+            expect(playerData[4].lastDealDiff).toBe(-3)
             expect(playerData[4].cents).toBe(13)
+
+            expect(dealerName).toBe('C')
+
+            expect(bockPreview.single).toBe(0)
+            expect(bockPreview.double).toBe(4)
+            expect(bockPreview.triple).toBe(0)
+
+            expect(isMandatorySolo).toBe(false)
+
+            expect(totalCash).toBe(32 + 3 * 6)
+            expect(absentPlayerCents).toBe(6)
         }
 
         const mandatorySoloTrigger = {
@@ -698,6 +832,7 @@ describe('game API', () => {
 
         expect(responseMandatorySoloTrigger.body.dealerName).toBe('C')
         expect(responseMandatorySoloTrigger.body.poppableEntry).toBe('mandatorySoloTrigger')
+        expect(responseMandatorySoloTrigger.body.isMandatorySolo).toBe(true)
 
         const deal3 = {
             kind: 'deal',
@@ -727,31 +862,46 @@ describe('game API', () => {
         expect(responseDeal3.status).toBe(200)
         expect(responseDeal3.body).toBeDefined()
 
-        expect(responseDeal3.body.dealerName).toBe('D')
         expect(responseDeal3.body.poppableEntry).toBe('deal')
 
         {
-            const playerData = responseDeal3.body.playerData
+            const { playerData, dealerName, bockPreview, isMandatorySolo, totalCash, absentPlayerCents, } = responseDeal3.body
 
             expect(playerData[0].name).toBe('A')
             expect(playerData[0].score).toBe(-17)
+            expect(playerData[0].lastDealDiff).toBe(-5)
             expect(playerData[0].cents).toBe(21)
 
             expect(playerData[1].name).toBe('B')
             expect(playerData[1].score).toBe(-4)
+            expect(playerData[1].lastDealDiff).toBe(-5)
             expect(playerData[1].cents).toBe(15)
 
             expect(playerData[2].name).toBe('C')
             expect(playerData[2].score).toBe(13)
+            expect(playerData[2].lastDealDiff).toBeNull()
             expect(playerData[2].cents).toBe(6)
 
             expect(playerData[3].name).toBe('D')
             expect(playerData[3].score).toBe(26)
+            expect(playerData[3].lastDealDiff).toBe(15)
             expect(playerData[3].cents).toBe(0)
 
             expect(playerData[4].name).toBe('E')
             expect(playerData[4].score).toBe(-18)
+            expect(playerData[4].lastDealDiff).toBe(-5)
             expect(playerData[4].cents).toBe(22)
+
+            expect(dealerName).toBe('D')
+
+            expect(bockPreview.single).toBe(0)
+            expect(bockPreview.double).toBe(4)
+            expect(bockPreview.triple).toBe(0)
+
+            expect(isMandatorySolo).toBe(true)
+
+            expect(totalCash).toBe(64 + 3 * 13)
+            expect(absentPlayerCents).toBe(13)
         }
 
         const responseDeleteToDeal2 = await api.delete(popEntryPath)
@@ -759,31 +909,46 @@ describe('game API', () => {
         expect(responseDeleteToDeal2.status).toBe(200)
         expect(responseDeleteToDeal2.body).toBeDefined()
 
-        expect(responseDeleteToDeal2.body.dealerName).toBe('C')
         expect(responseDeleteToDeal2.body.poppableEntry).toBe('mandatorySoloTrigger')
 
         {
-            const playerData = responseDeleteToDeal2.body.playerData
+            const { playerData, dealerName, bockPreview, isMandatorySolo, totalCash, absentPlayerCents, } = responseDeleteToDeal2.body
 
             expect(playerData[0].name).toBe('A')
             expect(playerData[0].score).toBe(-12)
+            expect(playerData[0].lastDealDiff).toBe(-3)
             expect(playerData[0].cents).toBe(12)
 
             expect(playerData[1].name).toBe('B')
             expect(playerData[1].score).toBe(1)
+            expect(playerData[1].lastDealDiff).toBeNull()
             expect(playerData[1].cents).toBe(6)
 
             expect(playerData[2].name).toBe('C')
             expect(playerData[2].score).toBe(13)
+            expect(playerData[2].lastDealDiff).toBe(3)
             expect(playerData[2].cents).toBe(0)
 
             expect(playerData[3].name).toBe('D')
             expect(playerData[3].score).toBe(11)
+            expect(playerData[3].lastDealDiff).toBe(3)
             expect(playerData[3].cents).toBe(1)
 
             expect(playerData[4].name).toBe('E')
             expect(playerData[4].score).toBe(-13)
+            expect(playerData[4].lastDealDiff).toBe(-3)
             expect(playerData[4].cents).toBe(13)
+
+            expect(dealerName).toBe('C')
+
+            expect(bockPreview.single).toBe(0)
+            expect(bockPreview.double).toBe(4)
+            expect(bockPreview.triple).toBe(0)
+
+            expect(isMandatorySolo).toBe(true)
+
+            expect(totalCash).toBe(32 + 3 * 6)
+            expect(absentPlayerCents).toBe(6)
         }
 
         const responseDeleteMandatorySolo = await api.delete(popEntryPath)
@@ -799,31 +964,46 @@ describe('game API', () => {
         expect(responseDeleteToDeal1.status).toBe(200)
         expect(responseDeleteToDeal1.body).toBeDefined()
 
-        expect(responseDeleteToDeal1.body.dealerName).toBe('B')
         expect(responseDeleteToDeal1.body.poppableEntry).toBe('deal')
 
         {
-            const playerData = responseDeleteToDeal1.body.playerData
+            const { playerData, dealerName, bockPreview, isMandatorySolo, totalCash, absentPlayerCents, } = responseDeleteToDeal1.body
 
             expect(playerData[0].name).toBe('A')
             expect(playerData[0].score).toBe(0)
+            expect(playerData[0].lastDealDiff).toBeNull()
             expect(playerData[0].cents).toBe(0)
 
             expect(playerData[1].name).toBe('B')
             expect(playerData[1].score).toBe(1)
+            expect(playerData[1].lastDealDiff).toBe(1)
             expect(playerData[1].cents).toBe(0)
 
             expect(playerData[2].name).toBe('C')
             expect(playerData[2].score).toBe(1)
+            expect(playerData[2].lastDealDiff).toBe(1)
             expect(playerData[2].cents).toBe(0)
 
             expect(playerData[3].name).toBe('D')
             expect(playerData[3].score).toBe(-1)
+            expect(playerData[3].lastDealDiff).toBe(-1)
             expect(playerData[3].cents).toBe(1)
 
             expect(playerData[4].name).toBe('E')
             expect(playerData[4].score).toBe(-1)
+            expect(playerData[4].lastDealDiff).toBe(-1)
             expect(playerData[4].cents).toBe(1)
+
+            expect(dealerName).toBe('B')
+
+            expect(bockPreview.single).toBe(0)
+            expect(bockPreview.double).toBe(5)
+            expect(bockPreview.triple).toBe(0)
+
+            expect(isMandatorySolo).toBe(false)
+
+            expect(totalCash).toBe(2)
+            expect(absentPlayerCents).toBe(0)
         }
 
         const responseDeleteToInitialPlayersSet = await api.delete(popEntryPath)

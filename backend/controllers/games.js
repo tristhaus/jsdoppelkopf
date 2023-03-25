@@ -2,7 +2,7 @@ const gamesRouter = require('express').Router()
 const Game = require('../models/game')
 const logger = require('../utils/logger')
 const config = require('../utils/config')
-const { applyDeal, applyMandatorySoloTrigger, applyPlayersSet, calculatePlayerData, determineDealer, validateDeal, validateMandatorySoloTrigger, validatePlayerSet, } = require('../logic/game')
+const { applyDeal, applyMandatorySoloTrigger, applyPlayersSet, calculatePlayerData, validateDeal, validateMandatorySoloTrigger, validatePlayerSet, } = require('../logic/game')
 
 const dataVersion = 1
 
@@ -18,13 +18,15 @@ const generateId = () => {
 }
 
 const createApiModel = game => {
+
+    const data = calculatePlayerData(game.data)
+
     return {
         deploymentUrl: `${config.DEPLOYMENT_URL}`,
         readerId: game.readerId,
         creationDate: game.creationDate,
-        dealerName: determineDealer(game.data),
-        playerData: calculatePlayerData(game.data),
         poppableEntry: game.data.length > 1 ? game.data[game.data.length - 1].kind : null,
+        ...data
     }
 }
 

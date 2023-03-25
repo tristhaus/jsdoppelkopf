@@ -73,6 +73,33 @@ const getMultiplier = (bockHelper, gameIndex) => {
     }
 }
 
+const createBockPreview = (bockHelper, currentGameIndex) => {
+
+    const preview = {
+        single: 0,
+        double: 0,
+        triple: 0,
+    }
+
+    const future = bockHelper.slice(currentGameIndex)
+
+    for (const value of future) {
+        switch (value) {
+            case 1:
+                preview.single++
+                break
+            case 2:
+                preview.double++
+                break
+            case 3:
+                preview.triple++
+                break
+        }
+    }
+
+    return preview
+}
+
 const isMandatorySolo = data => {
     const relevantPlayersSetIndex = lodash.findLastIndex(data, entry => entry.kind === 'playersSet')
 
@@ -102,7 +129,7 @@ const calculatePlayerData = data => {
 
     const presentPlayers = relevantPlayersSet
         .playerNames
-        .map(name => { return { name, present: true, playing: true } })
+        .map(name => { return { name, present: true, playing: true, lastDealDiff: null } })
 
     if (relevantPlayersSet.playerNames.length > 4) {
         presentPlayers[dealerIndex].playing = false
@@ -116,7 +143,7 @@ const calculatePlayerData = data => {
         .filter(entry => entry.kind === 'playersSet')
         .flatMap(playersSet => playersSet.playerNames)
         .filter(name => !presentPlayers.some(presentPlayer => presentPlayer.name === name))
-        .map(name => { return { name, present: false, playing: false } })
+        .map(name => { return { name, present: false, playing: false, lastDealDiff: null } })
 
     const allPlayers = [...presentPlayers, ...absentPlayers]
 
@@ -138,13 +165,37 @@ const calculatePlayerData = data => {
         }
     })
 
+    const mostRecentDeal = lodash.findLast(data, entry => entry.kind === 'deal')
+
+    if (mostRecentDeal) {
+        mostRecentDeal.changes.forEach(change => {
+            const player = allPlayers.find(player => player.name === change.name)
+            player.lastDealDiff = change.diff
+        })
+    }
+
+    const bockPreview = createBockPreview(bockHelper, gameIndex)
+
     const leaderScore = Math.max(...allPlayers.map(player => player.score))
 
     allPlayers.forEach(player => {
         player.cents = pointDifferenceToCents(leaderScore - player.score)
     })
 
-    return allPlayers
+    const numberOfAbsentPlayers = config.TOTAL_NUMBER_OF_PLAYERS - allPlayers.length
+
+    const absentPlayerCents = numberOfAbsentPlayers > 0 ? pointDifferenceToCents(leaderScore - 0) : null
+
+    const totalCash = allPlayers.reduce((total, player) => total + player.cents, 0) + (absentPlayerCents ?? 0) * numberOfAbsentPlayers
+
+    return {
+        playerData: allPlayers,
+        dealerName,
+        bockPreview,
+        isMandatorySolo: isMandatorySolo(data),
+        totalCash,
+        absentPlayerCents,
+    }
 }
 
 const validatePlayerSet = (data, playersSet) => {
@@ -231,8 +282,8 @@ const validateDeal = (data, deal) => {
         return false
     }
 
-    const oldPlayerData = calculatePlayerData(data)
-    const activePlayerNames = oldPlayerData.filter(player => player.playing).map(player => player.name)
+    const oldData = calculatePlayerData(data)
+    const activePlayerNames = oldData.playerData.filter(player => player.playing).map(player => player.name)
 
     if (!deal.changes.map(change => change.name).every(name => activePlayerNames.includes(name))) {
         return false
@@ -267,6 +318,7 @@ module.exports = {
     applyMandatorySoloTrigger,
     applyPlayersSet,
     calculatePlayerData,
+    createBockPreview,
     constructBockHelper,
     determineDealer,
     getMultiplier,

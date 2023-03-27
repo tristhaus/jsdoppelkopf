@@ -785,6 +785,34 @@ describe('validate deal', () => {
             const result = validateDeal(data, candidate)
             expect(result).toBe(true)
         }
+
+        {
+            const candidate = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'A',
+                        diff: 6
+                    },
+                    {
+                        name: 'C',
+                        diff: -2
+                    },
+                    {
+                        name: 'D',
+                        diff: -2
+                    },
+                    {
+                        name: 'F',
+                        diff: -2
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(true)
+        }
     })
 
     test('standalone validations work without data', () => {
@@ -977,6 +1005,67 @@ describe('validate deal', () => {
                     {
                         name: 'F',
                         diff: -1
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(false)
+        }
+    })
+
+    test('standalone validation of diffs consistent within parties works', () => {
+
+        const data = null
+
+        {
+            const candidate = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'A',
+                        diff: -2
+                    },
+                    {
+                        name: 'C',
+                        diff: 2
+                    },
+                    {
+                        name: 'D',
+                        diff: -1
+                    },
+                    {
+                        name: 'F',
+                        diff: 1
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(false)
+        }
+
+        {
+            const candidate = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'A',
+                        diff: -6
+                    },
+                    {
+                        name: 'C',
+                        diff: 1
+                    },
+                    {
+                        name: 'D',
+                        diff: 2
+                    },
+                    {
+                        name: 'F',
+                        diff: 3
                     }
                 ]
             }

@@ -276,6 +276,12 @@ const validateDeal = (data, deal) => {
         return false
     }
 
+    const set = new Set(deal.changes.map(change => change.diff))
+
+    if (set.size !== 2) {
+        return false
+    }
+
     const playerNamesSet = new Set(deal.changes.map(change => change.name))
 
     if ([...playerNamesSet].length !== deal.changes.length) {

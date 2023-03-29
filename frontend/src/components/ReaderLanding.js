@@ -24,7 +24,7 @@ const ReaderLanding = () => {
 
     const reader = () => (
         <div>
-            <h2>JSDoppelkopf Reader from ReaderEntry</h2>
+            <h2>JSDoppelkopf Reader</h2>
             <hr />
             <Reader data={data} />
         </div>

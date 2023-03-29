@@ -48,7 +48,7 @@ const WriterLanding = () => {
 
     const writer = () => (
         <div>
-            <h2>JSDoppelkopf Writer from WriterLanding</h2>
+            <h2>JSDoppelkopf Writer</h2>
             <hr />
             <Writer
                 data={data}

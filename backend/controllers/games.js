@@ -6,15 +6,15 @@ const { applyDeal, applyMandatorySoloTrigger, applyPlayersSet, calculatePlayerDa
 
 const dataVersion = 1
 
-const letters = 'qwertzuiopasdfghjklyxcvbnm'
+const letters = 'QWERTZUIOPASDFGHJKLYXCVBNM'
 
 const getRandomLetter = () => {
     const index = Math.floor(Math.random() * 26)
     return letters[index]
 }
 
-const generateId = () => {
-    return getRandomLetter() + getRandomLetter() + getRandomLetter() + getRandomLetter() + getRandomLetter() + getRandomLetter()
+const generateId = isWriter => {
+    return (isWriter ? 'W' : 'R') + getRandomLetter() + getRandomLetter() + getRandomLetter() + getRandomLetter() + getRandomLetter() + getRandomLetter()
 }
 
 const createApiModel = game => {
@@ -38,8 +38,8 @@ gamesRouter.post('/', async (request, response, next) => {
             throw { name: 'ValidationError', message: 'invalid playersSet' }
         }
 
-        const readerId = generateId()
-        const writerId = generateId()
+        const writerId = generateId(true)
+        const readerId = generateId(false)
 
         const game = new Game(
             {

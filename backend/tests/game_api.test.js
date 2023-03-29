@@ -83,8 +83,8 @@ describe('game API', () => {
         expect(response.status).toBe(201)
         expect(response.body).toBeDefined()
         expect(response.body.deploymentUrl).toBeDefined()
-        expect(response.body.writerId).toBeDefined()
-        expect(response.body.readerId).toBeDefined()
+        expect(response.body.writerId).toMatch(/W[A-Z]{6}/)
+        expect(response.body.readerId).toMatch(/R[A-Z]{6}/)
 
         testData.validateResult(response)
     })

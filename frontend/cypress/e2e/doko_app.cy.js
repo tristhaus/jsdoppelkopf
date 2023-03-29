@@ -1,6 +1,6 @@
 describe('Doko app', function () {
 
-    describe('initialization', function () {
+    describe('main landing page', function () {
 
         it('page can be opened and has a working New Game button', function () {
             cy.request('POST', 'http://localhost:3000/api/testing/reset')
@@ -16,6 +16,11 @@ describe('Doko app', function () {
         })
 
         it('player entry dialog with valid data can be closed by OK', function () {
+            cy.intercept({
+                method: 'POST',
+                url: '/api/game',
+            }).as('createGame')
+
             cy.request('POST', 'http://localhost:3000/api/testing/reset')
             cy.visit('http://localhost:3000')
             cy.contains('Neues Spiel beginnen').click()
@@ -30,6 +35,8 @@ describe('Doko app', function () {
             cy.get('#text-6').type('G')
 
             cy.contains('OK').should('not.be.disabled').click()
+
+            cy.wait('@createGame')
         })
 
         it('player entry dialog has drag and drop-based swapping of the boxes', function () {
@@ -115,9 +122,185 @@ describe('Doko app', function () {
 
             cy.contains('OK').should('be.disabled')
         })
+
+        it('page has a writer ID input field, accesses correct page', function () {
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'RBBBBBB',
+                writerId: 'WAAAAAA',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000')
+
+            cy.get('#inputWriterId').type('WAAAAAA')
+            cy.get('#writerIdButton').click()
+
+            cy.get('#name_PlayerA').contains('PlayerA')
+            cy.get('#name_PlayerB').contains('PlayerB')
+            cy.get('#name_PlayerC').contains('PlayerC')
+            cy.get('#name_PlayerD').contains('PlayerD')
+            cy.get('#name_PlayerE').contains('PlayerE')
+            cy.get('#name_PlayerF').contains('PlayerF')
+            cy.get('#name_PlayerG').contains('PlayerG')
+
+            cy.get('#currentDeal_PlayerA')
+            cy.get('#currentDeal_PlayerB')
+            cy.get('#currentDeal_PlayerC').should('not.exist')
+            cy.get('#currentDeal_PlayerD')
+            cy.get('#currentDeal_PlayerE').should('not.exist')
+            cy.get('#currentDeal_PlayerF')
+            cy.get('#currentDeal_PlayerG').should('not.exist')
+        })
+
+        it('page validates the entered writer ID: works', function () {
+            cy.request('POST', 'http://localhost:3000/api/testing/reset')
+            cy.visit('http://localhost:3000')
+
+            cy.get('#inputWriterId').type('WaBcDeF')
+            cy.get('#writerIdButton').should('not.be.disabled')
+        })
+
+        it('page validates the entered writer ID: too short', function () {
+            cy.request('POST', 'http://localhost:3000/api/testing/reset')
+            cy.visit('http://localhost:3000')
+
+            cy.get('#inputWriterId').type('Wshort')
+            cy.get('#writerIdButton').should('be.disabled')
+        })
+
+        it('page validates the entered writer ID: too long', function () {
+            cy.request('POST', 'http://localhost:3000/api/testing/reset')
+            cy.visit('http://localhost:3000')
+
+            cy.get('#inputWriterId').type('Wtoolong')
+            cy.get('#writerIdButton').should('be.disabled')
+        })
+
+        it('page validates the entered writer ID: wrong characters', function () {
+            cy.request('POST', 'http://localhost:3000/api/testing/reset')
+            cy.visit('http://localhost:3000')
+
+            cy.get('#inputWriterId').type('W123456')
+            cy.get('#writerIdButton').should('be.disabled')
+        })
+
+        it('page has a reader ID input field, accesses correct page', function () {
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'RBBBBBB',
+                writerId: 'WAAAAAA',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000')
+
+            cy.get('#inputReaderId').type('RBBBBBB')
+            cy.get('#readerIdButton').click()
+
+            cy.get('#name_PlayerA').contains('PlayerA')
+            cy.get('#name_PlayerB').contains('PlayerB')
+            cy.get('#name_PlayerC').contains('PlayerC')
+            cy.get('#name_PlayerD').contains('PlayerD')
+            cy.get('#name_PlayerE').contains('PlayerE')
+            cy.get('#name_PlayerF').contains('PlayerF')
+            cy.get('#name_PlayerG').contains('PlayerG')
+
+            cy.get('#currentDeal_PlayerA').should('not.exist')
+            cy.get('#currentDeal_PlayerB').should('not.exist')
+            cy.get('#currentDeal_PlayerC').should('not.exist')
+            cy.get('#currentDeal_PlayerD').should('not.exist')
+            cy.get('#currentDeal_PlayerE').should('not.exist')
+            cy.get('#currentDeal_PlayerF').should('not.exist')
+            cy.get('#currentDeal_PlayerG').should('not.exist')
+        })
+
+        it('page validates the entered reader ID: works', function () {
+            cy.request('POST', 'http://localhost:3000/api/testing/reset')
+            cy.visit('http://localhost:3000')
+
+            cy.get('#inputReaderId').type('RaBcDeF')
+            cy.get('#readerIdButton').should('not.be.disabled')
+        })
+
+        it('page validates the entered reader ID: too short', function () {
+            cy.request('POST', 'http://localhost:3000/api/testing/reset')
+            cy.visit('http://localhost:3000')
+
+            cy.get('#inputReaderId').type('Rshort')
+            cy.get('#readerIdButton').should('be.disabled')
+        })
+
+        it('page validates the entered reader ID: too long', function () {
+            cy.request('POST', 'http://localhost:3000/api/testing/reset')
+            cy.visit('http://localhost:3000')
+
+            cy.get('#inputReaderId').type('Rtoolong')
+            cy.get('#readerIdButton').should('be.disabled')
+        })
+
+        it('page validates the entered reader ID: wrong characters', function () {
+            cy.request('POST', 'http://localhost:3000/api/testing/reset')
+            cy.visit('http://localhost:3000')
+
+            cy.get('#inputReaderId').type('R123456')
+            cy.get('#readerIdButton').should('be.disabled')
+        })
     })
 
-    describe('access write page', function () {
+    describe('write landing page', function () {
 
         it('page can be opened and has correct content', function () {
 
@@ -584,6 +767,15 @@ describe('Doko app', function () {
 
         it('page can start mandatory solo round and pop it again', function () {
 
+            cy.intercept({
+                method: 'POST',
+                url: '/api/game/write/**',
+            }).as('push')
+            cy.intercept({
+                method: 'DELETE',
+                url: '/api/game/write/**',
+            }).as('pop')
+
             cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
             cy.get('@delete')
 
@@ -619,17 +811,28 @@ describe('Doko app', function () {
             cy.visit('http://localhost:3000/writer/myWriterId')
 
             cy.get('.mandatorySoloButton').should('not.be.disabled').click()
+            cy.wait('@push')
 
             cy.get('.mandatorySoloButton').should('be.disabled')
             cy.get('#currentBockStatus').contains('Pflichtsolo')
 
             cy.get('#popButton').should('not.be.disabled').click()
+            cy.wait('@pop')
 
             cy.get('.mandatorySoloButton').should('not.be.disabled')
             cy.get('#currentBockStatus').contains('Kein Bock')
         })
 
         it('page can note a deal and pop it again', function () {
+
+            cy.intercept({
+                method: 'POST',
+                url: '/api/game/write/**',
+            }).as('push')
+            cy.intercept({
+                method: 'DELETE',
+                url: '/api/game/write/**',
+            }).as('pop')
 
             cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
             cy.get('@delete')
@@ -679,6 +882,7 @@ describe('Doko app', function () {
 
             cy.get('#popButton').should('be.disabled')
             cy.get('#dealButton').should('not.be.disabled').click()
+            cy.wait('@push')
 
             cy.get('#currentBockStatus').contains('Doppelbock')
             cy.get('#bockPreviewTriple').contains('0')
@@ -702,6 +906,7 @@ describe('Doko app', function () {
             cy.get('#score_PlayerG').contains('0')
 
             cy.get('#popButton').should('not.be.disabled').click()
+            cy.wait('@pop')
 
             cy.get('#currentBockStatus').contains('Kein Bock')
             cy.get('#bockPreviewTriple').contains('0')
@@ -726,7 +931,7 @@ describe('Doko app', function () {
         })
     })
 
-    describe('access read page', function () {
+    describe('read landing page', function () {
 
         it('page can be opened and has correct content', function () {
 

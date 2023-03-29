@@ -43,6 +43,10 @@ const completeDiffs = (diffEntries, playerNamesInDeal) => {
 
 const formatCents = cents => `${Math.floor(cents / 100)},${String(cents % 100).padStart(2, '0')}`
 
+const addPresentOrAbsent = (classString, player) => {
+    return `${classString} ${player.present ? 'isPresent' : 'isAbsent'}`
+}
+
 const CurrentGame = ({ playerData, diffEntries, handleEntryChanged }) => (
     <>
         <span>Aktuelles Spiel</span>
@@ -143,9 +147,9 @@ const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry,
             </div>
             <div style={{ display: 'grid', gap: '5px 10px', gridTemplateColumns: gridTemplateColumns, }}>
                 <span>Name</span>
-                {playerData.map(player => (<span key={player.name} id={`name_${player.name}`} className={data.dealerName === player.name ? 'playerNameDealer' : 'playerName'}>{player.name}</span>))}
+                {playerData.map(player => (<span key={player.name} id={`name_${player.name}`} className={addPresentOrAbsent(data.dealerName === player.name ? 'playerNameDealer' : 'playerName', player)}>{player.name}</span>))}
                 <span>Letztes Spiel</span>
-                {playerData.map(player => (<span key={player.name} id={`lastDeal_${player.name}`} className="lastDeal">{player.lastDealDiff ?? ''}</span>))}
+                {playerData.map(player => (<span key={player.name} id={`lastDeal_${player.name}`} className={addPresentOrAbsent('lastDeal', player)}>{player.lastDealDiff ?? ''}</span>))}
                 {isWriter && (<CurrentGame
                     playerData={playerData}
                     diffEntries={diffEntries}
@@ -160,12 +164,12 @@ const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry,
                     isDealDisabled={isDealDisabled}
                     handleDealClicked={handleDealClicked}
                 />)}
-                <span style={{ gridColumnStart: '1', fontWeight: 'bold' }}>Spielstand</span>
-                {playerData.map(player => (<span key={player.name} id={`score_${player.name}`} style={{ justifySelf: 'center', fontWeight: 'bold' }}>{player.score}</span>))}
+                <span style={{ gridColumnStart: '1' }} className="scoreLabel">Spielstand</span>
+                {playerData.map(player => (<span key={player.name} id={`score_${player.name}`} className={addPresentOrAbsent('score', player)}>{player.score}</span>))}
                 <span>Zu Zahlen</span>
                 {playerData.map(player => {
                     const cash = formatCents(player.cents)
-                    return (<span key={player.name} id={`cash_${player.name}`} style={{ justifySelf: 'center' }}>{cash}</span>)
+                    return (<span key={player.name} id={`cash_${player.name}`} className={addPresentOrAbsent('cash', player)}>{cash}</span>)
                 })}
                 <span style={{ gridColumn: '1 / 3' }}>Aktueller Kassenstand</span>
                 <span id="totalCash" style={{ gridColumn: `3 / ${numberOfPlayers + 2}`, justifySelf: 'center' }}>{`${formatCents(data.totalCash)} (inkl. ${formatCents(data.absentPlayerCents)} pro Abwesender)`}</span>

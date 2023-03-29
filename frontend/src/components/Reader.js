@@ -1,15 +1,22 @@
 import { PropTypes } from 'prop-types'
+import { Score } from './Score'
 
-const Reader = ({ readerId, data }) => {
+const Reader = ({ data }) => {
+
+    const noop = () => {}
 
     return (
         <>
             <div>
-                <span>readerId: </span><span id="reader-readerId">{readerId}</span>
+                <span>readerId: </span><span id="reader-readerId">{data.readerId}</span>
             </div>
-            <div>
-                game: {`${data.playerData[0].name}, ${data.playerData[1].name}`}
-            </div>
+            <Score
+                isWriter={false}
+                data={data}
+                addDeal={noop}
+                addMandatorySoloTrigger={noop}
+                popLastEntry={noop}
+            />
         </>
     )
 }
@@ -18,8 +25,7 @@ Reader.displayName = 'Reader'
 
 Reader.propTypes = {
     demo: PropTypes.shape({
-        readerId: PropTypes.string.isRequired,
-        playerData: PropTypes.object.isRequired,
+        data: PropTypes.object.isRequired,
     }),
 }
 

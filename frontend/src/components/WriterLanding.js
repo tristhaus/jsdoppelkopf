@@ -63,7 +63,7 @@ const WriterLanding = () => {
         return writer()
     }
 
-    return <div>Loading from writer ID ...</div>
+    return <div>Loading from writer ID &apos;{inputWriterId}&apos;  ...</div>
 }
 
 WriterLanding.displayName = 'WriterLanding'

@@ -9,7 +9,6 @@ const ReaderLanding = () => {
 
     const inputReaderId = useParams().id
 
-    const [readerId, setReaderId] = useState(null)
     const [data, setData] = useState(null)
 
     useEffect(() => {
@@ -17,7 +16,6 @@ const ReaderLanding = () => {
             const response = await gameService.getGameByReaderId(inputReaderId)
 
             if (response) {
-                setReaderId(response.readerId)
                 setData(response)
             }
         }
@@ -28,15 +26,15 @@ const ReaderLanding = () => {
         <div>
             <h2>JSDoppelkopf Reader from ReaderEntry</h2>
             <hr />
-            <Reader readerId={readerId} data={data} />
+            <Reader data={data} />
         </div>
     )
 
-    if (readerId && data) {
+    if (data) {
         return reader()
     }
 
-    return <div>Loading from reader ID ...</div>
+    return <div>Loading from reader ID &apos;{inputReaderId}&apos; ...</div>
 }
 
 ReaderLanding.displayName = 'ReaderEntry'

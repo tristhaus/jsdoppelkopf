@@ -751,11 +751,35 @@ describe('Doko app', function () {
                 ]
             }
 
+            const deal = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'PlayerA',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerB',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerD',
+                        diff: -1
+                    },
+                    {
+                        name: 'PlayerF',
+                        diff: -1
+                    }
+                ],
+            }
+
             const content = {
                 readerId: 'myReaderId',
+                writerId: 'myWriterId',
                 dataVersion: 1,
                 creationDate: Date.now(),
-                data: [playersSet],
+                data: [playersSet, deal],
             }
 
             cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
@@ -763,6 +787,57 @@ describe('Doko app', function () {
 
             cy.visit('http://localhost:3000/myReaderId')
             cy.get('#reader-readerId').contains('myReaderId')
+
+            cy.get('.mandatorySoloButton').should('not.exist')
+            cy.get('#currentBockStatus').contains('Kein Bock')
+            cy.get('#bockPreviewTriple').contains('0')
+            cy.get('#bockPreviewDouble').contains('0')
+            cy.get('#bockPreviewSingle').contains('0')
+
+            cy.get('#name_PlayerA').contains('PlayerA')
+            cy.get('#name_PlayerB').contains('PlayerB')
+            cy.get('#name_PlayerC').contains('PlayerC')
+            cy.get('#name_PlayerD').contains('PlayerD')
+            cy.get('#name_PlayerE').contains('PlayerE')
+            cy.get('#name_PlayerF').contains('PlayerF')
+            cy.get('#name_PlayerG').contains('PlayerG')
+
+            cy.get('#lastDeal_PlayerA').contains('1')
+            cy.get('#lastDeal_PlayerB').contains('1')
+            cy.get('#lastDeal_PlayerC').should('be.empty')
+            cy.get('#lastDeal_PlayerD').contains('-1')
+            cy.get('#lastDeal_PlayerE').should('be.empty')
+            cy.get('#lastDeal_PlayerF').contains('-1')
+            cy.get('#lastDeal_PlayerG').should('be.empty')
+
+            cy.get('#currentDeal_PlayerA').should('not.exist')
+            cy.get('#currentDeal_PlayerB').should('not.exist')
+            cy.get('#currentDeal_PlayerC').should('not.exist')
+            cy.get('#currentDeal_PlayerD').should('not.exist')
+            cy.get('#currentDeal_PlayerE').should('not.exist')
+            cy.get('#currentDeal_PlayerF').should('not.exist')
+            cy.get('#currentDeal_PlayerG').should('not.exist')
+
+            cy.get('#popButton').should('not.exist')
+            cy.get('#dealButton').should('not.exist')
+
+            cy.get('#score_PlayerA').contains('1')
+            cy.get('#score_PlayerB').contains('1')
+            cy.get('#score_PlayerC').contains('0')
+            cy.get('#score_PlayerD').contains('-1')
+            cy.get('#score_PlayerE').contains('0')
+            cy.get('#score_PlayerF').contains('-1')
+            cy.get('#score_PlayerG').contains('0')
+
+            cy.get('#cash_PlayerA').contains('0,00')
+            cy.get('#cash_PlayerB').contains('0,00')
+            cy.get('#cash_PlayerC').contains('0,00')
+            cy.get('#cash_PlayerD').contains('0,01')
+            cy.get('#cash_PlayerE').contains('0,00')
+            cy.get('#cash_PlayerF').contains('0,01')
+            cy.get('#cash_PlayerG').contains('0,00')
+
+            cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
         })
     })
 })

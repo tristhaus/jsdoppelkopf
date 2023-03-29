@@ -43,7 +43,30 @@ const completeDiffs = (diffEntries, playerNamesInDeal) => {
 
 const formatCents = cents => `${Math.floor(cents / 100)},${String(cents % 100).padStart(2, '0')}`
 
-const Score = ({ data, addDeal, addMandatorySoloTrigger, popLastEntry, }) => {
+const CurrentGame = ({ playerData, diffEntries, handleEntryChanged }) => (
+    <>
+        <span>Aktuelles Spiel</span>
+        {playerData.map((player, index) => {
+            if (player.playing) {
+                return (<input key={`${index}`} type="text" size={3} id={`currentDeal_${player.name}`} className="currentDeal" value={diffEntries[player.name] ?? ''} onChange={event => {
+                    const playerName = player.name
+                    handleEntryChanged(playerName, event.target.value)
+                }} />)
+            }
+            else {
+                return <span key={`${index}`} />
+            }
+        })}
+    </>)
+
+const ScoreControls = ({ numberOfPlayers, numberOfEvents, setNumberOfEvents, isPopDisabled, handlePopClicked, isDealDisabled, handleDealClicked }) => (
+    <>
+        <span style={{ gridColumn: '1 / 3', justifySelf: 'left' }}>Bockereignisse <input type="number" id="bockereignisse" min="0" value={numberOfEvents} onChange={event => setNumberOfEvents(event.target.value)} size={3} /></span>
+        <button id="popButton" style={{ gridColumn: `${numberOfPlayers - 1} / ${numberOfPlayers}`, justifySelf: 'center' }} disabled={isPopDisabled} onClick={handlePopClicked}>Zurücksetzen</button>
+        <button id="dealButton" style={{ gridColumn: `${numberOfPlayers + 1} / ${numberOfPlayers + 2}`, justifySelf: 'center' }} disabled={isDealDisabled} onClick={handleDealClicked}>Übernehmen</button>
+    </>)
+
+const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry, }) => {
 
     const playerData = data.playerData
 
@@ -102,7 +125,7 @@ const Score = ({ data, addDeal, addMandatorySoloTrigger, popLastEntry, }) => {
     return (
         <>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'right' }}>
-                <button className="mandatorySoloButton" disabled={isMandatorySoloDisabled} onClick={handleMandatorySoloClicked}>Pflichtsolorunde</button>
+                {isWriter && (<button className="mandatorySoloButton" disabled={isMandatorySoloDisabled} onClick={handleMandatorySoloClicked}>Pflichtsolorunde</button>)}
                 <span id="currentBockStatus">{deduceBock(data)}</span>
                 <table style={{ margin: '0px 15px' }}>
                     <tbody>
@@ -123,21 +146,20 @@ const Score = ({ data, addDeal, addMandatorySoloTrigger, popLastEntry, }) => {
                 {playerData.map(player => (<span key={player.name} id={`name_${player.name}`} className={data.dealerName === player.name ? 'playerNameDealer' : 'playerName'}>{player.name}</span>))}
                 <span>Letztes Spiel</span>
                 {playerData.map(player => (<span key={player.name} id={`lastDeal_${player.name}`} className="lastDeal">{player.lastDealDiff ?? ''}</span>))}
-                <span>Aktuelles Spiel</span>
-                {playerData.map((player, index) => {
-                    if (player.playing) {
-                        return (<input key={`${index}`} type="text" size={3} id={`currentDeal_${player.name}`} className="currentDeal" value={diffEntries[player.name] ?? ''} onChange={event => {
-                            const playerName = player.name
-                            handleEntryChanged(playerName, event.target.value)
-                        }} />)
-                    }
-                    else {
-                        return <span key={`${index}`} />
-                    }
-                })}
-                <span style={{ gridColumn: '1 / 3', justifySelf: 'left' }}>Bockereignisse <input type="number" id="bockereignisse" min="0" value={numberOfEvents} onChange={event => setNumberOfEvents(event.target.value)} size={3} /></span>
-                <button id="popButton" style={{ gridColumn: `${numberOfPlayers - 1} / ${numberOfPlayers}`, justifySelf: 'center' }} disabled={isPopDisabled} onClick={handlePopClicked}>Zurücksetzen</button>
-                <button id="dealButton" style={{ gridColumn: `${numberOfPlayers + 1} / ${numberOfPlayers + 2}`, justifySelf: 'center' }} disabled={isDealDisabled} onClick={handleDealClicked}>Übernehmen</button>
+                {isWriter && (<CurrentGame
+                    playerData={playerData}
+                    diffEntries={diffEntries}
+                    handleEntryChanged={handleEntryChanged}
+                />)}
+                {isWriter && (<ScoreControls
+                    numberOfPlayers={numberOfPlayers}
+                    numberOfEvents={numberOfEvents}
+                    setNumberOfEvents={setNumberOfEvents}
+                    isPopDisabled={isPopDisabled}
+                    handlePopClicked={handlePopClicked}
+                    isDealDisabled={isDealDisabled}
+                    handleDealClicked={handleDealClicked}
+                />)}
                 <span style={{ gridColumnStart: '1', fontWeight: 'bold' }}>Spielstand</span>
                 {playerData.map(player => (<span key={player.name} id={`score_${player.name}`} style={{ justifySelf: 'center', fontWeight: 'bold' }}>{player.score}</span>))}
                 <span>Zu Zahlen</span>

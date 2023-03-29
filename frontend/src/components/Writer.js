@@ -12,6 +12,7 @@ const Writer = ({ data, addDeal, addMandatorySoloTrigger, popLastEntry, }) => {
                 <span>readerId: </span><span id="writer-readerId">{data.readerId}</span>
             </div>
             <Score
+                isWriter={true}
                 data={data}
                 addDeal={addDeal}
                 addMandatorySoloTrigger={addMandatorySoloTrigger}

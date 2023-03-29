@@ -78,6 +78,9 @@ describe('writer view unit tests', () => {
         expect(container.querySelector('#currentDeal_PlayerE')).toBeNull()
         expect(container.querySelector('#currentDeal_PlayerF')).toBeNull()
 
+        const bockereignisse = container.querySelector('#bockereignisse')
+        expect(bockereignisse).toBeDefined()
+
         const popButton = container.querySelector('#popButton')
         expect(popButton).not.toBeDisabled()
 

@@ -39,6 +39,14 @@ const WriterLanding = () => {
         }
     }
 
+    const addPlayersSet = async playerInformation => {
+        const response = await gameService.addPlayersSetEntryByWriterId(data.writerId, playerInformation)
+
+        if (response) {
+            setData(response)
+        }
+    }
+
     const popLastEntry = async () => {
         const response = await gameService.popLastEntryOnGameByWriterId(data.writerId)
 
@@ -55,6 +63,7 @@ const WriterLanding = () => {
                 data={data}
                 addDeal={addDeal}
                 addMandatorySoloTrigger={addMandatorySoloTrigger}
+                addPlayersSet={addPlayersSet}
                 popLastEntry={popLastEntry}
                 reloadAction={loadData}
             />

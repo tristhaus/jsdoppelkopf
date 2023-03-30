@@ -743,6 +743,112 @@ describe('calculate player data', () => {
         expect(totalCash).toBe(24)
         expect(absentPlayerCents).toBe(null)
     })
+
+    test('7-d-6-5: handle two players leaving consecutively', () => {
+        const playersSet1 = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+            dealerName: 'A',
+            sitOutScheme: [2, 4]
+        }
+
+        const deal1 = {
+            kind: 'deal',
+            events: 0,
+            changes: [
+                {
+                    name: 'B',
+                    diff: 6
+                },
+                {
+                    name: 'D',
+                    diff: 6
+                },
+                {
+                    name: 'F',
+                    diff: -6
+                },
+                {
+                    name: 'G',
+                    diff: -6
+                }
+            ]
+        }
+
+        const playersSet2 = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D', 'E', 'G'],
+            dealerName: 'B',
+            sitOutScheme: [3]
+        }
+
+        const playersSet3 = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'E', 'G'],
+            dealerName: 'B',
+            sitOutScheme: []
+        }
+
+        const data = [playersSet1, deal1, playersSet2, playersSet3]
+
+        const { playerData, dealerName, totalCash, absentPlayerCents, } = calculatePlayerData(data)
+
+        expect(playerData.length).toBe(7)
+
+        expect(playerData[0].name).toBe('A')
+        expect(playerData[0].present).toBe(true)
+        expect(playerData[0].playing).toBe(true)
+        expect(playerData[0].score).toBe(0)
+        expect(playerData[0].lastDealDiff).toBeNull()
+        expect(playerData[0].cents).toBe(3)
+
+        expect(playerData[1].name).toBe('B')
+        expect(playerData[1].present).toBe(true)
+        expect(playerData[1].playing).toBe(false)
+        expect(playerData[1].score).toBe(6)
+        expect(playerData[1].lastDealDiff).toBe(6)
+        expect(playerData[1].cents).toBe(0)
+
+        expect(playerData[2].name).toBe('C')
+        expect(playerData[2].present).toBe(true)
+        expect(playerData[2].playing).toBe(true)
+        expect(playerData[2].score).toBe(0)
+        expect(playerData[2].lastDealDiff).toBeNull()
+        expect(playerData[2].cents).toBe(3)
+
+        expect(playerData[3].name).toBe('E')
+        expect(playerData[3].present).toBe(true)
+        expect(playerData[3].playing).toBe(true)
+        expect(playerData[3].score).toBe(0)
+        expect(playerData[3].lastDealDiff).toBeNull()
+        expect(playerData[3].cents).toBe(3)
+
+        expect(playerData[4].name).toBe('G')
+        expect(playerData[4].present).toBe(true)
+        expect(playerData[4].playing).toBe(true)
+        expect(playerData[4].score).toBe(-6)
+        expect(playerData[4].lastDealDiff).toBe(-6)
+        expect(playerData[4].cents).toBe(6)
+
+        expect(playerData[5].name).toBe('D')
+        expect(playerData[5].present).toBe(false)
+        expect(playerData[5].playing).toBe(false)
+        expect(playerData[5].score).toBe(6)
+        expect(playerData[5].lastDealDiff).toBe(6)
+        expect(playerData[5].cents).toBe(0)
+
+        expect(playerData[6].name).toBe('F')
+        expect(playerData[6].present).toBe(false)
+        expect(playerData[6].playing).toBe(false)
+        expect(playerData[6].score).toBe(-6)
+        expect(playerData[6].lastDealDiff).toBe(-6)
+        expect(playerData[6].cents).toBe(6)
+
+        expect(dealerName).toBe('B')
+
+        expect(totalCash).toBe(21 + 1 * 3)
+        expect(absentPlayerCents).toBe(3)
+    })
 })
 
 describe('validate deal', () => {

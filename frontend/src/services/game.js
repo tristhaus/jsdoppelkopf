@@ -50,7 +50,7 @@ const addDealEntryByWriterId = async (writerId, changes, events) => {
         return response.data
     }
     else {
-        console.error('game service error in getGameByWriterId', response)
+        console.error('game service error in addDealEntryByWriterId', response)
         return null
     }
 }
@@ -69,7 +69,27 @@ const addMandatorySoloEntryByWriterId = async writerId => {
         return response.data
     }
     else {
-        console.error('game service error in getGameByWriterId', response)
+        console.error('game service error in addMandatorySoloEntryByWriterId', response)
+        return null
+    }
+}
+
+const addPlayersSetEntryByWriterId = async (writerId, playerInformation) => {
+
+    const postWritePlayersSet = `${baseUrl}/write/${writerId}/playersset`
+
+    const requestData = {
+        kind: 'playersSet',
+        ...playerInformation,
+    }
+
+    const response = await axios.post(postWritePlayersSet, requestData)
+
+    if (response.status === 200) {
+        return response.data
+    }
+    else {
+        console.error('game service error in addNewPlayersSetByWriterId', response)
         return null
     }
 }
@@ -84,7 +104,7 @@ const popLastEntryOnGameByWriterId = async writerId => {
         return response.data
     }
     else {
-        console.error('game service error in getGameByWriterId', response)
+        console.error('game service error in popLastEntryOnGameByWriterId', response)
         return null
     }
 }
@@ -107,6 +127,7 @@ const getGameByReaderId = async readerId => {
 export default {
     addDealEntryByWriterId,
     addMandatorySoloEntryByWriterId,
+    addPlayersSetEntryByWriterId,
     getGameByReaderId,
     getGameByWriterId,
     popLastEntryOnGameByWriterId,

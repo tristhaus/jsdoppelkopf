@@ -1,7 +1,7 @@
 import { PropTypes } from 'prop-types'
 import { Score } from './Score'
 
-const Writer = ({ data, addDeal, addMandatorySoloTrigger, popLastEntry, reloadAction, }) => {
+const Writer = ({ data, addDeal, addMandatorySoloTrigger, addPlayersSet, popLastEntry, reloadAction, }) => {
 
     return (
         <Score
@@ -9,6 +9,7 @@ const Writer = ({ data, addDeal, addMandatorySoloTrigger, popLastEntry, reloadAc
             data={data}
             addDeal={addDeal}
             addMandatorySoloTrigger={addMandatorySoloTrigger}
+            addPlayersSet={addPlayersSet}
             popLastEntry={popLastEntry}
             reloadAction={reloadAction}
         />

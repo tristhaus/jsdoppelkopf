@@ -143,6 +143,8 @@ const calculatePlayerData = data => {
         .filter(entry => entry.kind === 'playersSet')
         .flatMap(playersSet => playersSet.playerNames)
         .filter(name => !presentPlayers.some(presentPlayer => presentPlayer.name === name))
+        .sort()
+        .filter((name, index, array) => index === 0 || name !== array[index - 1]) // remove duplicates
         .map(name => { return { name, present: false, playing: false, lastDealDiff: null } })
 
     const allPlayers = [...presentPlayers, ...absentPlayers]

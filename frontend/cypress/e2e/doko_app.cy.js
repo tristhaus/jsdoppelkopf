@@ -1,5 +1,7 @@
 describe('Doko app', function () {
 
+    const absentPlayerFontColor = 'rgba(0, 0, 0, 0.5)'
+
     Cypress.Commands.add('assertTextContainedInClipboardToMatchRegex', regex => {
         cy.window().then(win => {
             win.navigator.clipboard.readText().then(text => {
@@ -1249,6 +1251,359 @@ describe('Doko app', function () {
             cy.get('#writerLinkButton').click()
             cy.contains('Writer-Link in Zwischenablage kopiert')
             cy.assertTextContainedInClipboardToMatchRegex(new RegExp('http://localhost:[0-9]+/writer/myWriterId'))
+        })
+
+        it('after a deal, page can change player and shows now-absent player in gray', function () {
+
+            cy.intercept({
+                method: 'POST',
+                url: '/api/game/write/**',
+            }).as('push')
+            cy.intercept({
+                method: 'DELETE',
+                url: '/api/game/write/**',
+            }).as('pop')
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const deal = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'PlayerA',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerB',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerD',
+                        diff: -1
+                    },
+                    {
+                        name: 'PlayerF',
+                        diff: -1
+                    }
+                ],
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet, deal],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('#lastDeal_PlayerH').should('not.exist')
+            cy.get('#score_PlayerH').should('not.exist')
+
+            cy.get('.changePlayersButton').should('not.be.disabled').click()
+
+            cy.get('#text-0').type('{selectall}{backspace}PlayerH')
+
+            cy.contains('OK').should('not.be.disabled').click()
+
+            cy.wait('@push')
+
+            cy.get('#lastDeal_PlayerH').should('be.empty')
+            cy.get('#lastDeal_PlayerB').contains('1')
+            cy.get('#lastDeal_PlayerC').should('be.empty')
+            cy.get('#lastDeal_PlayerD').contains('-1')
+            cy.get('#lastDeal_PlayerE').should('be.empty')
+            cy.get('#lastDeal_PlayerF').contains('-1')
+            cy.get('#lastDeal_PlayerG').should('be.empty')
+            cy.get('#lastDeal_PlayerA').contains('1')
+
+
+            cy.get('#score_PlayerH').contains('0')
+            cy.get('#score_PlayerB').contains('1')
+            cy.get('#score_PlayerC').contains('0')
+            cy.get('#score_PlayerD').contains('-1')
+            cy.get('#score_PlayerE').contains('0')
+            cy.get('#score_PlayerF').contains('-1')
+            cy.get('#score_PlayerG').contains('0')
+            cy.get('#score_PlayerA').contains('1')
+
+            cy.get('#name_PlayerA').should('have.css', 'color', absentPlayerFontColor)
+            cy.get('#lastDeal_PlayerA').should('have.css', 'color', absentPlayerFontColor)
+            cy.get('#score_PlayerA').should('have.css', 'color', absentPlayerFontColor)
+            cy.get('#cash_PlayerA').should('have.css', 'color', absentPlayerFontColor)
+        })
+
+        it('after a deal, page can change player and pop again on confirming', function () {
+
+            cy.intercept({
+                method: 'POST',
+                url: '/api/game/write/**',
+            }).as('push')
+            cy.intercept({
+                method: 'DELETE',
+                url: '/api/game/write/**',
+            }).as('pop')
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const deal = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'PlayerA',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerB',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerD',
+                        diff: -1
+                    },
+                    {
+                        name: 'PlayerF',
+                        diff: -1
+                    }
+                ],
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet, deal],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('#lastDeal_PlayerH').should('not.exist')
+            cy.get('#score_PlayerH').should('not.exist')
+
+            cy.get('.changePlayersButton').should('not.be.disabled').click()
+
+            cy.get('#text-0').type('{selectall}{backspace}PlayerH')
+
+            cy.contains('OK').should('not.be.disabled').click()
+
+            cy.wait('@push')
+
+            cy.get('#lastDeal_PlayerH').should('be.empty')
+            cy.get('#lastDeal_PlayerB').contains('1')
+            cy.get('#lastDeal_PlayerC').should('be.empty')
+            cy.get('#lastDeal_PlayerD').contains('-1')
+            cy.get('#lastDeal_PlayerE').should('be.empty')
+            cy.get('#lastDeal_PlayerF').contains('-1')
+            cy.get('#lastDeal_PlayerG').should('be.empty')
+            cy.get('#lastDeal_PlayerA').contains('1')
+
+            cy.get('#score_PlayerH').contains('0')
+            cy.get('#score_PlayerB').contains('1')
+            cy.get('#score_PlayerC').contains('0')
+            cy.get('#score_PlayerD').contains('-1')
+            cy.get('#score_PlayerE').contains('0')
+            cy.get('#score_PlayerF').contains('-1')
+            cy.get('#score_PlayerG').contains('0')
+            cy.get('#score_PlayerA').contains('1')
+
+            cy.on('window:confirm', str => {
+                expect(str).to.eq('Letzte Auswahl der Spieler rückgängig machen?')
+                return true
+            })
+
+            cy.get('#popButton').should('not.be.disabled').click()
+            cy.wait('@pop')
+
+            cy.get('#lastDeal_PlayerA').contains('1')
+            cy.get('#lastDeal_PlayerB').contains('1')
+            cy.get('#lastDeal_PlayerC').should('be.empty')
+            cy.get('#lastDeal_PlayerD').contains('-1')
+            cy.get('#lastDeal_PlayerE').should('be.empty')
+            cy.get('#lastDeal_PlayerF').contains('-1')
+            cy.get('#lastDeal_PlayerG').should('be.empty')
+
+            cy.get('#lastDeal_PlayerH').should('not.exist')
+
+            cy.get('#score_PlayerA').contains('1')
+            cy.get('#score_PlayerB').contains('1')
+            cy.get('#score_PlayerC').contains('0')
+            cy.get('#score_PlayerD').contains('-1')
+            cy.get('#score_PlayerE').contains('0')
+            cy.get('#score_PlayerF').contains('-1')
+            cy.get('#score_PlayerG').contains('0')
+
+            cy.get('#score_PlayerH').should('not.exist')
+        })
+
+        it('after a deal, page can change player and not pop on cancelling', function () {
+
+            cy.intercept({
+                method: 'POST',
+                url: '/api/game/write/**',
+            }).as('push')
+            cy.intercept({
+                method: 'DELETE',
+                url: '/api/game/write/**',
+            }).as('pop')
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const deal = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'PlayerA',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerB',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerD',
+                        diff: -1
+                    },
+                    {
+                        name: 'PlayerF',
+                        diff: -1
+                    }
+                ],
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet, deal],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('#lastDeal_PlayerH').should('not.exist')
+            cy.get('#score_PlayerH').should('not.exist')
+
+            cy.get('.changePlayersButton').should('not.be.disabled').click()
+
+            cy.get('#text-0').type('{selectall}{backspace}PlayerH')
+
+            cy.contains('OK').should('not.be.disabled').click()
+
+            cy.wait('@push')
+
+            cy.get('#lastDeal_PlayerH').should('be.empty')
+            cy.get('#lastDeal_PlayerB').contains('1')
+            cy.get('#lastDeal_PlayerC').should('be.empty')
+            cy.get('#lastDeal_PlayerD').contains('-1')
+            cy.get('#lastDeal_PlayerE').should('be.empty')
+            cy.get('#lastDeal_PlayerF').contains('-1')
+            cy.get('#lastDeal_PlayerG').should('be.empty')
+            cy.get('#lastDeal_PlayerA').contains('1')
+
+            cy.get('#score_PlayerH').contains('0')
+            cy.get('#score_PlayerB').contains('1')
+            cy.get('#score_PlayerC').contains('0')
+            cy.get('#score_PlayerD').contains('-1')
+            cy.get('#score_PlayerE').contains('0')
+            cy.get('#score_PlayerF').contains('-1')
+            cy.get('#score_PlayerG').contains('0')
+            cy.get('#score_PlayerA').contains('1')
+
+            cy.on('window:confirm', str => {
+                expect(str).to.eq('Letzte Auswahl der Spieler rückgängig machen?')
+                return false
+            })
+
+            cy.get('#popButton').should('not.be.disabled').click()
+
+            cy.get('#lastDeal_PlayerH').should('be.empty')
+            cy.get('#lastDeal_PlayerB').contains('1')
+            cy.get('#lastDeal_PlayerC').should('be.empty')
+            cy.get('#lastDeal_PlayerD').contains('-1')
+            cy.get('#lastDeal_PlayerE').should('be.empty')
+            cy.get('#lastDeal_PlayerF').contains('-1')
+            cy.get('#lastDeal_PlayerG').should('be.empty')
+            cy.get('#lastDeal_PlayerA').contains('1')
+
+            cy.get('#score_PlayerH').contains('0')
+            cy.get('#score_PlayerB').contains('1')
+            cy.get('#score_PlayerC').contains('0')
+            cy.get('#score_PlayerD').contains('-1')
+            cy.get('#score_PlayerE').contains('0')
+            cy.get('#score_PlayerF').contains('-1')
+            cy.get('#score_PlayerG').contains('0')
+            cy.get('#score_PlayerA').contains('1')
         })
     })
 

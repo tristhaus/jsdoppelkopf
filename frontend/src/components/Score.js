@@ -1,5 +1,6 @@
 import { PropTypes } from 'prop-types'
 import { useRef, useState } from 'react'
+import PlayerEntry from './PlayerEntry'
 
 const deduceBock = data => {
     if (data.isMandatorySolo) { return <div className="pflichtSolo">Pflichtsolo</div> }
@@ -70,7 +71,7 @@ const ScoreControls = ({ numberOfPlayers, numberOfEvents, setNumberOfEvents, isP
         <button id="dealButton" style={{ gridColumn: `${numberOfPlayers + 1} / ${numberOfPlayers + 2}`, justifySelf: 'center' }} disabled={isDealDisabled} onClick={handleDealClicked}>Übernehmen</button>
     </>)
 
-const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry, reloadAction, }) => {
+const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, addPlayersSet, popLastEntry, reloadAction, }) => {
 
     const playerData = data.playerData
 
@@ -79,6 +80,7 @@ const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry,
     const gridTemplateColumns = [...Array(numberOfPlayers + 1)].map(() => 'auto').join(' ')
 
     const [message, setMessage] = useState('')
+    const [showPlayerEntry, setShowPlayerEntry] = useState(false)
     const [diffEntries, setDiffEntries] = useState({})
     const [numberOfEvents, setNumberOfEvents] = useState(0)
 
@@ -100,6 +102,17 @@ const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry,
     const shareWriterLink = () => {
         navigator.clipboard.writeText(`${data.deploymentUrl}/writer/${data.readerId}`)
         setTemporaryMessage('Writer-Link in Zwischenablage kopiert')
+    }
+
+    const isChangePlayersDisabled = data.isMandatorySolo
+
+    const handleChangePlayersClicked = () => {
+        setShowPlayerEntry(true)
+    }
+
+    const submitNewPlayersAction = playerInformation => {
+        addPlayersSet(playerInformation)
+        setShowPlayerEntry(false)
     }
 
     const isMandatorySoloDisabled = data.isMandatorySolo
@@ -164,6 +177,7 @@ const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry,
 
     return (
         <>
+            {showPlayerEntry && (<PlayerEntry playerInformation={{ dealerName: data.dealerName, playerData: data.playerData, }} closeAction={() => setShowPlayerEntry(false)} submitAction={submitNewPlayersAction} />)}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span>
                     <button id="readerLinkButton" className='shareButton' onClick={shareReaderLink}>Reader-Link teilen</button>
@@ -173,6 +187,7 @@ const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry,
                 <button id="reloadButton" className='reloadButton' onClick={reloadAction}>&#x27F3;</button>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'right' }}>
+                {isWriter && (<button className="changePlayersButton" disabled={isChangePlayersDisabled} onClick={handleChangePlayersClicked}>Spieler ausw&auml;hlen ...</button>)}
                 {isWriter && (<button className="mandatorySoloButton" disabled={isMandatorySoloDisabled} onClick={handleMandatorySoloClicked}>Pflichtsolorunde</button>)}
                 <span id="currentBockStatus">{deduceBock(data)}</span>
                 <table style={{ margin: '0px 15px' }}>

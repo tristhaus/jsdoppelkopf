@@ -3,22 +3,17 @@ import { Score } from './Score'
 
 const Reader = ({ data, reloadAction, }) => {
 
-    const noop = () => {}
+    const noop = () => { }
 
     return (
-        <>
-            <div>
-                <span>readerId: </span><span id="reader-readerId">{data.readerId}</span>
-            </div>
-            <Score
-                isWriter={false}
-                data={data}
-                addDeal={noop}
-                addMandatorySoloTrigger={noop}
-                popLastEntry={noop}
-                reloadAction={reloadAction}
-            />
-        </>
+        <Score
+            isWriter={false}
+            data={data}
+            addDeal={noop}
+            addMandatorySoloTrigger={noop}
+            popLastEntry={noop}
+            reloadAction={reloadAction}
+        />
     )
 }
 

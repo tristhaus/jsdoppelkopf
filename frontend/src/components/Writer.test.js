@@ -29,12 +29,6 @@ describe('writer view unit tests', () => {
 
         const { container } = render(<Writer writerId={data.writerId} readerId={data.readerId} data={data} />)
 
-        const writerIdSpan = container.querySelector('#writer-writerId')
-        expect(writerIdSpan).toHaveTextContent('aaaaaa')
-
-        const readerIdSpan = container.querySelector('#writer-readerId')
-        expect(readerIdSpan).toHaveTextContent('bbbbbb')
-
         const mandatorySoloButton = container.querySelector('.mandatorySoloButton')
         expect(mandatorySoloButton).not.toBeDisabled()
 

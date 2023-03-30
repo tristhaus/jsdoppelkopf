@@ -1,5 +1,13 @@
 describe('Doko app', function () {
 
+    Cypress.Commands.add('assertTextContainedInClipboardToMatchRegex', regex => {
+        cy.window().then(win => {
+            win.navigator.clipboard.readText().then(text => {
+                expect(text).to.match(regex)
+            })
+        })
+    })
+
     describe('main landing page', function () {
 
         it('page can be opened and has a working New Game button', function () {
@@ -360,8 +368,6 @@ describe('Doko app', function () {
             cy.get('@create')
 
             cy.visit('http://localhost:3000/writer/myWriterId')
-            cy.get('#writer-writerId').contains('myWriterId')
-            cy.get('#writer-readerId').contains('myReaderId')
 
             cy.get('.mandatorySoloButton').should('not.be.disabled')
             cy.get('#currentBockStatus').contains('Kein Bock')
@@ -537,8 +543,6 @@ describe('Doko app', function () {
             cy.get('@create')
 
             cy.visit('http://localhost:3000/writer/myWriterId')
-            cy.get('#writer-writerId').contains('myWriterId')
-            cy.get('#writer-readerId').contains('myReaderId')
 
             cy.get('#currentDeal_PlayerA').type('-9')
             cy.get('#currentDeal_PlayerB')
@@ -587,8 +591,6 @@ describe('Doko app', function () {
             cy.get('@create')
 
             cy.visit('http://localhost:3000/writer/myWriterId')
-            cy.get('#writer-writerId').contains('myWriterId')
-            cy.get('#writer-readerId').contains('myReaderId')
 
             cy.get('#currentDeal_PlayerA').type('6')
             cy.get('#currentDeal_PlayerB')
@@ -637,8 +639,6 @@ describe('Doko app', function () {
             cy.get('@create')
 
             cy.visit('http://localhost:3000/writer/myWriterId')
-            cy.get('#writer-writerId').contains('myWriterId')
-            cy.get('#writer-readerId').contains('myReaderId')
 
             cy.get('#currentDeal_PlayerA').type('6')
             cy.get('#currentDeal_PlayerB')
@@ -687,8 +687,6 @@ describe('Doko app', function () {
             cy.get('@create')
 
             cy.visit('http://localhost:3000/writer/myWriterId')
-            cy.get('#writer-writerId').contains('myWriterId')
-            cy.get('#writer-readerId').contains('myReaderId')
 
             cy.get('#currentDeal_PlayerA').type('5')
             cy.get('#currentDeal_PlayerB').type('-5')
@@ -737,8 +735,6 @@ describe('Doko app', function () {
             cy.get('@create')
 
             cy.visit('http://localhost:3000/writer/myWriterId')
-            cy.get('#writer-writerId').contains('myWriterId')
-            cy.get('#writer-readerId').contains('myReaderId')
 
             cy.get('#currentDeal_PlayerA').type('5')
             cy.get('#currentDeal_PlayerB')
@@ -787,8 +783,6 @@ describe('Doko app', function () {
             cy.get('@create')
 
             cy.visit('http://localhost:3000/writer/myWriterId')
-            cy.get('#writer-writerId').contains('myWriterId')
-            cy.get('#writer-readerId').contains('myReaderId')
 
             cy.get('#currentDeal_PlayerA').type('5')
             cy.get('#currentDeal_PlayerB')
@@ -837,8 +831,6 @@ describe('Doko app', function () {
             cy.get('@create')
 
             cy.visit('http://localhost:3000/writer/myWriterId')
-            cy.get('#writer-writerId').contains('myWriterId')
-            cy.get('#writer-readerId').contains('myReaderId')
 
             cy.get('#currentDeal_PlayerA').type('5')
             cy.get('#currentDeal_PlayerB').type('-5')
@@ -914,7 +906,6 @@ describe('Doko app', function () {
             cy.get('.mandatorySoloButton').should('not.be.disabled')
             cy.get('#currentBockStatus').contains('Kein Bock')
         })
-
 
         it('page can start mandatory solo round and not pop it on cancelling', function () {
 
@@ -1018,8 +1009,6 @@ describe('Doko app', function () {
             cy.get('@create')
 
             cy.visit('http://localhost:3000/writer/myWriterId')
-            cy.get('#writer-writerId').contains('myWriterId')
-            cy.get('#writer-readerId').contains('myReaderId')
 
             cy.get('#currentDeal_PlayerA').type('5')
             cy.get('#currentDeal_PlayerB').type('5')
@@ -1126,8 +1115,6 @@ describe('Doko app', function () {
             cy.get('@create')
 
             cy.visit('http://localhost:3000/writer/myWriterId')
-            cy.get('#writer-writerId').contains('myWriterId')
-            cy.get('#writer-readerId').contains('myReaderId')
 
             cy.get('#currentDeal_PlayerA').type('5')
             cy.get('#currentDeal_PlayerB').type('5')
@@ -1178,6 +1165,90 @@ describe('Doko app', function () {
             cy.get('#score_PlayerE').contains('0')
             cy.get('#score_PlayerF').contains('-5')
             cy.get('#score_PlayerG').contains('0')
+        })
+
+        // test fails in FF due to access to clipboard
+        it('page has a working button: share reader link', { browser: '!firefox' }, function () {
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('#readerLinkButton').click()
+            cy.contains('Reader-Link in Zwischenablage kopiert')
+            cy.assertTextContainedInClipboardToMatchRegex(new RegExp('http://localhost:[0-9]+/myReaderId'))
+        })
+
+        // test fails in FF due to access to clipboard
+        it('page has a working button: share writer link', { browser: '!firefox' }, function () {
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('#writerLinkButton').click()
+            cy.contains('Writer-Link in Zwischenablage kopiert')
+            cy.assertTextContainedInClipboardToMatchRegex(new RegExp('http://localhost:[0-9]+/writer/myWriterId'))
         })
     })
 
@@ -1241,7 +1312,6 @@ describe('Doko app', function () {
             cy.get('@create')
 
             cy.visit('http://localhost:3000/myReaderId')
-            cy.get('#reader-readerId').contains('myReaderId')
 
             cy.get('.mandatorySoloButton').should('not.exist')
             cy.get('#currentBockStatus').contains('Kein Bock')
@@ -1380,6 +1450,50 @@ describe('Doko app', function () {
             cy.get('#score_PlayerE').contains('0')
             cy.get('#score_PlayerF').contains('-1')
             cy.get('#score_PlayerG').contains('0')
+        })
+
+        // test fails in FF due to access to clipboard
+        it('page has one working button: only share reader link', { browser: '!firefox' }, function () {
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/myReaderId')
+
+            cy.get('#readerLinkButton').click()
+            cy.contains('Reader-Link in Zwischenablage kopiert')
+            cy.assertTextContainedInClipboardToMatchRegex(new RegExp('http://localhost:[0-9]+/myReaderId'))
+
+            cy.get('#writerLinkButton').should('not.exist')
         })
     })
 })

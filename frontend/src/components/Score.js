@@ -1,5 +1,5 @@
 import { PropTypes } from 'prop-types'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 const deduceBock = data => {
     if (data.isMandatorySolo) { return <div className="pflichtSolo">Pflichtsolo</div> }
@@ -78,8 +78,29 @@ const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry,
 
     const gridTemplateColumns = [...Array(numberOfPlayers + 1)].map(() => 'auto').join(' ')
 
+    const [message, setMessage] = useState('')
     const [diffEntries, setDiffEntries] = useState({})
     const [numberOfEvents, setNumberOfEvents] = useState(0)
+
+    const timeOut = useRef(null)
+
+    const setTemporaryMessage = message => {
+        setMessage(message)
+        clearTimeout(timeOut.current)
+        timeOut.current = setTimeout(() => {
+            setMessage('')
+        }, 5000)
+    }
+
+    const shareReaderLink = () => {
+        navigator.clipboard.writeText(`${data.deploymentUrl}/${data.readerId}`)
+        setTemporaryMessage('Reader-Link in Zwischenablage kopiert')
+    }
+
+    const shareWriterLink = () => {
+        navigator.clipboard.writeText(`${data.deploymentUrl}/writer/${data.readerId}`)
+        setTemporaryMessage('Writer-Link in Zwischenablage kopiert')
+    }
 
     const isMandatorySoloDisabled = data.isMandatorySolo
 
@@ -100,12 +121,12 @@ const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry,
 
         const mapPoppableEntry = poppableEntry => {
             switch (poppableEntry) {
-            case 'deal':
-                return 'Letztes Spiel'
-            case 'mandatorySoloTrigger':
-                return 'Letzte Pflichtsolorunde'
-            case 'playersSet':
-                return 'Letzte Auswahl der Spieler'
+                case 'deal':
+                    return 'Letztes Spiel'
+                case 'mandatorySoloTrigger':
+                    return 'Letzte Pflichtsolorunde'
+                case 'playersSet':
+                    return 'Letzte Auswahl der Spieler'
             }
         }
 
@@ -143,8 +164,13 @@ const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry,
 
     return (
         <>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'right' }}>
-                <button id="reloadButton" onClick={reloadAction}>&#x27F3;</button>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span>
+                    <button id="readerLinkButton" className='shareButton' onClick={shareReaderLink}>Reader-Link teilen</button>
+                    {isWriter && (<button id="writerLinkButton" className='shareButton' onClick={shareWriterLink}>Writer-Link teilen</button>)}
+                    <span id="messageSpan">{message}</span>
+                </span>
+                <button id="reloadButton" className='reloadButton' onClick={reloadAction}>&#x27F3;</button>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'right' }}>
                 {isWriter && (<button className="mandatorySoloButton" disabled={isMandatorySoloDisabled} onClick={handleMandatorySoloClicked}>Pflichtsolorunde</button>)}

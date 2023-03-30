@@ -29,9 +29,6 @@ describe('reader view unit tests', () => {
 
         const { container } = render(<Reader readerId={data.readerId} data={data} />)
 
-        const readerIdSpan = container.querySelector('#reader-readerId')
-        expect(readerIdSpan).toHaveTextContent('bbbbbb')
-
         const mandatorySoloButton = container.querySelector('.mandatorySoloButton')
         expect(mandatorySoloButton).toBeNull()
 

@@ -1,7 +1,7 @@
 import { PropTypes } from 'prop-types'
 import { Score } from './Score'
 
-const Reader = ({ data }) => {
+const Reader = ({ data, reloadAction, }) => {
 
     const noop = () => {}
 
@@ -16,6 +16,7 @@ const Reader = ({ data }) => {
                 addDeal={noop}
                 addMandatorySoloTrigger={noop}
                 popLastEntry={noop}
+                reloadAction={reloadAction}
             />
         </>
     )

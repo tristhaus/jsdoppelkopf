@@ -11,15 +11,16 @@ const WriterLanding = () => {
 
     const [data, setData] = useState(null)
 
-    useEffect(() => {
-        const func = async () => {
-            const response = await gameService.getGameByWriterId(inputWriterId)
+    const loadData = async () => {
+        const response = await gameService.getGameByWriterId(inputWriterId)
 
-            if (response) {
-                setData(response)
-            }
+        if (response) {
+            setData(response)
         }
-        func()
+    }
+
+    useEffect(() => {
+        loadData()
     }, [])
 
     const addDeal = async (changes, events) => {
@@ -55,6 +56,7 @@ const WriterLanding = () => {
                 addDeal={addDeal}
                 addMandatorySoloTrigger={addMandatorySoloTrigger}
                 popLastEntry={popLastEntry}
+                reloadAction={loadData}
             />
         </div>
     )

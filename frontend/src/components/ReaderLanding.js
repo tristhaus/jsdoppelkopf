@@ -11,22 +11,26 @@ const ReaderLanding = () => {
 
     const [data, setData] = useState(null)
 
-    useEffect(() => {
-        const func = async () => {
-            const response = await gameService.getGameByReaderId(inputReaderId)
+    const loadData = async () => {
+        const response = await gameService.getGameByReaderId(inputReaderId)
 
-            if (response) {
-                setData(response)
-            }
+        if (response) {
+            setData(response)
         }
-        func()
+    }
+
+    useEffect(() => {
+        loadData()
     }, [])
 
     const reader = () => (
         <div>
             <h2>JSDoppelkopf Reader</h2>
             <hr />
-            <Reader data={data} />
+            <Reader
+                data={data}
+                reloadAction={loadData}
+            />
         </div>
     )
 

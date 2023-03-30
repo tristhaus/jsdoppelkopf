@@ -415,6 +415,93 @@ describe('Doko app', function () {
             cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
         })
 
+        it('page has a working reload button', function () {
+
+            cy.intercept({
+                method: 'GET',
+                url: '/api/game/write/**',
+            }).as('load')
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('#score_PlayerA').contains('0')
+            cy.get('#score_PlayerB').contains('0')
+            cy.get('#score_PlayerC').contains('0')
+            cy.get('#score_PlayerD').contains('0')
+            cy.get('#score_PlayerE').contains('0')
+            cy.get('#score_PlayerF').contains('0')
+            cy.get('#score_PlayerG').contains('0')
+
+            const deal = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'PlayerA',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerB',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerD',
+                        diff: -1
+                    },
+                    {
+                        name: 'PlayerF',
+                        diff: -1
+                    }
+                ],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/game/write/myWriterId/deal', deal).as('deal')
+            cy.get('@deal')
+
+            cy.get('#reloadButton').click()
+            cy.wait('@load')
+
+            cy.get('#score_PlayerA').contains('1')
+            cy.get('#score_PlayerB').contains('1')
+            cy.get('#score_PlayerC').contains('0')
+            cy.get('#score_PlayerD').contains('-1')
+            cy.get('#score_PlayerE').contains('0')
+            cy.get('#score_PlayerF').contains('-1')
+            cy.get('#score_PlayerG').contains('0')
+        })
+
         it('page handles entries for current game correctly: one valid entry for solo', function () {
 
             cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
@@ -1043,6 +1130,93 @@ describe('Doko app', function () {
             cy.get('#cash_PlayerG').contains('0,00')
 
             cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
+        })
+
+        it('page has a working reload button', function () {
+
+            cy.intercept({
+                method: 'GET',
+                url: '/api/game/**',
+            }).as('load')
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/myReaderId')
+
+            cy.get('#score_PlayerA').contains('0')
+            cy.get('#score_PlayerB').contains('0')
+            cy.get('#score_PlayerC').contains('0')
+            cy.get('#score_PlayerD').contains('0')
+            cy.get('#score_PlayerE').contains('0')
+            cy.get('#score_PlayerF').contains('0')
+            cy.get('#score_PlayerG').contains('0')
+
+            const deal = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'PlayerA',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerB',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerD',
+                        diff: -1
+                    },
+                    {
+                        name: 'PlayerF',
+                        diff: -1
+                    }
+                ],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/game/write/myWriterId/deal', deal).as('deal')
+            cy.get('@deal')
+
+            cy.get('#reloadButton').click()
+            cy.wait('@load')
+
+            cy.get('#score_PlayerA').contains('1')
+            cy.get('#score_PlayerB').contains('1')
+            cy.get('#score_PlayerC').contains('0')
+            cy.get('#score_PlayerD').contains('-1')
+            cy.get('#score_PlayerE').contains('0')
+            cy.get('#score_PlayerF').contains('-1')
+            cy.get('#score_PlayerG').contains('0')
         })
     })
 })

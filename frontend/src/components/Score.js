@@ -70,7 +70,7 @@ const ScoreControls = ({ numberOfPlayers, numberOfEvents, setNumberOfEvents, isP
         <button id="dealButton" style={{ gridColumn: `${numberOfPlayers + 1} / ${numberOfPlayers + 2}`, justifySelf: 'center' }} disabled={isDealDisabled} onClick={handleDealClicked}>Übernehmen</button>
     </>)
 
-const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry, }) => {
+const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry, reloadAction, }) => {
 
     const playerData = data.playerData
 
@@ -128,6 +128,9 @@ const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry,
 
     return (
         <>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'right' }}>
+                <button id="reloadButton" onClick={reloadAction}>&#x27F3;</button>
+            </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'right' }}>
                 {isWriter && (<button className="mandatorySoloButton" disabled={isMandatorySoloDisabled} onClick={handleMandatorySoloClicked}>Pflichtsolorunde</button>)}
                 <span id="currentBockStatus">{deduceBock(data)}</span>

@@ -903,6 +903,11 @@ describe('Doko app', function () {
             cy.get('.mandatorySoloButton').should('be.disabled')
             cy.get('#currentBockStatus').contains('Pflichtsolo')
 
+            cy.on('window:confirm', str => {
+                expect(str).to.eq('Letzte Pflichtsolorunde rückgängig machen?')
+                return true
+            })
+
             cy.get('#popButton').should('not.be.disabled').click()
             cy.wait('@pop')
 
@@ -910,7 +915,66 @@ describe('Doko app', function () {
             cy.get('#currentBockStatus').contains('Kein Bock')
         })
 
-        it('page can note a deal and pop it again', function () {
+
+        it('page can start mandatory solo round and not pop it on cancelling', function () {
+
+            cy.intercept({
+                method: 'POST',
+                url: '/api/game/write/**',
+            }).as('push')
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('.mandatorySoloButton').should('not.be.disabled').click()
+            cy.wait('@push')
+
+            cy.get('.mandatorySoloButton').should('be.disabled')
+            cy.get('#currentBockStatus').contains('Pflichtsolo')
+
+            cy.on('window:confirm', str => {
+                expect(str).to.eq('Letzte Pflichtsolorunde rückgängig machen?')
+                return false
+            })
+
+            cy.get('#popButton').should('not.be.disabled').click()
+
+            cy.get('.mandatorySoloButton').should('be.disabled')
+            cy.get('#currentBockStatus').contains('Pflichtsolo')
+        })
+
+        it('page can note a deal and pop it again on confirming', function () {
 
             cy.intercept({
                 method: 'POST',
@@ -992,6 +1056,11 @@ describe('Doko app', function () {
             cy.get('#score_PlayerF').contains('-5')
             cy.get('#score_PlayerG').contains('0')
 
+            cy.on('window:confirm', str => {
+                expect(str).to.eq('Letztes Spiel rückgängig machen?')
+                return true
+            })
+
             cy.get('#popButton').should('not.be.disabled').click()
             cy.wait('@pop')
 
@@ -1014,6 +1083,100 @@ describe('Doko app', function () {
             cy.get('#score_PlayerD').contains('0')
             cy.get('#score_PlayerE').contains('0')
             cy.get('#score_PlayerF').contains('0')
+            cy.get('#score_PlayerG').contains('0')
+        })
+
+        it('page can note a deal and not pop it on cancelling', function () {
+
+            cy.intercept({
+                method: 'POST',
+                url: '/api/game/write/**',
+            }).as('push')
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+            cy.get('#writer-writerId').contains('myWriterId')
+            cy.get('#writer-readerId').contains('myReaderId')
+
+            cy.get('#currentDeal_PlayerA').type('5')
+            cy.get('#currentDeal_PlayerB').type('5')
+            cy.get('#currentDeal_PlayerC').should('not.exist')
+            cy.get('#currentDeal_PlayerD')
+            cy.get('#currentDeal_PlayerE').should('not.exist')
+            cy.get('#currentDeal_PlayerF')
+            cy.get('#currentDeal_PlayerG').should('not.exist')
+
+            cy.get('#bockereignisse').type(2)
+
+            cy.get('#popButton').should('be.disabled')
+            cy.get('#dealButton').should('not.be.disabled').click()
+            cy.wait('@push')
+
+            cy.get('#currentBockStatus').contains('Doppelbock')
+            cy.get('#bockPreviewTriple').contains('0')
+            cy.get('#bockPreviewDouble').contains('7')
+            cy.get('#bockPreviewSingle').contains('0')
+
+            cy.get('#lastDeal_PlayerA').contains('5')
+            cy.get('#lastDeal_PlayerB').contains('5')
+            cy.get('#lastDeal_PlayerC').should('be.empty')
+            cy.get('#lastDeal_PlayerD').contains('-5')
+            cy.get('#lastDeal_PlayerE').should('be.empty')
+            cy.get('#lastDeal_PlayerF').contains('-5')
+            cy.get('#lastDeal_PlayerG').should('be.empty')
+
+            cy.get('#score_PlayerA').contains('5')
+            cy.get('#score_PlayerB').contains('5')
+            cy.get('#score_PlayerC').contains('0')
+            cy.get('#score_PlayerD').contains('-5')
+            cy.get('#score_PlayerE').contains('0')
+            cy.get('#score_PlayerF').contains('-5')
+            cy.get('#score_PlayerG').contains('0')
+
+            cy.on('window:confirm', str => {
+                expect(str).to.eq('Letztes Spiel rückgängig machen?')
+                return false
+            })
+
+            cy.get('#popButton').should('not.be.disabled').click()
+
+            cy.get('#score_PlayerA').contains('5')
+            cy.get('#score_PlayerB').contains('5')
+            cy.get('#score_PlayerC').contains('0')
+            cy.get('#score_PlayerD').contains('-5')
+            cy.get('#score_PlayerE').contains('0')
+            cy.get('#score_PlayerF').contains('-5')
             cy.get('#score_PlayerG').contains('0')
         })
     })

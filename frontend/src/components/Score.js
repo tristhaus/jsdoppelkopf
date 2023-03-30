@@ -97,7 +97,22 @@ const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, popLastEntry,
     const isPopDisabled = data.poppableEntry === null
 
     const handlePopClicked = () => {
-        popLastEntry()
+
+        const mapPoppableEntry = poppableEntry => {
+            switch (poppableEntry) {
+            case 'deal':
+                return 'Letztes Spiel'
+            case 'mandatorySoloTrigger':
+                return 'Letzte Pflichtsolorunde'
+            case 'playersSet':
+                return 'Letzte Auswahl der Spieler'
+            }
+        }
+
+        const result = confirm(`${mapPoppableEntry(data.poppableEntry)} rückgängig machen?`)
+        if (result) {
+            popLastEntry()
+        }
     }
 
     const diffEntriesAreValid = () => {

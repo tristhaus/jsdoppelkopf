@@ -11,7 +11,7 @@ const deduceBock = data => {
 }
 
 const completeDiffs = (diffEntries, playerNamesInDeal) => {
-    const numbers = Object.values(diffEntries).map(value => parseInt(value, 10))
+    const numbers = Object.values(diffEntries).filter(value => !!value).map(value => parseInt(value, 10))
 
     const sumOfCurrentEntries = numbers.reduce((total, number) => total + number, 0)
 
@@ -34,8 +34,8 @@ const completeDiffs = (diffEntries, playerNamesInDeal) => {
     const retval = { ...diffEntries }
 
     playerNamesInDeal.forEach(name => {
-        if (!(name in retval)) {
-            retval[name] = - sumOfCurrentEntries / numberOfMissingEntries
+        if (!(name in retval) || !retval[name]) {
+            retval[name] = `${- sumOfCurrentEntries / numberOfMissingEntries}`
         }
     })
 
@@ -48,15 +48,28 @@ const addPresentOrAbsent = (classString, player) => {
     return `${classString} ${player.present ? 'isPresent' : 'isAbsent'}`
 }
 
-const CurrentGame = ({ playerData, diffEntries, handleEntryChanged }) => (
+const CurrentGame = ({ playerData, diffEntries, handleFocus, handleEntryChanged }) => (
     <>
         <span>Aktuelles Spiel</span>
         {playerData.map((player, index) => {
             if (player.playing) {
-                return (<input key={`${index}`} type="text" size={3} id={`currentDeal_${player.name}`} className="currentDeal" value={diffEntries[player.name] ?? ''} onChange={event => {
-                    const playerName = player.name
-                    handleEntryChanged(playerName, event.target.value)
-                }} />)
+                return (
+                    <input
+                        key={`${index}`}
+                        type="text"
+                        size={3}
+                        id={`currentDeal_${player.name}`}
+                        className="currentDeal"
+                        value={diffEntries[player.name] ?? ''}
+                        onFocus={event => {
+                            const playerName = player.name
+                            handleFocus(playerName, event.target)
+                        }}
+                        onChange={event => {
+                            const playerName = player.name
+                            handleEntryChanged(playerName, event.target.value)
+                        }}
+                    />)
             }
             else {
                 return <span key={`${index}`} />
@@ -121,11 +134,27 @@ const Score = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySoloTri
         addMandatorySoloTrigger()
     }
 
-    const handleEntryChanged = (playerName, value) => {
+    const changeEntry = (playerName, value) => {
         const newDiffEntries = { ...diffEntries }
         newDiffEntries[playerName] = value
 
         setDiffEntries(newDiffEntries)
+    }
+
+    const handleEntryChanged = (playerName, value) => {
+        changeEntry(playerName, value)
+    }
+
+    const handleFocus = (playerName, target) => {
+        const relevantEntries = Object.values(diffEntries)
+            .filter(entry => entry !== '')
+            .sort()
+            .filter((entry, index, array) => index === 0 || entry !== array[index - 1])
+
+        if (relevantEntries.length === 1) {
+            target.value = relevantEntries[0]
+            changeEntry(playerName, relevantEntries[0])
+        }
     }
 
     const isPopDisabled = data.poppableEntry === null
@@ -150,7 +179,7 @@ const Score = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySoloTri
     }
 
     const diffEntriesAreValid = () => {
-        const numbers = Object.values(diffEntries).map(value => parseInt(value, 10))
+        const numbers = Object.values(diffEntries).filter(value => !!value).map(value => parseInt(value, 10))
 
         if (!numbers.every(objectValue => Number.isInteger(objectValue))) {
             return false
@@ -213,6 +242,7 @@ const Score = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySoloTri
                 {isWriter && (<CurrentGame
                     playerData={playerData}
                     diffEntries={diffEntries}
+                    handleFocus={handleFocus}
                     handleEntryChanged={handleEntryChanged}
                 />)}
                 {isWriter && (<ScoreControls

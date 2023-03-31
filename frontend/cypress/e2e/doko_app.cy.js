@@ -633,10 +633,10 @@ describe('Doko app', function () {
 
             cy.visit('http://localhost:3000/writer/myWriterId')
 
-            cy.get('#currentDeal_PlayerA').type('6')
+            cy.get('#currentDeal_PlayerA').type('{selectAll}{backspace}6')
             cy.get('#currentDeal_PlayerB')
             cy.get('#currentDeal_PlayerC').should('not.exist')
-            cy.get('#currentDeal_PlayerD').type('6')
+            cy.get('#currentDeal_PlayerD').type('{selectAll}{backspace}6')
             cy.get('#currentDeal_PlayerE').should('not.exist')
             cy.get('#currentDeal_PlayerF')
             cy.get('#currentDeal_PlayerG').should('not.exist')
@@ -681,12 +681,12 @@ describe('Doko app', function () {
 
             cy.visit('http://localhost:3000/writer/myWriterId')
 
-            cy.get('#currentDeal_PlayerA').type('6')
+            cy.get('#currentDeal_PlayerA').type('{selectAll}{backspace}6')
             cy.get('#currentDeal_PlayerB')
             cy.get('#currentDeal_PlayerC').should('not.exist')
-            cy.get('#currentDeal_PlayerD').type('6')
+            cy.get('#currentDeal_PlayerD').type('{selectAll}{backspace}6')
             cy.get('#currentDeal_PlayerE').should('not.exist')
-            cy.get('#currentDeal_PlayerF').type('6')
+            cy.get('#currentDeal_PlayerF').type('{selectAll}{backspace}6')
             cy.get('#currentDeal_PlayerG').should('not.exist')
 
             cy.get('#popButton').should('be.disabled')
@@ -729,12 +729,12 @@ describe('Doko app', function () {
 
             cy.visit('http://localhost:3000/writer/myWriterId')
 
-            cy.get('#currentDeal_PlayerA').type('5')
-            cy.get('#currentDeal_PlayerB').type('-5')
+            cy.get('#currentDeal_PlayerA').type('{selectAll}{backspace}5')
+            cy.get('#currentDeal_PlayerB').type('{selectAll}{backspace}-5')
             cy.get('#currentDeal_PlayerC').should('not.exist')
-            cy.get('#currentDeal_PlayerD').type('5')
+            cy.get('#currentDeal_PlayerD').type('{selectAll}{backspace}5')
             cy.get('#currentDeal_PlayerE').should('not.exist')
-            cy.get('#currentDeal_PlayerF').type('-5')
+            cy.get('#currentDeal_PlayerF').type('{selectAll}{backspace}-5')
             cy.get('#currentDeal_PlayerG').should('not.exist')
 
             cy.get('#popButton').should('be.disabled')
@@ -883,6 +883,142 @@ describe('Doko app', function () {
 
             cy.get('#popButton').should('be.disabled')
             cy.get('#dealButton').should('be.disabled')
+        })
+
+        it('page copies entry made when clicking other fields', function () {
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('#currentDeal_PlayerA').type('7')
+            cy.get('#currentDeal_PlayerB').focus()
+
+            cy.get('#dealButton').click()
+
+            cy.get('#score_PlayerA').contains('7')
+            cy.get('#score_PlayerB').contains('7')
+            cy.get('#score_PlayerC').contains('0')
+            cy.get('#score_PlayerD').contains('-7')
+            cy.get('#score_PlayerE').contains('0')
+            cy.get('#score_PlayerF').contains('-7')
+            cy.get('#score_PlayerG').contains('0')
+        })
+
+        it('page does not copy entries made when they are inconsistent', function () {
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('#currentDeal_PlayerA').type('7')
+            cy.get('#currentDeal_PlayerB').type('{selectAll}{backspace}6')
+            cy.get('#currentDeal_PlayerD').focus()
+
+            cy.get('#dealButton').should('be.disabled')
+        })
+
+        it('page allows to note a deal after deleting an erroneously copied entry', function () {
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('#currentDeal_PlayerA').type('7')
+            cy.get('#currentDeal_PlayerB').focus()
+            cy.get('#currentDeal_PlayerD').type('{selectAll}{backspace}')
+
+            cy.get('#dealButton').should('not.be.disabled')
         })
 
         it('page can start mandatory solo round and pop it again', function () {
@@ -1103,8 +1239,8 @@ describe('Doko app', function () {
 
             cy.visit('http://localhost:3000/writer/myWriterId')
 
-            cy.get('#currentDeal_PlayerA').type('5')
-            cy.get('#currentDeal_PlayerB').type('5')
+            cy.get('#currentDeal_PlayerA').type('{selectAll}{backspace}5')
+            cy.get('#currentDeal_PlayerB').type('{selectAll}{backspace}5')
             cy.get('#currentDeal_PlayerC').should('not.exist')
             cy.get('#currentDeal_PlayerD')
             cy.get('#currentDeal_PlayerE').should('not.exist')
@@ -1209,8 +1345,8 @@ describe('Doko app', function () {
 
             cy.visit('http://localhost:3000/writer/myWriterId')
 
-            cy.get('#currentDeal_PlayerA').type('5')
-            cy.get('#currentDeal_PlayerB').type('5')
+            cy.get('#currentDeal_PlayerA').type('{selectAll}{backspace}5')
+            cy.get('#currentDeal_PlayerB').type('{selectAll}{backspace}5')
             cy.get('#currentDeal_PlayerC').should('not.exist')
             cy.get('#currentDeal_PlayerD')
             cy.get('#currentDeal_PlayerE').should('not.exist')
@@ -1306,8 +1442,8 @@ describe('Doko app', function () {
 
             cy.visit('http://localhost:3000/writer/myWriterId')
 
-            cy.get('#currentDeal_PlayerA').type('5')
-            cy.get('#currentDeal_PlayerB').type('5')
+            cy.get('#currentDeal_PlayerA').type('{selectAll}{backspace}5')
+            cy.get('#currentDeal_PlayerB').type('{selectAll}{backspace}5')
             cy.get('#currentDeal_PlayerC').should('not.exist')
             cy.get('#currentDeal_PlayerD')
             cy.get('#currentDeal_PlayerE').should('not.exist')

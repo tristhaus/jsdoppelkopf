@@ -2,124 +2,159 @@ import axios from 'axios'
 const baseUrl = '/api/game'
 
 const startGame = async playerInformation => {
+    try {
+        const playersSet = {
+            kind: 'playersSet',
+            ...playerInformation,
+        }
 
-    const playersSet = {
-        kind: 'playersSet',
-        ...playerInformation,
+        const response = await axios.post(baseUrl, playersSet)
+
+        if (response.status === 201) {
+            return response.data
+        }
+        else {
+            console.error('game service error in startGame', response)
+            return null
+        }
     }
-
-    const response = await axios.post(baseUrl, playersSet)
-
-    if (response.status === 201) {
-        return response.data
-    }
-    else {
-        console.error('game service error in startGame', response)
+    catch (error) {
+        console.error('error in startGame', error)
         return null
     }
 }
 
 const getGameByWriterId = async writerId => {
+    try {
+        const getWrite = `${baseUrl}/write/${writerId}`
 
-    const getWrite = `${baseUrl}/write/${writerId}`
+        const response = await axios.get(getWrite)
 
-    const response = await axios.get(getWrite)
-
-    if (response.status === 200) {
-        return response.data
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            console.error('game service error in getGameByWriterId', response)
+            return null
+        }
     }
-    else {
-        console.error('game service error in getGameByWriterId', response)
+    catch (error) {
+        console.error('error in getGameByWriterId', error)
         return null
     }
 }
 
 const addDealEntryByWriterId = async (writerId, changes, events) => {
+    try {
+        const postWriteDeal = `${baseUrl}/write/${writerId}/deal`
 
-    const postWriteDeal = `${baseUrl}/write/${writerId}/deal`
+        const requestData = {
+            kind: 'deal',
+            events,
+            changes,
+        }
 
-    const requestData = {
-        kind: 'deal',
-        events,
-        changes,
+        const response = await axios.post(postWriteDeal, requestData)
+
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            console.error('game service error in addDealEntryByWriterId', response)
+            return null
+        }
     }
-
-    const response = await axios.post(postWriteDeal, requestData)
-
-    if (response.status === 200) {
-        return response.data
-    }
-    else {
-        console.error('game service error in addDealEntryByWriterId', response)
+    catch (error) {
+        console.error('error in addDealEntryByWriterId', error)
         return null
     }
 }
 
 const addMandatorySoloEntryByWriterId = async writerId => {
+    try {
+        const postWriteMandatorySolo = `${baseUrl}/write/${writerId}/mandatorysolotrigger`
 
-    const postWriteMandatorySolo = `${baseUrl}/write/${writerId}/mandatorysolotrigger`
+        const requestData = {
+            kind: 'mandatorySoloTrigger',
+        }
 
-    const requestData = {
-        kind: 'mandatorySoloTrigger',
+        const response = await axios.post(postWriteMandatorySolo, requestData)
+
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            console.error('game service error in addMandatorySoloEntryByWriterId', response)
+            return null
+        }
     }
-
-    const response = await axios.post(postWriteMandatorySolo, requestData)
-
-    if (response.status === 200) {
-        return response.data
-    }
-    else {
-        console.error('game service error in addMandatorySoloEntryByWriterId', response)
+    catch (error) {
+        console.error('error in addMandatorySoloEntryByWriterId', error)
         return null
     }
 }
 
 const addPlayersSetEntryByWriterId = async (writerId, playerInformation) => {
+    try {
+        const postWritePlayersSet = `${baseUrl}/write/${writerId}/playersset`
 
-    const postWritePlayersSet = `${baseUrl}/write/${writerId}/playersset`
+        const requestData = {
+            kind: 'playersSet',
+            ...playerInformation,
+        }
 
-    const requestData = {
-        kind: 'playersSet',
-        ...playerInformation,
+        const response = await axios.post(postWritePlayersSet, requestData)
+
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            console.error('game service error in addNewPlayersSetByWriterId', response)
+            return null
+        }
     }
-
-    const response = await axios.post(postWritePlayersSet, requestData)
-
-    if (response.status === 200) {
-        return response.data
-    }
-    else {
-        console.error('game service error in addNewPlayersSetByWriterId', response)
+    catch (error) {
+        console.error('error in addPlayersSetEntryByWriterId', error)
         return null
     }
 }
 
 const popLastEntryOnGameByWriterId = async writerId => {
+    try {
+        const deleteWriteEntry = `${baseUrl}/write/${writerId}/entry`
 
-    const deleteWriteEntry = `${baseUrl}/write/${writerId}/entry`
+        const response = await axios.delete(deleteWriteEntry)
 
-    const response = await axios.delete(deleteWriteEntry)
-
-    if (response.status === 200) {
-        return response.data
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            console.error('game service error in popLastEntryOnGameByWriterId', response)
+            return null
+        }
     }
-    else {
-        console.error('game service error in popLastEntryOnGameByWriterId', response)
+    catch (error) {
+        console.error('error in popLastEntryOnGameByWriterId', error)
         return null
     }
 }
 
 const getGameByReaderId = async readerId => {
+    try {
+        const getRead = `${baseUrl}/${readerId}`
 
-    const getRead = `${baseUrl}/${readerId}`
+        const response = await axios.get(getRead)
 
-    const response = await axios.get(getRead)
-
-    if (response.status === 200) {
-        return response.data
+        if (response.status === 200) {
+            return response.data
+        }
+        else {
+            console.error('game service error in getGameByReaderId', response)
+            return null
+        }
     }
-    else {
-        console.error('game service error in getGameByReaderId', response)
+    catch (error) {
+        console.error('error in getGameByReaderId', error)
         return null
     }
 }

@@ -75,6 +75,10 @@ beforeAll(async () => {
     await Game.deleteMany({})
 })
 
+afterAll(async () => {
+    await Game.deleteMany({})
+})
+
 describe('game API', () => {
 
     test('POST creates new game', async () => {
@@ -1014,7 +1018,7 @@ describe('game API', () => {
         expect(responseDeleteToInitialPlayersSet.body.poppableEntry).toBe(null)
     })
 
-    test('DELETE of first entry is not possible', async () => {
+    test('DELETE of first entry is not possible, game remains valid', async () => {
         const playersSet = {
             kind: 'playersSet',
             playerNames: [
@@ -1041,6 +1045,11 @@ describe('game API', () => {
 
         const response = await api.delete(popEntryPath)
         expect(response.status).toBe(400)
+
+        const getPath = `/api/game/write/${writerId}`
+
+        const getResponse = await api.get(getPath)
+        expect(getResponse.status).toBe(200)
     })
 
     test('Game is accessible to readers by reader ID', async () => {

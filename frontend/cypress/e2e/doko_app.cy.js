@@ -423,6 +423,16 @@ describe('Doko app', function () {
             cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
         })
 
+        it('page displays error when using bad ID', function () {
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            cy.visit('http://localhost:3000/writer/WNONEXISTENT')
+
+            cy.contains('kann nicht laden, writer ID')
+        })
+
         it('page has a working reload button', function () {
 
             cy.intercept({
@@ -967,6 +977,57 @@ describe('Doko app', function () {
             cy.get('#currentBockStatus').contains('Pflichtsolo')
         })
 
+        it('page displays error if unable to start mandatory solo round', function () {
+
+            cy.intercept({
+                method: 'POST',
+                url: '/api/game/write/**',
+            },
+            {
+                statusCode: 499,
+                body: 'Intercepted by cypress'
+            }).as('push')
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('.mandatorySoloButton').should('not.be.disabled').click()
+            cy.wait('@push')
+
+            cy.contains('Pflichtsolorunde konnte nicht gestartet werden.')
+        })
+
         it('page can note a deal and pop it again on confirming', function () {
 
             cy.intercept({
@@ -1169,6 +1230,67 @@ describe('Doko app', function () {
             cy.get('#score_PlayerG').contains('0')
         })
 
+        it('page displays error if unable to note a deal', function () {
+
+            cy.intercept({
+                method: 'POST',
+                url: '/api/game/write/**',
+            },
+            {
+                statusCode: 499,
+                body: 'Intercepted by cypress'
+            }).as('push')
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('#currentDeal_PlayerA').type('5')
+            cy.get('#currentDeal_PlayerB').type('5')
+            cy.get('#currentDeal_PlayerC').should('not.exist')
+            cy.get('#currentDeal_PlayerD')
+            cy.get('#currentDeal_PlayerE').should('not.exist')
+            cy.get('#currentDeal_PlayerF')
+            cy.get('#currentDeal_PlayerG').should('not.exist')
+
+            cy.get('#bockereignisse').type(2)
+
+            cy.get('#dealButton').should('not.be.disabled').click()
+            cy.wait('@push')
+
+            cy.contains('Spiel konnte nicht notiert werden.')
+        })
+
         // test fails in FF due to access to clipboard
         it('page has a working button: share reader link', { browser: '!firefox' }, function () {
 
@@ -1329,7 +1451,6 @@ describe('Doko app', function () {
             cy.get('#text-0').type('{selectall}{backspace}PlayerH')
 
             cy.contains('OK').should('not.be.disabled').click()
-
             cy.wait('@push')
 
             cy.get('#lastDeal_PlayerH').should('be.empty')
@@ -1433,7 +1554,6 @@ describe('Doko app', function () {
             cy.get('#text-0').type('{selectall}{backspace}PlayerH')
 
             cy.contains('OK').should('not.be.disabled').click()
-
             cy.wait('@push')
 
             cy.get('#lastDeal_PlayerH').should('be.empty')
@@ -1559,7 +1679,6 @@ describe('Doko app', function () {
             cy.get('#text-0').type('{selectall}{backspace}PlayerH')
 
             cy.contains('OK').should('not.be.disabled').click()
-
             cy.wait('@push')
 
             cy.get('#lastDeal_PlayerH').should('be.empty')
@@ -1604,6 +1723,144 @@ describe('Doko app', function () {
             cy.get('#score_PlayerF').contains('-1')
             cy.get('#score_PlayerG').contains('0')
             cy.get('#score_PlayerA').contains('1')
+        })
+
+        it('page displays error if unable to change player', function () {
+
+            cy.intercept({
+                method: 'POST',
+                url: '/api/game/write/**',
+            },
+            {
+                statusCode: 499,
+                body: 'Intercepted by cypress'
+            }).as('push')
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('.changePlayersButton').should('not.be.disabled').click()
+
+            cy.get('#text-0').type('{selectall}{backspace}PlayerH')
+
+            cy.contains('OK').should('not.be.disabled').click()
+            cy.wait('@push')
+
+            cy.contains('Spieler konnten nicht geändert werden.')
+        })
+
+        it('after a deal, page displays error if unable to pop again', function () {
+
+            cy.intercept({
+                method: 'POST',
+                url: '/api/game/write/**',
+            }).as('push')
+            cy.intercept({
+                method: 'DELETE',
+                url: '/api/game/write/**',
+            },
+            {
+                statusCode: 499,
+                body: 'Intercepted by cypress'
+            }).as('pop')
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const deal = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'PlayerA',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerB',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerD',
+                        diff: -1
+                    },
+                    {
+                        name: 'PlayerF',
+                        diff: -1
+                    }
+                ],
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet, deal],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.on('window:confirm', str => {
+                expect(str).to.eq('Letztes Spiel rückgängig machen?')
+                return true
+            })
+
+            cy.get('#popButton').should('not.be.disabled').click()
+            cy.wait('@pop')
+
+            cy.contains('Letzter Eintrag konnte nicht gelöscht werden.')
         })
     })
 
@@ -1718,6 +1975,16 @@ describe('Doko app', function () {
             cy.get('#cash_PlayerG').contains('0,00')
 
             cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
+        })
+
+        it('page displays error when using bad ID', function () {
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            cy.visit('http://localhost:3000/RNONEXISTENT')
+
+            cy.contains('kann nicht laden, reader ID')
         })
 
         it('page has a working reload button', function () {

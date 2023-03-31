@@ -10,12 +10,19 @@ const WriterLanding = () => {
     const inputWriterId = useParams().id
 
     const [data, setData] = useState(null)
+    const [landingErrorMessage, setLandingErrorMessage] = useState('')
+    const [scoreErrorMessage, setScoreErrorMessage] = useState('')
 
     const loadData = async () => {
+        setLandingErrorMessage('')
         const response = await gameService.getGameByWriterId(inputWriterId)
 
         if (response) {
+            setScoreErrorMessage('')
             setData(response)
+        }
+        else {
+            setLandingErrorMessage(`kann nicht laden, writer ID: '${inputWriterId}'`)
         }
     }
 
@@ -29,6 +36,9 @@ const WriterLanding = () => {
         if (response) {
             setData(response)
         }
+        else {
+            setScoreErrorMessage('Spiel konnte nicht notiert werden.')
+        }
     }
 
     const addMandatorySoloTrigger = async () => {
@@ -36,6 +46,9 @@ const WriterLanding = () => {
 
         if (response) {
             setData(response)
+        }
+        else {
+            setScoreErrorMessage('Pflichtsolorunde konnte nicht gestartet werden.')
         }
     }
 
@@ -45,6 +58,9 @@ const WriterLanding = () => {
         if (response) {
             setData(response)
         }
+        else {
+            setScoreErrorMessage('Spieler konnten nicht geändert werden.')
+        }
     }
 
     const popLastEntry = async () => {
@@ -52,6 +68,9 @@ const WriterLanding = () => {
 
         if (response) {
             setData(response)
+        }
+        else {
+            setScoreErrorMessage('Letzter Eintrag konnte nicht gelöscht werden.')
         }
     }
 
@@ -61,6 +80,7 @@ const WriterLanding = () => {
             <hr />
             <Writer
                 data={data}
+                scoreErrorMessage={scoreErrorMessage}
                 addDeal={addDeal}
                 addMandatorySoloTrigger={addMandatorySoloTrigger}
                 addPlayersSet={addPlayersSet}
@@ -74,7 +94,7 @@ const WriterLanding = () => {
         return writer()
     }
 
-    return <div>Loading from writer ID &apos;{inputWriterId}&apos;  ...</div>
+    return <div>Lade aus writer ID &apos;{inputWriterId}&apos; ... <span className='errorMessage'>{landingErrorMessage}</span></div>
 }
 
 WriterLanding.displayName = 'WriterLanding'

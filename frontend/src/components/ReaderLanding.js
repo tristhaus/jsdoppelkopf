@@ -10,12 +10,16 @@ const ReaderLanding = () => {
     const inputReaderId = useParams().id
 
     const [data, setData] = useState(null)
+    const [errorMessage, setErrorMessage] = useState('')
 
     const loadData = async () => {
         const response = await gameService.getGameByReaderId(inputReaderId)
 
         if (response) {
             setData(response)
+        }
+        else {
+            setErrorMessage(`kann nicht laden, reader ID: '${inputReaderId}'`)
         }
     }
 
@@ -38,7 +42,7 @@ const ReaderLanding = () => {
         return reader()
     }
 
-    return <div>Loading from reader ID &apos;{inputReaderId}&apos; ...</div>
+    return <div>Lade aus reader ID &apos;{inputReaderId}&apos; ... <span className='errorMessage'>{errorMessage}</span></div>
 }
 
 ReaderLanding.displayName = 'ReaderEntry'

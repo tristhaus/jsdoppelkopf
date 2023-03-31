@@ -71,7 +71,7 @@ const ScoreControls = ({ numberOfPlayers, numberOfEvents, setNumberOfEvents, isP
         <button id="dealButton" style={{ gridColumn: `${numberOfPlayers + 1} / ${numberOfPlayers + 2}`, justifySelf: 'center' }} disabled={isDealDisabled} onClick={handleDealClicked}>Übernehmen</button>
     </>)
 
-const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, addPlayersSet, popLastEntry, reloadAction, }) => {
+const Score = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySoloTrigger, addPlayersSet, popLastEntry, reloadAction, }) => {
 
     const playerData = data.playerData
 
@@ -183,6 +183,7 @@ const Score = ({ isWriter, data, addDeal, addMandatorySoloTrigger, addPlayersSet
                     <button id="readerLinkButton" className='shareButton' onClick={shareReaderLink}>Reader-Link teilen</button>
                     {isWriter && (<button id="writerLinkButton" className='shareButton' onClick={shareWriterLink}>Writer-Link teilen</button>)}
                     <span id="messageSpan">{message}</span>
+                    <span id="errorMessageSpan" className='errorMessage'>{scoreErrorMessage ?? ''}</span>
                 </span>
                 <button id="reloadButton" className='reloadButton' onClick={reloadAction}>&#x27F3;</button>
             </div>

@@ -56,8 +56,9 @@ gamesRouter.post('/', async (request, response, next) => {
         apiModel.writerId = result.writerId
 
         response.status(201).json(apiModel)
-    } catch (error) {
-        next(error)
+    }
+    catch (error) {
+        return next(error)
     }
 })
 
@@ -69,14 +70,16 @@ gamesRouter.get('/write/:writerId', async (request, response, next) => {
         if (!game) {
             logger.error(`game with writerId '${request.params.writerId}' not found`)
             response.status(404).send({ error: `writerId not found: ${request.params.writerId}` })
+            return next()
         }
 
         const apiModel = createApiModel(game)
         apiModel.writerId = game.writerId
 
         response.status(200).json(apiModel)
-    } catch (error) {
-        next(error)
+    }
+    catch (error) {
+        return next(error)
     }
 })
 
@@ -88,6 +91,7 @@ gamesRouter.post('/write/:writerId/playersset', async (request, response, next) 
         if (!game) {
             logger.error(`game with writerId '${request.params.writerId}' not found`)
             response.status(404).send({ error: `writerId not found: ${request.params.writerId}` })
+            return next()
         }
 
         const playersSet = request.body
@@ -107,8 +111,9 @@ gamesRouter.post('/write/:writerId/playersset', async (request, response, next) 
         apiModel.writerId = game.writerId
 
         response.status(200).json(apiModel)
-    } catch (error) {
-        next(error)
+    }
+    catch (error) {
+        return next(error)
     }
 })
 
@@ -119,6 +124,7 @@ gamesRouter.post('/write/:writerId/deal', async (request, response, next) => {
         if (!game) {
             logger.error(`game with writerId '${request.params.writerId}' not found`)
             response.status(404).send({ error: `writerId not found: ${request.params.writerId}` })
+            return next()
         }
 
         const deal = request.body
@@ -138,8 +144,9 @@ gamesRouter.post('/write/:writerId/deal', async (request, response, next) => {
         apiModel.writerId = game.writerId
 
         response.status(200).json(apiModel)
-    } catch (error) {
-        next(error)
+    }
+    catch (error) {
+        return next(error)
     }
 })
 
@@ -150,6 +157,7 @@ gamesRouter.post('/write/:writerId/mandatorysolotrigger', async (request, respon
         if (!game) {
             logger.error(`game with writerId '${request.params.writerId}' not found`)
             response.status(404).send({ error: `writerId not found: ${request.params.writerId}` })
+            return next()
         }
 
         const mandatorySoloTrigger = request.body
@@ -169,8 +177,9 @@ gamesRouter.post('/write/:writerId/mandatorysolotrigger', async (request, respon
         apiModel.writerId = game.writerId
 
         response.status(200).json(apiModel)
-    } catch (error) {
-        next(error)
+    }
+    catch (error) {
+        return next(error)
     }
 })
 
@@ -181,11 +190,13 @@ gamesRouter.delete('/write/:writerId/entry', async (request, response, next) => 
         if (!game) {
             logger.error(`game with writerId '${request.params.writerId}' not found`)
             response.status(404).send({ error: `writerId not found: ${request.params.writerId}` })
+            return next()
         }
 
         if (game.data.length === 1) {
             logger.error(`unable to pop entry on game with writerId '${request.params.writerId}'`)
             response.status(400).send({ error: 'unable to pop entry' })
+            return next()
         }
 
         const newData = game.data.slice(0, -1)
@@ -199,8 +210,9 @@ gamesRouter.delete('/write/:writerId/entry', async (request, response, next) => 
         apiModel.writerId = game.writerId
 
         response.status(200).json(apiModel)
-    } catch (error) {
-        next(error)
+    }
+    catch (error) {
+        return next(error)
     }
 })
 
@@ -212,13 +224,15 @@ gamesRouter.get('/:readerId', async (request, response, next) => {
         if (!game) {
             logger.error(`game with readerId '${request.params.readerId}' not found`)
             response.status(404).send({ error: `readerId not found: ${request.params.readerId}` })
+            return next()
         }
 
         const apiModel = createApiModel(game)
 
         response.status(200).json(apiModel)
-    } catch (error) {
-        next(error)
+    }
+    catch (error) {
+        return next(error)
     }
 })
 

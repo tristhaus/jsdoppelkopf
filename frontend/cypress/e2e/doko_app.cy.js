@@ -41,6 +41,43 @@ describe('Doko app', function () {
             cy.wait('@createGame')
         })
 
+        it('player entry dialog can remove and add player lines within it', function () {
+            cy.request('POST', 'http://localhost:3000/api/testing/reset')
+            cy.visit('http://localhost:3000')
+            cy.contains('Neues Spiel beginnen').click()
+
+            cy.get('#text-0').type('A')
+            cy.get('#text-1').type('B')
+            cy.get('#text-2').type('C')
+            cy.get('#text-3').type('D')
+            cy.get('#text-4').type('E')
+            cy.get('#text-5').type('F')
+            cy.get('#text-6').type('G')
+
+            cy.get('#addButton').should('be.disabled')
+
+            cy.get('#deleteButton-5').click()
+            cy.get('#deleteButton-3').click()
+            cy.get('#deleteButton-1').click()
+
+            cy.get('#deleteButton-0').should('be.disabled')
+            cy.get('#deleteButton-1').should('be.disabled')
+            cy.get('#deleteButton-2').should('be.disabled')
+            cy.get('#deleteButton-3').should('be.disabled')
+
+            cy.get('#addButton').click()
+            cy.get('#addButton').click()
+            cy.get('#addButton').click()
+
+            cy.contains('OK').should('be.disabled')
+
+            cy.get('#text-4').type('F')
+            cy.get('#text-5').type('D')
+            cy.get('#text-6').type('B')
+
+            cy.contains('OK').should('not.be.disabled')
+        })
+
         it('player entry dialog has drag and drop-based swapping of the boxes', function () {
             cy.request('POST', 'http://localhost:3000/api/testing/reset')
             cy.visit('http://localhost:3000')
@@ -1778,6 +1815,419 @@ describe('Doko app', function () {
             cy.wait('@push')
 
             cy.contains('Spieler konnten nicht geändert werden.')
+        })
+
+        it('starting with 7 players, player entry dialog can remove and add player lines within it', function () {
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const deal = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'PlayerA',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerB',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerD',
+                        diff: -1
+                    },
+                    {
+                        name: 'PlayerF',
+                        diff: -1
+                    }
+                ],
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet, deal],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('.changePlayersButton').click()
+
+            cy.get('#deleteButton-5').click()
+            cy.get('#deleteButton-3').click()
+            cy.get('#deleteButton-1').click()
+
+            cy.get('#deleteButton-0').should('be.disabled')
+            cy.get('#deleteButton-1').should('be.disabled')
+            cy.get('#deleteButton-2').should('be.disabled')
+            cy.get('#deleteButton-3').should('be.disabled')
+
+            cy.contains('OK').should('not.be.disabled')
+
+            cy.get('#addButton').click()
+            cy.get('#addButton').click()
+            cy.get('#addButton').click()
+
+            cy.contains('OK').should('be.disabled')
+
+            cy.get('#text-4').type('PlayerF')
+            cy.get('#text-5').type('PlayerD')
+            cy.get('#text-6').type('PlayerB')
+
+            cy.contains('OK').should('not.be.disabled')
+        })
+
+        it('starting with 4 players, player entry dialog can add and remove player lines within it', function () {
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const deal = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'PlayerA',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerB',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerC',
+                        diff: -1
+                    },
+                    {
+                        name: 'PlayerD',
+                        diff: -1
+                    }
+                ],
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet, deal],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('.changePlayersButton').click()
+
+            cy.get('#deleteButton-0').should('be.disabled')
+            cy.get('#deleteButton-1').should('be.disabled')
+            cy.get('#deleteButton-2').should('be.disabled')
+            cy.get('#deleteButton-3').should('be.disabled')
+
+            cy.contains('OK').should('not.be.disabled')
+
+            cy.get('#addButton').click()
+            cy.get('#addButton').click()
+            cy.get('#addButton').click()
+
+            cy.contains('OK').should('be.disabled')
+
+            cy.get('#text-4').type('PlayerE')
+            cy.get('#text-5').type('PlayerF')
+            cy.get('#text-6').type('PlayerG')
+
+            cy.contains('OK').should('not.be.disabled')
+
+            cy.get('#deleteButton-5').click()
+            cy.get('#deleteButton-3').click()
+            cy.get('#deleteButton-1').click()
+
+            cy.contains('OK').should('not.be.disabled')
+        })
+
+        it('player entry dialog has drag and drop-based swapping of the boxes', function () {
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const deal = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'PlayerA',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerB',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerD',
+                        diff: -1
+                    },
+                    {
+                        name: 'PlayerF',
+                        diff: -1
+                    }
+                ],
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet, deal],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('.changePlayersButton').click()
+
+            cy.contains('OK').should('not.be.disabled')
+
+            cy.get('#text-0').type('{selectAll}{backspace}A')
+            cy.get('#text-1').type('{selectAll}{backspace}B')
+            cy.get('#text-2').type('{selectAll}{backspace}C')
+            cy.get('#text-3').type('{selectAll}{backspace}D')
+            cy.get('#text-4').type('{selectAll}{backspace}E')
+            cy.get('#text-5').type('{selectAll}{backspace}F')
+            cy.get('#text-6').type('{selectAll}{backspace}G')
+
+            cy.get('#radio-3').click()
+
+            cy.get('#box-1').trigger('dragstart')
+            cy.get('#box-3').trigger('drop')
+
+            cy.get('#text-0').should('have.value', 'A')
+            cy.get('#text-1').should('have.value', 'B')
+            cy.get('#text-2').should('have.value', 'C')
+            cy.get('#text-3').should('have.value', 'D')
+            cy.get('#text-4').should('have.value', 'E')
+            cy.get('#text-5').should('have.value', 'F')
+            cy.get('#text-6').should('have.value', 'G')
+
+            cy.get('.playerNameInputText').eq(0).should('have.value', 'A')
+            cy.get('.playerNameInputText').eq(1).should('have.value', 'D')
+            cy.get('.playerNameInputText').eq(2).should('have.value', 'C')
+            cy.get('.playerNameInputText').eq(3).should('have.value', 'B')
+            cy.get('.playerNameInputText').eq(4).should('have.value', 'E')
+            cy.get('.playerNameInputText').eq(5).should('have.value', 'F')
+            cy.get('.playerNameInputText').eq(6).should('have.value', 'G')
+
+            cy.get('.dealerRadioButton').eq(1).should('be.checked')
+
+            // trigger reordering
+            cy.get('#deleteButton-6').click()
+
+            cy.get('#text-0').should('have.value', 'A')
+            cy.get('#text-1').should('have.value', 'D')
+            cy.get('#text-2').should('have.value', 'C')
+            cy.get('#text-3').should('have.value', 'B')
+            cy.get('#text-4').should('have.value', 'E')
+            cy.get('#text-5').should('have.value', 'F')
+
+            cy.get('#radio-1').should('be.checked')
+        })
+
+        it('player entry dialog with duplicated player name has disabled OK', function () {
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const deal = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'PlayerA',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerB',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerD',
+                        diff: -1
+                    },
+                    {
+                        name: 'PlayerF',
+                        diff: -1
+                    }
+                ],
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet, deal],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('.changePlayersButton').click()
+
+            cy.contains('OK').should('not.be.disabled')
+
+            cy.get('#text-0').type('{selectAll}{backspace}A')
+            cy.get('#text-1').type('{selectAll}{backspace}B')
+            cy.get('#text-2').type('{selectAll}{backspace}duplicate')
+            cy.get('#text-3').type('{selectAll}{backspace}D')
+            cy.get('#text-4').type('{selectAll}{backspace}E')
+            cy.get('#text-5').type('{selectAll}{backspace}duplicate')
+            cy.get('#text-6').type('{selectAll}{backspace}G')
+
+            cy.contains('OK').should('be.disabled')
+        })
+
+        it('player entry dialog with empty player name has disabled OK', function () {
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const deal = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'PlayerA',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerB',
+                        diff: 1
+                    },
+                    {
+                        name: 'PlayerD',
+                        diff: -1
+                    },
+                    {
+                        name: 'PlayerF',
+                        diff: -1
+                    }
+                ],
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet, deal],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('.changePlayersButton').click()
+
+            cy.get('#text-2').type('{selectAll}{backspace}')
+
+            cy.contains('OK').should('be.disabled')
         })
 
         it('after a deal, page displays error if unable to pop again', function () {

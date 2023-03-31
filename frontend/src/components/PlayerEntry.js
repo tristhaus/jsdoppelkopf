@@ -15,7 +15,7 @@ const findNumberOfPlayers = playerInformation => playerInformation?.playerData.f
 
 const findDealerIndex = playerInformation => playerInformation?.playerData.map(player => player.name).indexOf(playerInformation.dealerName) ?? defaultSettings.dealerIndex
 
-const findPlayerNameAt = (playerInformation, index) => playerInformation?.playerData[index].name ?? defaultSettings.playerName
+const findPlayerNameAt = (playerInformation, index) => playerInformation?.playerData[index]?.name ?? defaultSettings.playerName
 
 const findSitOutGeneric = (playerInformation, numberOfPlayers, isFirst) => {
 

@@ -100,7 +100,7 @@ const Score = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySoloTri
     }
 
     const shareWriterLink = () => {
-        navigator.clipboard.writeText(`${data.deploymentUrl}/writer/${data.readerId}`)
+        navigator.clipboard.writeText(`${data.deploymentUrl}/writer/${data.writerId}`)
         setTemporaryMessage('Writer-Link in Zwischenablage kopiert')
     }
 

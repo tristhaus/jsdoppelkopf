@@ -2,14 +2,6 @@ describe('Doko app', function () {
 
     const absentPlayerFontColor = 'rgba(0, 0, 0, 0.5)'
 
-    Cypress.Commands.add('assertTextContainedInClipboardToMatchRegex', regex => {
-        cy.window().then(win => {
-            win.navigator.clipboard.readText().then(text => {
-                expect(text).to.match(regex)
-            })
-        })
-    })
-
     describe('main landing page', function () {
 
         it('page can be opened and has a working New Game button', function () {
@@ -979,14 +971,15 @@ describe('Doko app', function () {
 
         it('page displays error if unable to start mandatory solo round', function () {
 
-            cy.intercept({
-                method: 'POST',
-                url: '/api/game/write/**',
-            },
-            {
-                statusCode: 499,
-                body: 'Intercepted by cypress'
-            }).as('push')
+            cy.intercept(
+                {
+                    method: 'POST',
+                    url: '/api/game/write/**',
+                },
+                {
+                    statusCode: 499,
+                    body: 'Intercepted by cypress'
+                }).as('push')
 
             cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
             cy.get('@delete')
@@ -1232,14 +1225,15 @@ describe('Doko app', function () {
 
         it('page displays error if unable to note a deal', function () {
 
-            cy.intercept({
-                method: 'POST',
-                url: '/api/game/write/**',
-            },
-            {
-                statusCode: 499,
-                body: 'Intercepted by cypress'
-            }).as('push')
+            cy.intercept(
+                {
+                    method: 'POST',
+                    url: '/api/game/write/**',
+                },
+                {
+                    statusCode: 499,
+                    body: 'Intercepted by cypress'
+                }).as('push')
 
             cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
             cy.get('@delete')
@@ -1330,7 +1324,9 @@ describe('Doko app', function () {
 
             cy.get('#readerLinkButton').click()
             cy.contains('Reader-Link in Zwischenablage kopiert')
-            cy.assertTextContainedInClipboardToMatchRegex(new RegExp('http://localhost:[0-9]+/myReaderId'))
+            cy.window().its('navigator.clipboard')
+                .then(clip => clip.readText())
+                .should('match', new RegExp('http://localhost:[0-9]+/myReaderId'))
         })
 
         // test fails in FF due to access to clipboard
@@ -1372,7 +1368,10 @@ describe('Doko app', function () {
 
             cy.get('#writerLinkButton').click()
             cy.contains('Writer-Link in Zwischenablage kopiert')
-            cy.assertTextContainedInClipboardToMatchRegex(new RegExp('http://localhost:[0-9]+/writer/myWriterId'))
+
+            cy.window().its('navigator.clipboard')
+                .then(clip => clip.readText())
+                .should('match', new RegExp('http://localhost:[0-9]+/writer/myWriterId'))
         })
 
         it('after a deal, page can change player and shows now-absent player in gray', function () {
@@ -1727,14 +1726,15 @@ describe('Doko app', function () {
 
         it('page displays error if unable to change player', function () {
 
-            cy.intercept({
-                method: 'POST',
-                url: '/api/game/write/**',
-            },
-            {
-                statusCode: 499,
-                body: 'Intercepted by cypress'
-            }).as('push')
+            cy.intercept(
+                {
+                    method: 'POST',
+                    url: '/api/game/write/**',
+                },
+                {
+                    statusCode: 499,
+                    body: 'Intercepted by cypress'
+                }).as('push')
 
             cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
             cy.get('@delete')
@@ -1782,18 +1782,20 @@ describe('Doko app', function () {
 
         it('after a deal, page displays error if unable to pop again', function () {
 
-            cy.intercept({
-                method: 'POST',
-                url: '/api/game/write/**',
-            }).as('push')
-            cy.intercept({
-                method: 'DELETE',
-                url: '/api/game/write/**',
-            },
-            {
-                statusCode: 499,
-                body: 'Intercepted by cypress'
-            }).as('pop')
+            cy.intercept(
+                {
+                    method: 'POST',
+                    url: '/api/game/write/**',
+                }).as('push')
+            cy.intercept(
+                {
+                    method: 'DELETE',
+                    url: '/api/game/write/**',
+                },
+                {
+                    statusCode: 499,
+                    body: 'Intercepted by cypress'
+                }).as('pop')
 
             cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
             cy.get('@delete')
@@ -2075,7 +2077,7 @@ describe('Doko app', function () {
         })
 
         // test fails in FF due to access to clipboard
-        it('page has one working button: only share reader link', { browser: '!firefox' }, function () {
+        it('page has one working button: just share reader link', { browser: '!firefox' }, function () {
 
             cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
             cy.get('@delete')
@@ -2113,7 +2115,10 @@ describe('Doko app', function () {
 
             cy.get('#readerLinkButton').click()
             cy.contains('Reader-Link in Zwischenablage kopiert')
-            cy.assertTextContainedInClipboardToMatchRegex(new RegExp('http://localhost:[0-9]+/myReaderId'))
+
+            cy.window().its('navigator.clipboard')
+                .then(clip => clip.readText())
+                .should('match', new RegExp('http://localhost:[0-9]+/myReaderId'))
 
             cy.get('#writerLinkButton').should('not.exist')
         })

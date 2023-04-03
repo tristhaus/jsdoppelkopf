@@ -1181,6 +1181,46 @@ describe('validate deal', () => {
         }
     })
 
+    test('all-zero deal is validated', () => {
+
+        const playersSet = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D', 'E', 'F'],
+            dealerName: 'B',
+            sitOutScheme: [3]
+        }
+
+        const data = [playersSet]
+
+        {
+            const candidate = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'A',
+                        diff: 0
+                    },
+                    {
+                        name: 'C',
+                        diff: 0
+                    },
+                    {
+                        name: 'D',
+                        diff: 0
+                    },
+                    {
+                        name: 'F',
+                        diff: 0
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(true)
+        }
+    })
+
     test('duplicate player fails', () => {
 
         const playersSet = {

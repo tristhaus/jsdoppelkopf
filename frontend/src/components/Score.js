@@ -18,7 +18,7 @@ const completeDiffs = (diffEntries, playerNamesInDeal) => {
     const set = new Set(numbers)
 
     if (numbers.length === 4) {
-        return sumOfCurrentEntries === 0 && set.size === 2 ? diffEntries : null
+        return sumOfCurrentEntries === 0 && (set.size === 2 || (set.size === 1 && set.has(0))) ? diffEntries : null
     }
 
     if (set.size !== 1) {

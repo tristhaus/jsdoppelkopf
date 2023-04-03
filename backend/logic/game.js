@@ -280,7 +280,7 @@ const validateDeal = (data, deal) => {
 
     const set = new Set(deal.changes.map(change => change.diff))
 
-    if (set.size !== 2) {
+    if ((set.size !== 2 && !(set.size === 1 && set.has(0)))) {
         return false
     }
 

@@ -741,6 +741,54 @@ describe('Doko app', function () {
             cy.get('#dealButton').should('not.be.disabled')
         })
 
+        it('page handles entries for current game correctly: all zero', function () {
+
+            cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+            cy.get('@delete')
+
+            const playersSet = {
+                kind: 'playersSet',
+                playerNames: [
+                    'PlayerA',
+                    'PlayerB',
+                    'PlayerC',
+                    'PlayerD',
+                    'PlayerE',
+                    'PlayerF',
+                    'PlayerG'
+                ],
+                dealerName: 'PlayerC',
+                sitOutScheme: [
+                    2,
+                    4
+                ]
+            }
+
+            const content = {
+                readerId: 'myReaderId',
+                writerId: 'myWriterId',
+                dataVersion: 1,
+                creationDate: Date.now(),
+                data: [playersSet],
+            }
+
+            cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+            cy.get('@create')
+
+            cy.visit('http://localhost:3000/writer/myWriterId')
+
+            cy.get('#currentDeal_PlayerA').type('{selectAll}{backspace}0')
+            cy.get('#currentDeal_PlayerB').type('{selectAll}{backspace}0')
+            cy.get('#currentDeal_PlayerC').should('not.exist')
+            cy.get('#currentDeal_PlayerD').type('{selectAll}{backspace}0')
+            cy.get('#currentDeal_PlayerE').should('not.exist')
+            cy.get('#currentDeal_PlayerF').type('{selectAll}{backspace}0')
+            cy.get('#currentDeal_PlayerG').should('not.exist')
+
+            cy.get('#popButton').should('be.disabled')
+            cy.get('#dealButton').should('not.be.disabled')
+        })
+
         it('page handles entries for current game correctly: one entry - cannot be solo', function () {
 
             cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
@@ -777,7 +825,7 @@ describe('Doko app', function () {
 
             cy.visit('http://localhost:3000/writer/myWriterId')
 
-            cy.get('#currentDeal_PlayerA').type('5')
+            cy.get('#currentDeal_PlayerA').type('{selectAll}{backspace}5')
             cy.get('#currentDeal_PlayerB')
             cy.get('#currentDeal_PlayerC').should('not.exist')
             cy.get('#currentDeal_PlayerD')
@@ -825,10 +873,10 @@ describe('Doko app', function () {
 
             cy.visit('http://localhost:3000/writer/myWriterId')
 
-            cy.get('#currentDeal_PlayerA').type('5')
+            cy.get('#currentDeal_PlayerA').type('{selectAll}{backspace}5')
             cy.get('#currentDeal_PlayerB')
             cy.get('#currentDeal_PlayerC').should('not.exist')
-            cy.get('#currentDeal_PlayerD').type('17')
+            cy.get('#currentDeal_PlayerD').type('{selectAll}{backspace}17')
             cy.get('#currentDeal_PlayerE').should('not.exist')
             cy.get('#currentDeal_PlayerF')
             cy.get('#currentDeal_PlayerG').should('not.exist')
@@ -873,12 +921,12 @@ describe('Doko app', function () {
 
             cy.visit('http://localhost:3000/writer/myWriterId')
 
-            cy.get('#currentDeal_PlayerA').type('5')
-            cy.get('#currentDeal_PlayerB').type('-5')
+            cy.get('#currentDeal_PlayerA').type('{selectAll}{backspace}5')
+            cy.get('#currentDeal_PlayerB').type('{selectAll}{backspace}-5')
             cy.get('#currentDeal_PlayerC').should('not.exist')
-            cy.get('#currentDeal_PlayerD').type('4')
+            cy.get('#currentDeal_PlayerD').type('{selectAll}{backspace}4')
             cy.get('#currentDeal_PlayerE').should('not.exist')
-            cy.get('#currentDeal_PlayerF').type('-4')
+            cy.get('#currentDeal_PlayerF').type('{selectAll}{backspace}-4')
             cy.get('#currentDeal_PlayerG').should('not.exist')
 
             cy.get('#popButton').should('be.disabled')

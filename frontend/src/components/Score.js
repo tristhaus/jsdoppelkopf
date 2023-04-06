@@ -35,7 +35,7 @@ const completeDiffs = (diffEntries, playerNamesInDeal) => {
 
     playerNamesInDeal.forEach(name => {
         if (!(name in retval) || !retval[name]) {
-            retval[name] = `${- sumOfCurrentEntries / numberOfMissingEntries}`
+            retval[name] = - sumOfCurrentEntries / numberOfMissingEntries
         }
     })
 

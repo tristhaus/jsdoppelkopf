@@ -13,8 +13,8 @@
 
 .overlayBox {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  text-align: center;
   justify-content: center;
   width: 80vw;
   height: 80vh;
@@ -40,20 +40,14 @@
   position: absolute;
 }
 
-.overlayVertical {
-  padding: 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
 .overlayContent {
+  flex: 1 1 auto;
   padding: 10px;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   flex-direction: column;
+  overflow-y: scroll;
 }
 
 .playerSelectionBox {
@@ -61,6 +55,16 @@
   border-radius: 4px;
   padding: 10px;
   margin: 5px;
+  display: flex;
+}
+
+.playerSelectionBottom {
+  padding: 10px;
+  flex: 0 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .dealerRadioButton {

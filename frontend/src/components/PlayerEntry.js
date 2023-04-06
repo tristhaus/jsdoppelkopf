@@ -179,8 +179,8 @@ const PlayerEntry = ({ playerInformation, closeAction, submitAction }) => {
         setBoxes(newBoxes)
     }
 
-    const handleSitOut1 = value => { setSitOut1(Number.parseInt(value) - 1) }
-    const handleSitOut2 = value => { setSitOut2(Number.parseInt(value) - 1) }
+    const handleSitOut1 = value => { setSitOut1(Number.parseInt(value, 10) - 1) }
+    const handleSitOut2 = value => { setSitOut2(Number.parseInt(value, 10) - 1) }
 
     const cancelAction = () => {
         closeAction()
@@ -240,52 +240,52 @@ const PlayerEntry = ({ playerInformation, closeAction, submitAction }) => {
         <>
             <div className="darkBG overlayOutside" onClick={() => { return }} />
             <div className="overlayBox">
-                <div className="overlayVertical">
-                    <div className="overlayContent">
-                        {boxes
-                            .sort((a, b) => a.order - b.order)
-                            .map((box) => (
-                                <div
-                                    draggable={true}
-                                    id={box.id}
-                                    key={box.id}
-                                    onDragOver={(ev) => ev.preventDefault()}
-                                    onDragStart={handleDrag}
-                                    onDrop={handleDrop}
-                                    className="playerSelectionBox"
-                                >
-                                    <input
-                                        className='dealerRadioButton'
-                                        id={box.inputRadioId}
-                                        type="radio"
-                                        name="players"
-                                        value={box.id}
-                                        checked={box.originalIndex === selectedDealerOriginalIndex}
-                                        onChange={() => {
-                                            const localIndex = box.originalIndex
-                                            handleRadioOnInput(localIndex)
-                                        }}
-                                    />
-                                    <input
-                                        className='playerNameInputText'
-                                        id={box.inputTextId}
-                                        type="text"
-                                        value={textInputs[box.originalIndex]}
-                                        onInput={e => {
-                                            const localIndex = box.originalIndex
-                                            handleTextOnInput(e.target.value, localIndex)
-                                        }}
-                                    />
-                                    <button
-                                        className='deletePlayerButton'
-                                        id={box.deleteButtonId}
-                                        disabled={numberOfPlayers <= 4}
-                                        onClick={() => {
-                                            handleRemovePlayer(box.originalIndex)
-                                        }}>{deleteSymbol}</button>
-                                </div>
-                            ))}
-                    </div>
+                <div className="overlayContent">
+                    {boxes
+                        .sort((a, b) => a.order - b.order)
+                        .map((box) => (
+                            <div
+                                draggable={true}
+                                id={box.id}
+                                key={box.id}
+                                onDragOver={(ev) => ev.preventDefault()}
+                                onDragStart={handleDrag}
+                                onDrop={handleDrop}
+                                className="playerSelectionBox"
+                            >
+                                <input
+                                    className='dealerRadioButton'
+                                    id={box.inputRadioId}
+                                    type="radio"
+                                    name="players"
+                                    value={box.id}
+                                    checked={box.originalIndex === selectedDealerOriginalIndex}
+                                    onChange={() => {
+                                        const localIndex = box.originalIndex
+                                        handleRadioOnInput(localIndex)
+                                    }}
+                                />
+                                <input
+                                    className='playerNameInputText'
+                                    id={box.inputTextId}
+                                    type="text"
+                                    value={textInputs[box.originalIndex]}
+                                    onInput={e => {
+                                        const localIndex = box.originalIndex
+                                        handleTextOnInput(e.target.value, localIndex)
+                                    }}
+                                />
+                                <button
+                                    className='deletePlayerButton'
+                                    id={box.deleteButtonId}
+                                    disabled={numberOfPlayers <= 4}
+                                    onClick={() => {
+                                        handleRemovePlayer(box.originalIndex)
+                                    }}>{deleteSymbol}</button>
+                            </div>
+                        ))}
+                </div>
+                <div className="playerSelectionBottom">
                     {numberOfPlayers === 6 && (<div>
                         Aussitzen an Position:
                         <input

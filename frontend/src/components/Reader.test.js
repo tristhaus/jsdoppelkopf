@@ -75,10 +75,10 @@ describe('reader view unit tests', () => {
         const bockereignisse = container.querySelector('#bockereignisse')
         expect(bockereignisse).toBeNull()
 
-        const popButton = container.querySelector('#popButton')
+        const popButton = container.querySelector('.popButton')
         expect(popButton).toBeNull()
 
-        const dealButton = container.querySelector('#dealButton')
+        const dealButton = container.querySelector('.dealButton')
         expect(dealButton).toBeNull()
 
         expect(container.querySelector('#score_PlayerA')).toHaveTextContent('4')

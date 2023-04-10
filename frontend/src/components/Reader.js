@@ -1,12 +1,36 @@
 import { PropTypes } from 'prop-types'
-import { Score } from './Score'
+import { useEffect, useState } from 'react'
+import WideScore from './WideScore'
+import NarrowScore from './NarrowScore'
 
 const Reader = ({ data, reloadAction, }) => {
 
+    const [wideScreen, setWideScreen] = useState(
+        window.matchMedia('(min-width: 768px)').matches
+    )
+
+    useEffect(() => {
+        window
+            .matchMedia('(min-width: 768px)')
+            .addEventListener('change', e => setWideScreen(e.matches))
+    }, [])
+
     const noop = () => { }
 
-    return (
-        <Score
+    if (wideScreen) {
+        return (
+            <WideScore
+                isWriter={false}
+                data={data}
+                addDeal={noop}
+                addMandatorySoloTrigger={noop}
+                popLastEntry={noop}
+                reloadAction={reloadAction}
+            />
+        )
+    }
+    else {
+        return <NarrowScore
             isWriter={false}
             data={data}
             addDeal={noop}
@@ -14,7 +38,7 @@ const Reader = ({ data, reloadAction, }) => {
             popLastEntry={noop}
             reloadAction={reloadAction}
         />
-    )
+    }
 }
 
 Reader.displayName = 'Reader'

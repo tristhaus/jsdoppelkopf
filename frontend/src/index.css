@@ -131,6 +131,15 @@
   border-radius: 5px;
 }
 
+.narrow.playerName,
+.narrow.playerNameDealer {
+  justify-self: left;
+  padding: 0px 10px;
+  border-style: solid;
+  border-width: 5px;
+  border-radius: 5px;
+}
+
 .playerName {
   border-color: rgba(0, 0, 0, 0.0);
 }
@@ -154,7 +163,23 @@
   justify-self: center;
 }
 
+.narrow.lastDeal,
+.narrow.currentDeal,
+.narrow.score,
+.narrow.cash {
+  justify-self: right;
+}
+
 .scoreLabel,
 .score {
   font-weight: bold;
+}
+
+.popButton {
+  margin: 0px 10px;
+}
+
+.narrow.messageArea {
+  margin-top: 1em;
+  text-align: center;
 }

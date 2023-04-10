@@ -75,10 +75,10 @@ describe('writer view unit tests', () => {
         const bockereignisse = container.querySelector('#bockereignisse')
         expect(bockereignisse).toBeDefined()
 
-        const popButton = container.querySelector('#popButton')
+        const popButton = container.querySelector('.popButton')
         expect(popButton).not.toBeDisabled()
 
-        const dealButton = container.querySelector('#dealButton')
+        const dealButton = container.querySelector('.dealButton')
         expect(dealButton).toBeDisabled()
 
         expect(container.querySelector('#score_PlayerA')).toHaveTextContent('4')
@@ -283,7 +283,7 @@ describe('writer view unit tests', () => {
 
         const { container } = render(<Writer writerId={data.writerId} readerId={data.readerId} data={data} />)
 
-        const popButton = container.querySelector('#popButton')
+        const popButton = container.querySelector('.popButton')
         expect(popButton).toBeDisabled()
     })
 })

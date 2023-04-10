@@ -38,7 +38,7 @@ describe('Stress the Doko app', function () {
 
                 cy.get('#bockereignisse').type('{selectAll}{backspace}2')
 
-                cy.get('#dealButton').click()
+                cy.get('.dealButton').click()
             })
 
         })

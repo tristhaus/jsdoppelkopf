@@ -1,8 +1,8 @@
 import { PropTypes } from 'prop-types'
 import { useRef, useState } from 'react'
 import PlayerEntry from './PlayerEntry'
-import { addPresentOrAbsent, completeDiffs, deduceBock } from './Score'
-import { formatCents } from './Score'
+import { addPresentOrAbsent, completeDiffs, deduceBock, formatCents } from './Score'
+import NarrowStatistics from './NarrowStatistics'
 
 const PlayerLine = ({ isWriter, singlePlayerData, isDealer, handleEntryChanged, handleFocus }) => (
     <>
@@ -46,6 +46,7 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
     const playerData = data.playerData
 
     const [message, setMessage] = useState('')
+    const [showStatistics, setShowStatistics] = useState(false)
     const [showPlayerEntry, setShowPlayerEntry] = useState(false)
     const [diffEntries, setDiffEntries] = useState({})
     const [numberOfEvents, setNumberOfEvents] = useState(0)
@@ -160,6 +161,7 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
     return (
         <>
             {showPlayerEntry && (<PlayerEntry playerInformation={{ dealerName: data.dealerName, playerData: data.playerData, }} closeAction={() => setShowPlayerEntry(false)} submitAction={submitNewPlayersAction} />)}
+            {showStatistics && (<NarrowStatistics playerData={data.playerData} closeAction={() => setShowStatistics(false)} />)}
             <div style={{ display: 'grid', gap: '10px', gridTemplateColumns: 'repeat(3, auto)' }}>
                 <button id="readerLinkButton" className='shareButton' onClick={shareReaderLink}>Reader-Link teilen</button>
                 {isWriter && (<button id="writerLinkButton" className='shareButton' onClick={shareWriterLink}>Writer-Link teilen</button>)}
@@ -208,6 +210,9 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
                 />)}
                 <span style={{ gridColumn: '1 / 3' }}>Kassenstand</span>
                 <span id="totalCash" style={{ gridColumn: '3 / -1', justifySelf: 'center' }}>{`${formatCents(data.totalCash)} (inkl. ${formatCents(data.absentPlayerCents)} / Abw.)`}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <button id="statisticsButton" className="bottomButton" onClick={() => { setShowStatistics(true) }}>Statistiken ...</button>
             </div>
             <div className="narrow messageArea">
                 {message}

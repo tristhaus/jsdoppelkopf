@@ -2,6 +2,7 @@ import { PropTypes } from 'prop-types'
 import { useRef, useState } from 'react'
 import PlayerEntry from './PlayerEntry'
 import { addPresentOrAbsent, completeDiffs, deduceBock, formatCents } from './Score'
+import WideStatistics from './WideStatistics'
 
 const CurrentGame = ({ playerData, diffEntries, handleFocus, handleEntryChanged }) => (
     <>
@@ -51,6 +52,7 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
 
     const [message, setMessage] = useState('')
     const [showPlayerEntry, setShowPlayerEntry] = useState(false)
+    const [showStatistics, setShowStatistics] = useState(false)
     const [diffEntries, setDiffEntries] = useState({})
     const [numberOfEvents, setNumberOfEvents] = useState(0)
 
@@ -164,6 +166,7 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
     return (
         <>
             {showPlayerEntry && (<PlayerEntry playerInformation={{ dealerName: data.dealerName, playerData: data.playerData, }} closeAction={() => setShowPlayerEntry(false)} submitAction={submitNewPlayersAction} />)}
+            {showStatistics && (<WideStatistics playerData={data.playerData} closeAction={() => setShowStatistics(false)} />)}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span>
                     <button id="readerLinkButton" className='shareButton' onClick={shareReaderLink}>Reader-Link teilen</button>
@@ -219,6 +222,9 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
                 })}
                 <span style={{ gridColumn: '1 / 3' }}>Aktueller Kassenstand</span>
                 <span id="totalCash" style={{ gridColumn: '3 / -1', justifySelf: 'center' }}>{`${formatCents(data.totalCash)} (inkl. ${formatCents(data.absentPlayerCents)} pro Abwesender)`}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <button id="statisticsButton" className="bottomButton" onClick={() => { setShowStatistics(true) }}>Statistiken ...</button>
             </div>
         </>
     )

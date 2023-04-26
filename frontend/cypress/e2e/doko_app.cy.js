@@ -495,6 +495,175 @@ viewportInfos.forEach(viewportInfo => {
                 }
             })
 
+            it(`statistics box has correct content [${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD',
+                        'PlayerE',
+                        'PlayerF',
+                        'PlayerG'
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: [
+                        2,
+                        4
+                    ]
+                }
+
+                const deal1 = {
+                    kind: 'deal',
+                    events: 1,
+                    changes: [
+                        {
+                            name: 'PlayerA',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerB',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerD',
+                            diff: -1
+                        },
+                        {
+                            name: 'PlayerF',
+                            diff: -1
+                        }
+                    ],
+                }
+
+                const deal2 = {
+                    kind: 'deal',
+                    events: 0,
+                    changes: [
+                        {
+                            name: 'PlayerB',
+                            diff: -2
+                        },
+                        {
+                            name: 'PlayerC',
+                            diff: -2
+                        },
+                        {
+                            name: 'PlayerE',
+                            diff: 6
+                        },
+                        {
+                            name: 'PlayerG',
+                            diff: -2
+                        }
+                    ],
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet, deal1, deal2],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/writer/myWriterId')
+
+                cy.get('#statisticsButton').click()
+
+                cy.get('#statistics_name_PlayerA').contains('PlayerA')
+                cy.get('#statistics_name_PlayerB').contains('PlayerB')
+                cy.get('#statistics_name_PlayerC').contains('PlayerC')
+                cy.get('#statistics_name_PlayerD').contains('PlayerD')
+                cy.get('#statistics_name_PlayerE').contains('PlayerE')
+                cy.get('#statistics_name_PlayerF').contains('PlayerF')
+                cy.get('#statistics_name_PlayerG').contains('PlayerG')
+
+                cy.get('#statistics_numWin_PlayerA').contains('1')
+                cy.get('#statistics_numWin_PlayerB').contains('1')
+                cy.get('#statistics_numWin_PlayerC').contains('0')
+                cy.get('#statistics_numWin_PlayerD').contains('0')
+                cy.get('#statistics_numWin_PlayerE').contains('1')
+                cy.get('#statistics_numWin_PlayerF').contains('0')
+                cy.get('#statistics_numWin_PlayerG').contains('0')
+
+                cy.get('#statistics_numLoss_PlayerA').contains('0')
+                cy.get('#statistics_numLoss_PlayerB').contains('1')
+                cy.get('#statistics_numLoss_PlayerC').contains('1')
+                cy.get('#statistics_numLoss_PlayerD').contains('1')
+                cy.get('#statistics_numLoss_PlayerE').contains('0')
+                cy.get('#statistics_numLoss_PlayerF').contains('1')
+                cy.get('#statistics_numLoss_PlayerG').contains('1')
+
+                cy.get('#statistics_num_PlayerA').contains('1')
+                cy.get('#statistics_num_PlayerB').contains('2')
+                cy.get('#statistics_num_PlayerC').contains('1')
+                cy.get('#statistics_num_PlayerD').contains('1')
+                cy.get('#statistics_num_PlayerE').contains('1')
+                cy.get('#statistics_num_PlayerF').contains('1')
+                cy.get('#statistics_num_PlayerG').contains('1')
+
+                cy.get('#statistics_numWonSolo_PlayerA').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerB').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerC').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerD').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerE').contains('1')
+                cy.get('#statistics_numWonSolo_PlayerF').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerG').contains('0')
+
+                cy.get('#statistics_numLostSolo_PlayerA').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerB').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerC').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerD').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerE').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerF').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerG').contains('0')
+
+                cy.get('#statistics_soloScore_PlayerA').contains('0')
+                cy.get('#statistics_soloScore_PlayerB').contains('0')
+                cy.get('#statistics_soloScore_PlayerC').contains('0')
+                cy.get('#statistics_soloScore_PlayerD').contains('0')
+                cy.get('#statistics_soloScore_PlayerE').contains('12')
+                cy.get('#statistics_soloScore_PlayerF').contains('0')
+                cy.get('#statistics_soloScore_PlayerG').contains('0')
+
+                cy.get('#statistics_maxWin_PlayerA').contains('1')
+                cy.get('#statistics_maxWin_PlayerB').contains('1')
+                cy.get('#statistics_maxWin_PlayerC').contains('0')
+                cy.get('#statistics_maxWin_PlayerD').contains('0')
+                cy.get('#statistics_maxWin_PlayerE').contains('12')
+                cy.get('#statistics_maxWin_PlayerF').contains('0')
+                cy.get('#statistics_maxWin_PlayerG').contains('0')
+
+                cy.get('#statistics_maxLoss_PlayerA').contains('0')
+                cy.get('#statistics_maxLoss_PlayerB').contains('-4')
+                cy.get('#statistics_maxLoss_PlayerC').contains('-4')
+                cy.get('#statistics_maxLoss_PlayerD').contains('-1')
+                cy.get('#statistics_maxLoss_PlayerE').contains('0')
+                cy.get('#statistics_maxLoss_PlayerF').contains('-1')
+                cy.get('#statistics_maxLoss_PlayerG').contains('-4')
+
+                cy.get('#statistics_noBockScore_PlayerA').contains('1')
+                cy.get('#statistics_noBockScore_PlayerB').contains('-1')
+                cy.get('#statistics_noBockScore_PlayerC').contains('-2')
+                cy.get('#statistics_noBockScore_PlayerD').contains('-1')
+                cy.get('#statistics_noBockScore_PlayerE').contains('6')
+                cy.get('#statistics_noBockScore_PlayerF').contains('-1')
+                cy.get('#statistics_noBockScore_PlayerG').contains('-2')
+
+                cy.get('#statitistics_OkButton').click()
+
+                cy.get('#statistics_name_PlayerA').should('not.exist')
+            })
+
             it(`page displays error when using bad ID [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
@@ -2663,6 +2832,175 @@ viewportInfos.forEach(viewportInfo => {
                 else {
                     cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
                 }
+            })
+
+            it(`statistics box has correct content [${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD',
+                        'PlayerE',
+                        'PlayerF',
+                        'PlayerG'
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: [
+                        2,
+                        4
+                    ]
+                }
+
+                const deal1 = {
+                    kind: 'deal',
+                    events: 1,
+                    changes: [
+                        {
+                            name: 'PlayerA',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerB',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerD',
+                            diff: -1
+                        },
+                        {
+                            name: 'PlayerF',
+                            diff: -1
+                        }
+                    ],
+                }
+
+                const deal2 = {
+                    kind: 'deal',
+                    events: 0,
+                    changes: [
+                        {
+                            name: 'PlayerB',
+                            diff: -2
+                        },
+                        {
+                            name: 'PlayerC',
+                            diff: -2
+                        },
+                        {
+                            name: 'PlayerE',
+                            diff: 6
+                        },
+                        {
+                            name: 'PlayerG',
+                            diff: -2
+                        }
+                    ],
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet, deal1, deal2],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/myReaderId')
+
+                cy.get('#statisticsButton').click()
+
+                cy.get('#statistics_name_PlayerA').contains('PlayerA')
+                cy.get('#statistics_name_PlayerB').contains('PlayerB')
+                cy.get('#statistics_name_PlayerC').contains('PlayerC')
+                cy.get('#statistics_name_PlayerD').contains('PlayerD')
+                cy.get('#statistics_name_PlayerE').contains('PlayerE')
+                cy.get('#statistics_name_PlayerF').contains('PlayerF')
+                cy.get('#statistics_name_PlayerG').contains('PlayerG')
+
+                cy.get('#statistics_numWin_PlayerA').contains('1')
+                cy.get('#statistics_numWin_PlayerB').contains('1')
+                cy.get('#statistics_numWin_PlayerC').contains('0')
+                cy.get('#statistics_numWin_PlayerD').contains('0')
+                cy.get('#statistics_numWin_PlayerE').contains('1')
+                cy.get('#statistics_numWin_PlayerF').contains('0')
+                cy.get('#statistics_numWin_PlayerG').contains('0')
+
+                cy.get('#statistics_numLoss_PlayerA').contains('0')
+                cy.get('#statistics_numLoss_PlayerB').contains('1')
+                cy.get('#statistics_numLoss_PlayerC').contains('1')
+                cy.get('#statistics_numLoss_PlayerD').contains('1')
+                cy.get('#statistics_numLoss_PlayerE').contains('0')
+                cy.get('#statistics_numLoss_PlayerF').contains('1')
+                cy.get('#statistics_numLoss_PlayerG').contains('1')
+
+                cy.get('#statistics_num_PlayerA').contains('1')
+                cy.get('#statistics_num_PlayerB').contains('2')
+                cy.get('#statistics_num_PlayerC').contains('1')
+                cy.get('#statistics_num_PlayerD').contains('1')
+                cy.get('#statistics_num_PlayerE').contains('1')
+                cy.get('#statistics_num_PlayerF').contains('1')
+                cy.get('#statistics_num_PlayerG').contains('1')
+
+                cy.get('#statistics_numWonSolo_PlayerA').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerB').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerC').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerD').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerE').contains('1')
+                cy.get('#statistics_numWonSolo_PlayerF').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerG').contains('0')
+
+                cy.get('#statistics_numLostSolo_PlayerA').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerB').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerC').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerD').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerE').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerF').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerG').contains('0')
+
+                cy.get('#statistics_soloScore_PlayerA').contains('0')
+                cy.get('#statistics_soloScore_PlayerB').contains('0')
+                cy.get('#statistics_soloScore_PlayerC').contains('0')
+                cy.get('#statistics_soloScore_PlayerD').contains('0')
+                cy.get('#statistics_soloScore_PlayerE').contains('12')
+                cy.get('#statistics_soloScore_PlayerF').contains('0')
+                cy.get('#statistics_soloScore_PlayerG').contains('0')
+
+                cy.get('#statistics_maxWin_PlayerA').contains('1')
+                cy.get('#statistics_maxWin_PlayerB').contains('1')
+                cy.get('#statistics_maxWin_PlayerC').contains('0')
+                cy.get('#statistics_maxWin_PlayerD').contains('0')
+                cy.get('#statistics_maxWin_PlayerE').contains('12')
+                cy.get('#statistics_maxWin_PlayerF').contains('0')
+                cy.get('#statistics_maxWin_PlayerG').contains('0')
+
+                cy.get('#statistics_maxLoss_PlayerA').contains('0')
+                cy.get('#statistics_maxLoss_PlayerB').contains('-4')
+                cy.get('#statistics_maxLoss_PlayerC').contains('-4')
+                cy.get('#statistics_maxLoss_PlayerD').contains('-1')
+                cy.get('#statistics_maxLoss_PlayerE').contains('0')
+                cy.get('#statistics_maxLoss_PlayerF').contains('-1')
+                cy.get('#statistics_maxLoss_PlayerG').contains('-4')
+
+                cy.get('#statistics_noBockScore_PlayerA').contains('1')
+                cy.get('#statistics_noBockScore_PlayerB').contains('-1')
+                cy.get('#statistics_noBockScore_PlayerC').contains('-2')
+                cy.get('#statistics_noBockScore_PlayerD').contains('-1')
+                cy.get('#statistics_noBockScore_PlayerE').contains('6')
+                cy.get('#statistics_noBockScore_PlayerF').contains('-1')
+                cy.get('#statistics_noBockScore_PlayerG').contains('-2')
+
+                cy.get('#statitistics_OkButton').click()
+
+                cy.get('#statistics_name_PlayerA').should('not.exist')
             })
 
             it(`page displays error when using bad ID [${viewportInfo.displayName}]`, function () {

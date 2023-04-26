@@ -20,6 +20,23 @@ if (process.env.NODE_ENV === 'test') {
 }
 
 app.use('/static', express.static(path.join(__dirname, './build/static')))
+
+const resources = [
+    'asset-manifest.json',
+    'favicon.ico',
+    'index.html',
+    'logo192.png',
+    'logo512.png',
+    'manifest.json',
+    'robots.txt',
+]
+
+resources.forEach(resource => {
+    app.get(`/${resource}`, (req, res) => {
+        res.sendFile(resource, { root: path.join(__dirname, './build') })
+    })
+})
+
 app.get('*', (req, res) => {
     res.sendFile('index.html', { root: path.join(__dirname, './build') })
 })

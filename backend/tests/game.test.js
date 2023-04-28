@@ -1,4 +1,4 @@
-const { calculatePlayerData, createBockPreview, constructBockHelper, determineDealer, getMultiplier, pointDifferenceToCents, validateDeal, validateMandatorySoloTrigger, validatePlayerSet, } = require('../logic/game')
+const { calculatePlayerData, createBockPreview, constructBockHelper, determineDealer, findSoloPlayer, getMultiplier, pointDifferenceToCents, validateDeal, validateMandatorySoloTrigger, validatePlayerSet, } = require('../logic/game')
 
 describe('validate PlayerSet', () => {
 
@@ -583,6 +583,15 @@ describe('calculate player data', () => {
         expect(playerData[0].score).toBe(6)
         expect(playerData[0].lastDealDiff).toBe(3)
         expect(playerData[0].cents).toBe(0)
+        expect(playerData[0].maxWin).toBe(3)
+        expect(playerData[0].maxLoss).toBe(0)
+        expect(playerData[0].noBockScore).toBe(6)
+        expect(playerData[0].num).toBe(3)
+        expect(playerData[0].numWin).toBe(3)
+        expect(playerData[0].numLoss).toBe(0)
+        expect(playerData[0].soloScore).toBe(0)
+        expect(playerData[0].numWonSolo).toBe(0)
+        expect(playerData[0].numLostSolo).toBe(0)
 
         expect(playerData[1].name).toBe('B')
         expect(playerData[1].present).toBe(true)
@@ -590,6 +599,15 @@ describe('calculate player data', () => {
         expect(playerData[1].score).toBe(2)
         expect(playerData[1].lastDealDiff).toBe(3)
         expect(playerData[1].cents).toBe(2)
+        expect(playerData[1].maxWin).toBe(3)
+        expect(playerData[1].maxLoss).toBe(-2)
+        expect(playerData[1].noBockScore).toBe(2)
+        expect(playerData[1].num).toBe(3)
+        expect(playerData[1].numWin).toBe(2)
+        expect(playerData[1].numLoss).toBe(1)
+        expect(playerData[1].soloScore).toBe(0)
+        expect(playerData[1].numWonSolo).toBe(0)
+        expect(playerData[1].numLostSolo).toBe(0)
 
         expect(playerData[2].name).toBe('C')
         expect(playerData[2].present).toBe(true)
@@ -597,6 +615,15 @@ describe('calculate player data', () => {
         expect(playerData[2].score).toBe(-2)
         expect(playerData[2].lastDealDiff).toBe(-3)
         expect(playerData[2].cents).toBe(4)
+        expect(playerData[2].maxWin).toBe(2)
+        expect(playerData[2].maxLoss).toBe(-3)
+        expect(playerData[2].noBockScore).toBe(-2)
+        expect(playerData[2].num).toBe(3)
+        expect(playerData[2].numWin).toBe(1)
+        expect(playerData[2].numLoss).toBe(2)
+        expect(playerData[2].soloScore).toBe(0)
+        expect(playerData[2].numWonSolo).toBe(0)
+        expect(playerData[2].numLostSolo).toBe(0)
 
         expect(playerData[3].name).toBe('D')
         expect(playerData[3].present).toBe(true)
@@ -604,6 +631,15 @@ describe('calculate player data', () => {
         expect(playerData[3].score).toBe(-4)
         expect(playerData[3].lastDealDiff).toBe(-3)
         expect(playerData[3].cents).toBe(5)
+        expect(playerData[3].maxWin).toBe(0)
+        expect(playerData[3].maxLoss).toBe(-3)
+        expect(playerData[3].noBockScore).toBe(-4)
+        expect(playerData[3].num).toBe(2)
+        expect(playerData[3].numWin).toBe(0)
+        expect(playerData[3].numLoss).toBe(2)
+        expect(playerData[3].soloScore).toBe(0)
+        expect(playerData[3].numWonSolo).toBe(0)
+        expect(playerData[3].numLostSolo).toBe(0)
 
         expect(playerData[4].name).toBe('E')
         expect(playerData[4].present).toBe(true)
@@ -611,6 +647,15 @@ describe('calculate player data', () => {
         expect(playerData[4].score).toBe(-2)
         expect(playerData[4].lastDealDiff).toBeNull()
         expect(playerData[4].cents).toBe(4)
+        expect(playerData[4].maxWin).toBe(0)
+        expect(playerData[4].maxLoss).toBe(-2)
+        expect(playerData[4].noBockScore).toBe(-2)
+        expect(playerData[4].num).toBe(1)
+        expect(playerData[4].numWin).toBe(0)
+        expect(playerData[4].numLoss).toBe(1)
+        expect(playerData[4].soloScore).toBe(0)
+        expect(playerData[4].numWonSolo).toBe(0)
+        expect(playerData[4].numLostSolo).toBe(0)
 
         expect(dealerName).toBe('A')
 
@@ -688,6 +733,15 @@ describe('calculate player data', () => {
         expect(playerData[0].score).toBe(6)
         expect(playerData[0].lastDealDiff).toBe(6)
         expect(playerData[0].cents).toBe(0)
+        expect(playerData[0].maxWin).toBe(6)
+        expect(playerData[0].maxLoss).toBe(0)
+        expect(playerData[0].noBockScore).toBe(6)
+        expect(playerData[0].num).toBe(1)
+        expect(playerData[0].numWin).toBe(1)
+        expect(playerData[0].numLoss).toBe(0)
+        expect(playerData[0].soloScore).toBe(0)
+        expect(playerData[0].numWonSolo).toBe(0)
+        expect(playerData[0].numLostSolo).toBe(0)
 
         expect(playerData[1].name).toBe('F')
         expect(playerData[1].present).toBe(true)
@@ -695,6 +749,15 @@ describe('calculate player data', () => {
         expect(playerData[1].score).toBe(-6)
         expect(playerData[1].lastDealDiff).toBe(-6)
         expect(playerData[1].cents).toBe(6)
+        expect(playerData[1].maxWin).toBe(0)
+        expect(playerData[1].maxLoss).toBe(-6)
+        expect(playerData[1].noBockScore).toBe(-6)
+        expect(playerData[1].num).toBe(1)
+        expect(playerData[1].numWin).toBe(0)
+        expect(playerData[1].numLoss).toBe(1)
+        expect(playerData[1].soloScore).toBe(0)
+        expect(playerData[1].numWonSolo).toBe(0)
+        expect(playerData[1].numLostSolo).toBe(0)
 
         expect(playerData[2].name).toBe('G')
         expect(playerData[2].present).toBe(true)
@@ -702,6 +765,15 @@ describe('calculate player data', () => {
         expect(playerData[2].score).toBe(6)
         expect(playerData[2].lastDealDiff).toBe(6)
         expect(playerData[2].cents).toBe(0)
+        expect(playerData[2].maxWin).toBe(6)
+        expect(playerData[2].maxLoss).toBe(0)
+        expect(playerData[2].noBockScore).toBe(6)
+        expect(playerData[2].num).toBe(1)
+        expect(playerData[2].numWin).toBe(1)
+        expect(playerData[2].numLoss).toBe(0)
+        expect(playerData[2].soloScore).toBe(0)
+        expect(playerData[2].numWonSolo).toBe(0)
+        expect(playerData[2].numLostSolo).toBe(0)
 
         expect(playerData[3].name).toBe('H')
         expect(playerData[3].present).toBe(true)
@@ -709,6 +781,15 @@ describe('calculate player data', () => {
         expect(playerData[3].score).toBe(-6)
         expect(playerData[3].lastDealDiff).toBe(-6)
         expect(playerData[3].cents).toBe(6)
+        expect(playerData[3].maxWin).toBe(0)
+        expect(playerData[3].maxLoss).toBe(-6)
+        expect(playerData[3].noBockScore).toBe(-6)
+        expect(playerData[3].num).toBe(1)
+        expect(playerData[3].numWin).toBe(0)
+        expect(playerData[3].numLoss).toBe(1)
+        expect(playerData[3].soloScore).toBe(0)
+        expect(playerData[3].numWonSolo).toBe(0)
+        expect(playerData[3].numLostSolo).toBe(0)
 
         expect(playerData[4].name).toBe('A')
         expect(playerData[4].present).toBe(false)
@@ -716,6 +797,15 @@ describe('calculate player data', () => {
         expect(playerData[4].score).toBe(4)
         expect(playerData[4].lastDealDiff).toBeNull()
         expect(playerData[4].cents).toBe(1)
+        expect(playerData[4].maxWin).toBe(4)
+        expect(playerData[4].maxLoss).toBe(0)
+        expect(playerData[4].noBockScore).toBe(4)
+        expect(playerData[4].num).toBe(1)
+        expect(playerData[4].numWin).toBe(1)
+        expect(playerData[4].numLoss).toBe(0)
+        expect(playerData[4].soloScore).toBe(0)
+        expect(playerData[4].numWonSolo).toBe(0)
+        expect(playerData[4].numLostSolo).toBe(0)
 
         expect(playerData[5].name).toBe('B')
         expect(playerData[5].present).toBe(false)
@@ -723,6 +813,15 @@ describe('calculate player data', () => {
         expect(playerData[5].score).toBe(4)
         expect(playerData[5].lastDealDiff).toBeNull()
         expect(playerData[5].cents).toBe(1)
+        expect(playerData[5].maxWin).toBe(4)
+        expect(playerData[5].maxLoss).toBe(0)
+        expect(playerData[5].noBockScore).toBe(4)
+        expect(playerData[5].num).toBe(1)
+        expect(playerData[5].numWin).toBe(1)
+        expect(playerData[5].numLoss).toBe(0)
+        expect(playerData[5].soloScore).toBe(0)
+        expect(playerData[5].numWonSolo).toBe(0)
+        expect(playerData[5].numLostSolo).toBe(0)
 
         expect(playerData[6].name).toBe('C')
         expect(playerData[6].present).toBe(false)
@@ -730,6 +829,15 @@ describe('calculate player data', () => {
         expect(playerData[6].score).toBe(-4)
         expect(playerData[6].lastDealDiff).toBeNull()
         expect(playerData[6].cents).toBe(5)
+        expect(playerData[6].maxWin).toBe(0)
+        expect(playerData[6].maxLoss).toBe(-4)
+        expect(playerData[6].noBockScore).toBe(-4)
+        expect(playerData[6].num).toBe(1)
+        expect(playerData[6].numWin).toBe(0)
+        expect(playerData[6].numLoss).toBe(1)
+        expect(playerData[6].soloScore).toBe(0)
+        expect(playerData[6].numWonSolo).toBe(0)
+        expect(playerData[6].numLostSolo).toBe(0)
 
         expect(playerData[7].name).toBe('D')
         expect(playerData[7].present).toBe(false)
@@ -737,6 +845,15 @@ describe('calculate player data', () => {
         expect(playerData[7].score).toBe(-4)
         expect(playerData[7].lastDealDiff).toBeNull()
         expect(playerData[7].cents).toBe(5)
+        expect(playerData[7].maxWin).toBe(0)
+        expect(playerData[7].maxLoss).toBe(-4)
+        expect(playerData[7].noBockScore).toBe(-4)
+        expect(playerData[7].num).toBe(1)
+        expect(playerData[7].numWin).toBe(0)
+        expect(playerData[7].numLoss).toBe(1)
+        expect(playerData[7].soloScore).toBe(0)
+        expect(playerData[7].numWonSolo).toBe(0)
+        expect(playerData[7].numLostSolo).toBe(0)
 
         expect(dealerName).toBe('F')
 
@@ -801,6 +918,15 @@ describe('calculate player data', () => {
         expect(playerData[0].score).toBe(0)
         expect(playerData[0].lastDealDiff).toBeNull()
         expect(playerData[0].cents).toBe(3)
+        expect(playerData[0].maxWin).toBe(0)
+        expect(playerData[0].maxLoss).toBe(0)
+        expect(playerData[0].noBockScore).toBe(0)
+        expect(playerData[0].num).toBe(0)
+        expect(playerData[0].numWin).toBe(0)
+        expect(playerData[0].numLoss).toBe(0)
+        expect(playerData[0].soloScore).toBe(0)
+        expect(playerData[0].numWonSolo).toBe(0)
+        expect(playerData[0].numLostSolo).toBe(0)
 
         expect(playerData[1].name).toBe('B')
         expect(playerData[1].present).toBe(true)
@@ -808,6 +934,15 @@ describe('calculate player data', () => {
         expect(playerData[1].score).toBe(6)
         expect(playerData[1].lastDealDiff).toBe(6)
         expect(playerData[1].cents).toBe(0)
+        expect(playerData[1].maxWin).toBe(6)
+        expect(playerData[1].maxLoss).toBe(0)
+        expect(playerData[1].noBockScore).toBe(6)
+        expect(playerData[1].num).toBe(1)
+        expect(playerData[1].numWin).toBe(1)
+        expect(playerData[1].numLoss).toBe(0)
+        expect(playerData[1].soloScore).toBe(0)
+        expect(playerData[1].numWonSolo).toBe(0)
+        expect(playerData[1].numLostSolo).toBe(0)
 
         expect(playerData[2].name).toBe('C')
         expect(playerData[2].present).toBe(true)
@@ -815,6 +950,15 @@ describe('calculate player data', () => {
         expect(playerData[2].score).toBe(0)
         expect(playerData[2].lastDealDiff).toBeNull()
         expect(playerData[2].cents).toBe(3)
+        expect(playerData[2].maxWin).toBe(0)
+        expect(playerData[2].maxLoss).toBe(0)
+        expect(playerData[2].noBockScore).toBe(0)
+        expect(playerData[2].num).toBe(0)
+        expect(playerData[2].numWin).toBe(0)
+        expect(playerData[2].numLoss).toBe(0)
+        expect(playerData[2].soloScore).toBe(0)
+        expect(playerData[2].numWonSolo).toBe(0)
+        expect(playerData[2].numLostSolo).toBe(0)
 
         expect(playerData[3].name).toBe('E')
         expect(playerData[3].present).toBe(true)
@@ -822,6 +966,15 @@ describe('calculate player data', () => {
         expect(playerData[3].score).toBe(0)
         expect(playerData[3].lastDealDiff).toBeNull()
         expect(playerData[3].cents).toBe(3)
+        expect(playerData[3].maxWin).toBe(0)
+        expect(playerData[3].maxLoss).toBe(0)
+        expect(playerData[3].noBockScore).toBe(0)
+        expect(playerData[3].num).toBe(0)
+        expect(playerData[3].numWin).toBe(0)
+        expect(playerData[3].numLoss).toBe(0)
+        expect(playerData[3].soloScore).toBe(0)
+        expect(playerData[3].numWonSolo).toBe(0)
+        expect(playerData[3].numLostSolo).toBe(0)
 
         expect(playerData[4].name).toBe('G')
         expect(playerData[4].present).toBe(true)
@@ -829,6 +982,15 @@ describe('calculate player data', () => {
         expect(playerData[4].score).toBe(-6)
         expect(playerData[4].lastDealDiff).toBe(-6)
         expect(playerData[4].cents).toBe(6)
+        expect(playerData[4].maxWin).toBe(0)
+        expect(playerData[4].maxLoss).toBe(-6)
+        expect(playerData[4].noBockScore).toBe(-6)
+        expect(playerData[4].num).toBe(1)
+        expect(playerData[4].numWin).toBe(0)
+        expect(playerData[4].numLoss).toBe(1)
+        expect(playerData[4].soloScore).toBe(0)
+        expect(playerData[4].numWonSolo).toBe(0)
+        expect(playerData[4].numLostSolo).toBe(0)
 
         expect(playerData[5].name).toBe('D')
         expect(playerData[5].present).toBe(false)
@@ -836,6 +998,15 @@ describe('calculate player data', () => {
         expect(playerData[5].score).toBe(6)
         expect(playerData[5].lastDealDiff).toBe(6)
         expect(playerData[5].cents).toBe(0)
+        expect(playerData[5].maxWin).toBe(6)
+        expect(playerData[5].maxLoss).toBe(0)
+        expect(playerData[5].noBockScore).toBe(6)
+        expect(playerData[5].num).toBe(1)
+        expect(playerData[5].numWin).toBe(1)
+        expect(playerData[5].numLoss).toBe(0)
+        expect(playerData[5].soloScore).toBe(0)
+        expect(playerData[5].numWonSolo).toBe(0)
+        expect(playerData[5].numLostSolo).toBe(0)
 
         expect(playerData[6].name).toBe('F')
         expect(playerData[6].present).toBe(false)
@@ -843,11 +1014,147 @@ describe('calculate player data', () => {
         expect(playerData[6].score).toBe(-6)
         expect(playerData[6].lastDealDiff).toBe(-6)
         expect(playerData[6].cents).toBe(6)
+        expect(playerData[6].maxWin).toBe(0)
+        expect(playerData[6].maxLoss).toBe(-6)
+        expect(playerData[6].noBockScore).toBe(-6)
+        expect(playerData[6].num).toBe(1)
+        expect(playerData[6].numWin).toBe(0)
+        expect(playerData[6].numLoss).toBe(1)
+        expect(playerData[6].soloScore).toBe(0)
+        expect(playerData[6].numWonSolo).toBe(0)
+        expect(playerData[6].numLostSolo).toBe(0)
 
         expect(dealerName).toBe('B')
 
         expect(totalCash).toBe(21 + 1 * 3)
         expect(absentPlayerCents).toBe(3)
+    })
+
+    test('4-d-solo: solo and Bock', () => {
+        const playersSet1 = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D'],
+            dealerName: 'B',
+            sitOutScheme: []
+        }
+
+        const deal1 = {
+            kind: 'deal',
+            events: 2,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 1
+                },
+                {
+                    name: 'B',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: -1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                }
+            ]
+        }
+
+        const deal2 = {
+            kind: 'deal',
+            events: 0,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 6
+                },
+                {
+                    name: 'B',
+                    diff: -2
+                },
+                {
+                    name: 'C',
+                    diff: -2
+                },
+                {
+                    name: 'D',
+                    diff: -2
+                }
+            ]
+        }
+
+        const data = [playersSet1, deal1, deal2]
+
+        const { playerData, dealerName, totalCash, absentPlayerCents, } = calculatePlayerData(data)
+        expect(playerData[0].name).toBe('A')
+        expect(playerData[0].present).toBe(true)
+        expect(playerData[0].playing).toBe(true)
+        expect(playerData[0].score).toBe(25)
+        expect(playerData[0].lastDealDiff).toBe(6)
+        expect(playerData[0].cents).toBe(0)
+        expect(playerData[0].maxWin).toBe(24)
+        expect(playerData[0].maxLoss).toBe(0)
+        expect(playerData[0].noBockScore).toBe(7)
+        expect(playerData[0].num).toBe(2)
+        expect(playerData[0].numWin).toBe(2)
+        expect(playerData[0].numLoss).toBe(0)
+        expect(playerData[0].soloScore).toBe(24)
+        expect(playerData[0].numWonSolo).toBe(1)
+        expect(playerData[0].numLostSolo).toBe(0)
+
+        expect(playerData[1].name).toBe('B')
+        expect(playerData[1].present).toBe(true)
+        expect(playerData[1].playing).toBe(true)
+        expect(playerData[1].score).toBe(-7)
+        expect(playerData[1].lastDealDiff).toBe(-2)
+        expect(playerData[1].cents).toBe(16)
+        expect(playerData[1].maxWin).toBe(1)
+        expect(playerData[1].maxLoss).toBe(-8)
+        expect(playerData[1].noBockScore).toBe(-1)
+        expect(playerData[1].num).toBe(2)
+        expect(playerData[1].numWin).toBe(1)
+        expect(playerData[1].numLoss).toBe(1)
+        expect(playerData[1].soloScore).toBe(0)
+        expect(playerData[1].numWonSolo).toBe(0)
+        expect(playerData[1].numLostSolo).toBe(0)
+
+        expect(playerData[2].name).toBe('C')
+        expect(playerData[2].present).toBe(true)
+        expect(playerData[2].playing).toBe(true)
+        expect(playerData[2].score).toBe(-9)
+        expect(playerData[2].lastDealDiff).toBe(-2)
+        expect(playerData[2].cents).toBe(17)
+        expect(playerData[2].maxWin).toBe(0)
+        expect(playerData[2].maxLoss).toBe(-8)
+        expect(playerData[2].noBockScore).toBe(-3)
+        expect(playerData[2].num).toBe(2)
+        expect(playerData[2].numWin).toBe(0)
+        expect(playerData[2].numLoss).toBe(2)
+        expect(playerData[2].soloScore).toBe(0)
+        expect(playerData[2].numWonSolo).toBe(0)
+        expect(playerData[2].numLostSolo).toBe(0)
+
+        expect(playerData[3].name).toBe('D')
+        expect(playerData[3].present).toBe(true)
+        expect(playerData[3].playing).toBe(true)
+        expect(playerData[3].score).toBe(-9)
+        expect(playerData[3].lastDealDiff).toBe(-2)
+        expect(playerData[3].cents).toBe(17)
+        expect(playerData[3].maxWin).toBe(0)
+        expect(playerData[3].maxLoss).toBe(-8)
+        expect(playerData[3].noBockScore).toBe(-3)
+        expect(playerData[3].num).toBe(2)
+        expect(playerData[3].numWin).toBe(0)
+        expect(playerData[3].numLoss).toBe(2)
+        expect(playerData[3].soloScore).toBe(0)
+        expect(playerData[3].numWonSolo).toBe(0)
+        expect(playerData[3].numLostSolo).toBe(0)
+
+        expect(dealerName).toBe('D')
+
+        expect(totalCash).toBe(50 + 4 * 12)
+        expect(absentPlayerCents).toBe(12)
     })
 })
 
@@ -1760,5 +2067,108 @@ describe('convert point difference to cents', () => {
 
         const result = pointDifferenceToCents(7)
         expect(result).toBe(3)
+    })
+})
+
+describe('find solo player', () => {
+
+    test('normal game has no solo player', () => {
+
+        const changes = [
+            {
+                name: 'A',
+                diff: 6
+            },
+            {
+                name: 'B',
+                diff: 6
+            },
+            {
+                name: 'C',
+                diff: -6
+            },
+            {
+                name: 'D',
+                diff: -6
+            }
+        ]
+
+        const result = findSoloPlayer(changes)
+        expect(result).toBeNull()
+    })
+
+    test('zero game has no solo player', () => {
+
+        const changes = [
+            {
+                name: 'A',
+                diff: 0
+            },
+            {
+                name: 'B',
+                diff: 0
+            },
+            {
+                name: 'C',
+                diff: 0
+            },
+            {
+                name: 'D',
+                diff: 0
+            }
+        ]
+
+        const result = findSoloPlayer(changes)
+        expect(result).toBeNull()
+    })
+
+    test('won solo has a solo player', () => {
+
+        const changes = [
+            {
+                name: 'A',
+                diff: 3
+            },
+            {
+                name: 'B',
+                diff: -1
+            },
+            {
+                name: 'C',
+                diff: -1
+            },
+            {
+                name: 'D',
+                diff: -1
+            }
+        ]
+
+        const result = findSoloPlayer(changes)
+        expect(result).toBe('A')
+    })
+
+    test('lost solo has a solo player', () => {
+
+        const changes = [
+            {
+                name: 'A',
+                diff: 1
+            },
+            {
+                name: 'B',
+                diff: 1
+            },
+            {
+                name: 'C',
+                diff: -3
+            },
+            {
+                name: 'D',
+                diff: 1
+            }
+        ]
+
+        const result = findSoloPlayer(changes)
+        expect(result).toBe('C')
     })
 })

@@ -119,6 +119,22 @@ const pointDifferenceToCents = difference => {
     return Number(BigInt.asIntN(64, BigInt(difference) * BigInt(config.POINT_TO_CENT_NUMERATOR) / BigInt(config.POINT_TO_CENT_DENOMINATOR)))
 }
 
+const findSoloPlayer = changes => {
+    const losses = changes.filter(change => change.diff < 0)
+    if (losses.length === 2) {
+        return null
+    }
+
+    switch (losses.length) {
+        case 1:
+            return losses[0].name
+        case 3:
+            return changes.filter(change => change.diff > 0)[0].name
+        default:
+            return null
+    }
+}
+
 const calculatePlayerData = data => {
 
     const relevantPlayersSetIndex = lodash.findLastIndex(data, entry => entry.kind === 'playersSet')
@@ -151,7 +167,18 @@ const calculatePlayerData = data => {
 
     const bockHelper = constructBockHelper(data)
 
-    allPlayers.forEach(player => player.score = 0)
+    allPlayers.forEach(player => {
+        player.score = 0
+        player.maxWin = 0
+        player.maxLoss = 0
+        player.noBockScore = 0
+        player.num = 0
+        player.numWin = 0
+        player.numLoss = 0
+        player.soloScore = 0
+        player.numWonSolo = 0
+        player.numLostSolo = 0
+    })
 
     let gameIndex = 0
 
@@ -159,8 +186,23 @@ const calculatePlayerData = data => {
         if (entry.kind === 'deal') {
             const multiplier = getMultiplier(bockHelper, gameIndex)
 
+            const soloPlayer = findSoloPlayer(entry.changes)
+
             entry.changes.forEach(change => {
-                allPlayers.find(player => player.name === change.name).score += change.diff * multiplier
+                const player = allPlayers.find(player => player.name === change.name)
+                const multipliedDiff = change.diff * multiplier
+                player.score += multipliedDiff
+                player.maxWin = Math.max(player.maxWin, multipliedDiff)
+                player.maxLoss = Math.min(player.maxLoss, multipliedDiff)
+                player.noBockScore += change.diff
+
+                player.num++
+                multipliedDiff > 0 ? player.numWin++ : player.numLoss++
+
+                if (player.name === soloPlayer) {
+                    player.soloScore += multipliedDiff
+                    multipliedDiff > 0 ? player.numWonSolo++ : player.numLostSolo++
+                }
             })
 
             gameIndex++
@@ -329,6 +371,7 @@ module.exports = {
     createBockPreview,
     constructBockHelper,
     determineDealer,
+    findSoloPlayer,
     getMultiplier,
     pointDifferenceToCents,
     validateDeal,

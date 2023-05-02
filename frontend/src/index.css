@@ -131,15 +131,6 @@
   border-radius: 5px;
 }
 
-.narrow.playerName,
-.narrow.playerNameDealer {
-  justify-self: left;
-  padding: 0px 10px;
-  border-style: solid;
-  border-width: 5px;
-  border-radius: 5px;
-}
-
 .playerName {
   border-color: rgba(0, 0, 0, 0.0);
 }
@@ -182,4 +173,89 @@
 .narrow.messageArea {
   margin-top: 1em;
   text-align: center;
+}
+
+.bottomButton {
+  margin-top: 2em;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.statistics_overlayBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 90vw;
+  height: 90vh;
+  border-radius: 4px;
+  z-index: 10;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border: 5px solid black;
+  padding: 10px;
+}
+
+.statistics_overlayContent {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.statistics_playerNameLabel,
+.statistics_dataLabel {
+  text-align: left;
+  padding: 0px 10px;
+}
+
+.statistics_playerName {
+  text-align: center;
+  padding: 0px 10px;
+}
+
+.statistics_data {
+  text-align: right;
+  padding: 0px 10px;
+}
+
+.narrow.statistics_tableContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: calc(90vw - 2 * (10px + 10px + 5px));
+}
+
+.narrow.statistics_nameColumn {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px;
+}
+
+.narrow.statistics_dataColumns {
+  display: flex;
+  flex-direction: row;
+  overflow: scroll;
+  padding-bottom: 10px;
+}
+
+.narrow.statistics_dataColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.narrow.statistics_playerNameLabel,
+.narrow.statistics_playerName,
+.narrow.statistics_dataLabel {
+  white-space: nowrap;
+}
+
+.narrow.statistics_playerNameLabel,
+.narrow.statistics_playerName {
+  text-align: left;
 }

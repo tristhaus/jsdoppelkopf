@@ -76,8 +76,6 @@ const WriterLanding = () => {
 
     const writer = () => (
         <div>
-            <h2>JSDoppelkopf Writer</h2>
-            <hr />
             <Writer
                 data={data}
                 scoreErrorMessage={scoreErrorMessage}

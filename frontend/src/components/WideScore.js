@@ -3,6 +3,7 @@ import { useRef, useState } from 'react'
 import PlayerEntry from './PlayerEntry'
 import { addPresentOrAbsent, completeDiffs, deduceBock, formatCents } from './Score'
 import WideStatistics from './WideStatistics'
+import WidePlot from './WidePlot'
 
 const CurrentGame = ({ playerData, diffEntries, handleFocus, handleEntryChanged }) => (
     <>
@@ -53,6 +54,7 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
     const [message, setMessage] = useState('')
     const [showPlayerEntry, setShowPlayerEntry] = useState(false)
     const [showStatistics, setShowStatistics] = useState(false)
+    const [showPlot, setShowPlot] = useState(false)
     const [diffEntries, setDiffEntries] = useState({})
     const [numberOfEvents, setNumberOfEvents] = useState(0)
 
@@ -167,6 +169,7 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
         <>
             {showPlayerEntry && (<PlayerEntry playerInformation={{ dealerName: data.dealerName, playerData: data.playerData, }} closeAction={() => setShowPlayerEntry(false)} submitAction={submitNewPlayersAction} />)}
             {showStatistics && (<WideStatistics playerData={data.playerData} closeAction={() => setShowStatistics(false)} />)}
+            {showPlot && (<WidePlot playerData={data.playerData} closeAction={() => setShowPlot(false)} />)}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span>
                     <button id="readerLinkButton" className='shareButton' onClick={shareReaderLink}>Reader-Link teilen</button>
@@ -225,6 +228,7 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
             </div>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <button id="statisticsButton" className="bottomButton" onClick={() => { setShowStatistics(true) }}>Statistiken ...</button>
+                <button id="plotButton" className="bottomButton" onClick={() => { setShowPlot(true) }}>Graph ...</button>
             </div>
         </>
     )

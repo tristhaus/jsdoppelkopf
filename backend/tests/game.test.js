@@ -742,6 +742,7 @@ describe('calculate player data', () => {
         expect(playerData[0].soloScore).toBe(0)
         expect(playerData[0].numWonSolo).toBe(0)
         expect(playerData[0].numLostSolo).toBe(0)
+        expect(playerData[0].history).toStrictEqual([0, 6])
 
         expect(playerData[1].name).toBe('F')
         expect(playerData[1].present).toBe(true)
@@ -758,6 +759,7 @@ describe('calculate player data', () => {
         expect(playerData[1].soloScore).toBe(0)
         expect(playerData[1].numWonSolo).toBe(0)
         expect(playerData[1].numLostSolo).toBe(0)
+        expect(playerData[1].history).toStrictEqual([0, -6])
 
         expect(playerData[2].name).toBe('G')
         expect(playerData[2].present).toBe(true)
@@ -774,6 +776,7 @@ describe('calculate player data', () => {
         expect(playerData[2].soloScore).toBe(0)
         expect(playerData[2].numWonSolo).toBe(0)
         expect(playerData[2].numLostSolo).toBe(0)
+        expect(playerData[2].history).toStrictEqual([0, 6])
 
         expect(playerData[3].name).toBe('H')
         expect(playerData[3].present).toBe(true)
@@ -790,6 +793,7 @@ describe('calculate player data', () => {
         expect(playerData[3].soloScore).toBe(0)
         expect(playerData[3].numWonSolo).toBe(0)
         expect(playerData[3].numLostSolo).toBe(0)
+        expect(playerData[3].history).toStrictEqual([0, -6])
 
         expect(playerData[4].name).toBe('A')
         expect(playerData[4].present).toBe(false)
@@ -806,6 +810,7 @@ describe('calculate player data', () => {
         expect(playerData[4].soloScore).toBe(0)
         expect(playerData[4].numWonSolo).toBe(0)
         expect(playerData[4].numLostSolo).toBe(0)
+        expect(playerData[4].history).toStrictEqual([4, 4])
 
         expect(playerData[5].name).toBe('B')
         expect(playerData[5].present).toBe(false)
@@ -822,6 +827,7 @@ describe('calculate player data', () => {
         expect(playerData[5].soloScore).toBe(0)
         expect(playerData[5].numWonSolo).toBe(0)
         expect(playerData[5].numLostSolo).toBe(0)
+        expect(playerData[5].history).toStrictEqual([4, 4])
 
         expect(playerData[6].name).toBe('C')
         expect(playerData[6].present).toBe(false)
@@ -838,6 +844,7 @@ describe('calculate player data', () => {
         expect(playerData[6].soloScore).toBe(0)
         expect(playerData[6].numWonSolo).toBe(0)
         expect(playerData[6].numLostSolo).toBe(0)
+        expect(playerData[6].history).toStrictEqual([-4, -4])
 
         expect(playerData[7].name).toBe('D')
         expect(playerData[7].present).toBe(false)
@@ -854,6 +861,7 @@ describe('calculate player data', () => {
         expect(playerData[7].soloScore).toBe(0)
         expect(playerData[7].numWonSolo).toBe(0)
         expect(playerData[7].numLostSolo).toBe(0)
+        expect(playerData[7].history).toStrictEqual([-4, -4])
 
         expect(dealerName).toBe('F')
 
@@ -927,6 +935,7 @@ describe('calculate player data', () => {
         expect(playerData[0].soloScore).toBe(0)
         expect(playerData[0].numWonSolo).toBe(0)
         expect(playerData[0].numLostSolo).toBe(0)
+        expect(playerData[0].history).toStrictEqual([0])
 
         expect(playerData[1].name).toBe('B')
         expect(playerData[1].present).toBe(true)
@@ -943,6 +952,7 @@ describe('calculate player data', () => {
         expect(playerData[1].soloScore).toBe(0)
         expect(playerData[1].numWonSolo).toBe(0)
         expect(playerData[1].numLostSolo).toBe(0)
+        expect(playerData[1].history).toStrictEqual([6])
 
         expect(playerData[2].name).toBe('C')
         expect(playerData[2].present).toBe(true)
@@ -959,6 +969,7 @@ describe('calculate player data', () => {
         expect(playerData[2].soloScore).toBe(0)
         expect(playerData[2].numWonSolo).toBe(0)
         expect(playerData[2].numLostSolo).toBe(0)
+        expect(playerData[2].history).toStrictEqual([0])
 
         expect(playerData[3].name).toBe('E')
         expect(playerData[3].present).toBe(true)
@@ -975,6 +986,7 @@ describe('calculate player data', () => {
         expect(playerData[3].soloScore).toBe(0)
         expect(playerData[3].numWonSolo).toBe(0)
         expect(playerData[3].numLostSolo).toBe(0)
+        expect(playerData[3].history).toStrictEqual([0])
 
         expect(playerData[4].name).toBe('G')
         expect(playerData[4].present).toBe(true)
@@ -991,6 +1003,7 @@ describe('calculate player data', () => {
         expect(playerData[4].soloScore).toBe(0)
         expect(playerData[4].numWonSolo).toBe(0)
         expect(playerData[4].numLostSolo).toBe(0)
+        expect(playerData[4].history).toStrictEqual([-6])
 
         expect(playerData[5].name).toBe('D')
         expect(playerData[5].present).toBe(false)
@@ -1007,6 +1020,7 @@ describe('calculate player data', () => {
         expect(playerData[5].soloScore).toBe(0)
         expect(playerData[5].numWonSolo).toBe(0)
         expect(playerData[5].numLostSolo).toBe(0)
+        expect(playerData[5].history).toStrictEqual([6])
 
         expect(playerData[6].name).toBe('F')
         expect(playerData[6].present).toBe(false)
@@ -1023,6 +1037,7 @@ describe('calculate player data', () => {
         expect(playerData[6].soloScore).toBe(0)
         expect(playerData[6].numWonSolo).toBe(0)
         expect(playerData[6].numLostSolo).toBe(0)
+        expect(playerData[6].history).toStrictEqual([-6])
 
         expect(dealerName).toBe('B')
 
@@ -1102,6 +1117,7 @@ describe('calculate player data', () => {
         expect(playerData[0].soloScore).toBe(24)
         expect(playerData[0].numWonSolo).toBe(1)
         expect(playerData[0].numLostSolo).toBe(0)
+        expect(playerData[0].history).toStrictEqual([1, 25])
 
         expect(playerData[1].name).toBe('B')
         expect(playerData[1].present).toBe(true)
@@ -1118,6 +1134,7 @@ describe('calculate player data', () => {
         expect(playerData[1].soloScore).toBe(0)
         expect(playerData[1].numWonSolo).toBe(0)
         expect(playerData[1].numLostSolo).toBe(0)
+        expect(playerData[1].history).toStrictEqual([1, -7])
 
         expect(playerData[2].name).toBe('C')
         expect(playerData[2].present).toBe(true)
@@ -1134,6 +1151,7 @@ describe('calculate player data', () => {
         expect(playerData[2].soloScore).toBe(0)
         expect(playerData[2].numWonSolo).toBe(0)
         expect(playerData[2].numLostSolo).toBe(0)
+        expect(playerData[2].history).toStrictEqual([-1, -9])
 
         expect(playerData[3].name).toBe('D')
         expect(playerData[3].present).toBe(true)
@@ -1150,6 +1168,7 @@ describe('calculate player data', () => {
         expect(playerData[3].soloScore).toBe(0)
         expect(playerData[3].numWonSolo).toBe(0)
         expect(playerData[3].numLostSolo).toBe(0)
+        expect(playerData[3].history).toStrictEqual([-1, -9])
 
         expect(dealerName).toBe('D')
 

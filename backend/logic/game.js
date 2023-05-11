@@ -145,7 +145,7 @@ const calculatePlayerData = data => {
 
     const presentPlayers = relevantPlayersSet
         .playerNames
-        .map(name => { return { name, present: true, playing: true, lastDealDiff: null } })
+        .map(name => { return { name, present: true, playing: true } })
 
     if (relevantPlayersSet.playerNames.length > 4) {
         presentPlayers[dealerIndex].playing = false
@@ -161,7 +161,7 @@ const calculatePlayerData = data => {
         .filter(name => !presentPlayers.some(presentPlayer => presentPlayer.name === name))
         .sort()
         .filter((name, index, array) => index === 0 || name !== array[index - 1]) // remove duplicates
-        .map(name => { return { name, present: false, playing: false, lastDealDiff: null } })
+        .map(name => { return { name, present: false, playing: false } })
 
     const allPlayers = [...presentPlayers, ...absentPlayers]
 
@@ -169,6 +169,7 @@ const calculatePlayerData = data => {
 
     allPlayers.forEach(player => {
         player.score = 0
+        player.lastDealDiff = null
         player.maxWin = 0
         player.maxLoss = 0
         player.noBockScore = 0
@@ -178,6 +179,7 @@ const calculatePlayerData = data => {
         player.soloScore = 0
         player.numWonSolo = 0
         player.numLostSolo = 0
+        player.history = []
     })
 
     let gameIndex = 0
@@ -204,6 +206,8 @@ const calculatePlayerData = data => {
                     multipliedDiff > 0 ? player.numWonSolo++ : player.numLostSolo++
                 }
             })
+
+            allPlayers.forEach(player => player.history.push(player.score))
 
             gameIndex++
         }

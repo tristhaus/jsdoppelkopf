@@ -664,6 +664,97 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('#statistics_name_PlayerA').should('not.exist')
             })
 
+            it(`plot box can be opened, closed, has plot [${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD',
+                        'PlayerE',
+                        'PlayerF',
+                        'PlayerG'
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: [
+                        2,
+                        4
+                    ]
+                }
+
+                const deal1 = {
+                    kind: 'deal',
+                    events: 1,
+                    changes: [
+                        {
+                            name: 'PlayerA',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerB',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerD',
+                            diff: -1
+                        },
+                        {
+                            name: 'PlayerF',
+                            diff: -1
+                        }
+                    ],
+                }
+
+                const deal2 = {
+                    kind: 'deal',
+                    events: 0,
+                    changes: [
+                        {
+                            name: 'PlayerB',
+                            diff: -2
+                        },
+                        {
+                            name: 'PlayerC',
+                            diff: -2
+                        },
+                        {
+                            name: 'PlayerE',
+                            diff: 6
+                        },
+                        {
+                            name: 'PlayerG',
+                            diff: -2
+                        }
+                    ],
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet, deal1, deal2],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/writer/myWriterId')
+
+                cy.get('#plotButton').click()
+
+                cy.get('.js-plotly-plot').should('exist')
+
+                cy.get('#plot_OkButton').click()
+
+                cy.get('.js-plotly-plot').should('not.exist')
+            })
+
             it(`page displays error when using bad ID [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
@@ -3001,6 +3092,97 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('#statitistics_OkButton').click()
 
                 cy.get('#statistics_name_PlayerA').should('not.exist')
+            })
+
+            it(`plot box can be opened, closed, has plot [${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD',
+                        'PlayerE',
+                        'PlayerF',
+                        'PlayerG'
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: [
+                        2,
+                        4
+                    ]
+                }
+
+                const deal1 = {
+                    kind: 'deal',
+                    events: 1,
+                    changes: [
+                        {
+                            name: 'PlayerA',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerB',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerD',
+                            diff: -1
+                        },
+                        {
+                            name: 'PlayerF',
+                            diff: -1
+                        }
+                    ],
+                }
+
+                const deal2 = {
+                    kind: 'deal',
+                    events: 0,
+                    changes: [
+                        {
+                            name: 'PlayerB',
+                            diff: -2
+                        },
+                        {
+                            name: 'PlayerC',
+                            diff: -2
+                        },
+                        {
+                            name: 'PlayerE',
+                            diff: 6
+                        },
+                        {
+                            name: 'PlayerG',
+                            diff: -2
+                        }
+                    ],
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet, deal1, deal2],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/myReaderId')
+
+                cy.get('#plotButton').click()
+
+                cy.get('.js-plotly-plot').should('exist')
+
+                cy.get('#plot_OkButton').click()
+
+                cy.get('.js-plotly-plot').should('not.exist')
             })
 
             it(`page displays error when using bad ID [${viewportInfo.displayName}]`, function () {

@@ -18,16 +18,14 @@ const Reader = ({ data, reloadAction, }) => {
     const noop = () => { }
 
     if (wideScreen) {
-        return (
-            <WideScore
-                isWriter={false}
-                data={data}
-                addDeal={noop}
-                addMandatorySoloTrigger={noop}
-                popLastEntry={noop}
-                reloadAction={reloadAction}
-            />
-        )
+        return <WideScore
+            isWriter={false}
+            data={data}
+            addDeal={noop}
+            addMandatorySoloTrigger={noop}
+            popLastEntry={noop}
+            reloadAction={reloadAction}
+        />
     }
     else {
         return <NarrowScore

@@ -215,8 +215,9 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
                 <span id="totalCash" style={{ gridColumn: '3 / -1', justifySelf: 'center' }}>{`${formatCents(data.totalCash)} (inkl. ${formatCents(data.absentPlayerCents)} / Abw.)`}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <button id="statisticsButton" className="bottomButton" onClick={() => { setShowStatistics(true) }}>Statistiken ...</button>
-                <button id="plotButton" className="bottomButton" onClick={() => { setShowPlot(true) }}>Graph ...</button>
+                <button id="statisticsButton" className="bottomItem" onClick={() => { setShowStatistics(true) }}>Statistiken ...</button>
+                <button id="plotButton" className="bottomItem" onClick={() => { setShowPlot(true) }}>Graph ...</button>
+                <a id="csvLink" className="bottomItem" href={data.csvLink} target="_blank" rel="noopener noreferrer">CSV downloaden</a>
             </div>
             <div className="narrow messageArea">
                 {message}

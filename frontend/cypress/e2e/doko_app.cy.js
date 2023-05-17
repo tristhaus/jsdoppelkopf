@@ -493,6 +493,8 @@ viewportInfos.forEach(viewportInfo => {
                 else {
                     cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
                 }
+
+                cy.get('#csvLink')
             })
 
             it(`statistics box has correct content [${viewportInfo.displayName}]`, function () {
@@ -2804,6 +2806,93 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.contains('Letzter Eintrag konnte nicht gelöscht werden.')
             })
+
+            it(`page can be opened and has working CSV download link [${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD',
+                        'PlayerE',
+                        'PlayerF',
+                        'PlayerG'
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: [
+                        2,
+                        4
+                    ]
+                }
+
+                const deal = {
+                    kind: 'deal',
+                    events: 0,
+                    changes: [
+                        {
+                            name: 'PlayerA',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerB',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerD',
+                            diff: -1
+                        },
+                        {
+                            name: 'PlayerF',
+                            diff: -1
+                        }
+                    ],
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet, deal],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/writer/myWriterId')
+
+                cy.get('#cash_PlayerA').contains('0,00')
+                cy.get('#cash_PlayerB').contains('0,00')
+                cy.get('#cash_PlayerC').contains('0,00')
+                cy.get('#cash_PlayerD').contains('0,01')
+                cy.get('#cash_PlayerE').contains('0,00')
+                cy.get('#cash_PlayerF').contains('0,01')
+                cy.get('#cash_PlayerG').contains('0,00')
+
+                const expectedLink = 'http://localhost:3001/api/game/myReaderId/csv'
+
+                cy
+                    .get('#csvLink')
+                    .invoke('attr', 'href')
+                    .should('eq', expectedLink)
+
+                cy
+                    .request('GET', expectedLink)
+                    .its('body')
+                    .should('include', '"Name";"Zu zahlen in Euro')
+                    .should('include', '"PlayerA";0,00')
+                    .should('include', '"PlayerB";0,00')
+                    .should('include', '"PlayerC";0,00')
+                    .should('include', '"PlayerD";0,01')
+                    .should('include', '"PlayerE";0,00')
+                    .should('include', '"PlayerF";0,01')
+                    .should('include', '"PlayerG";0,00')
+            })
         })
 
         describe(`read landing page  [${viewportInfo.displayName}]`, function () {
@@ -2923,6 +3012,8 @@ viewportInfos.forEach(viewportInfo => {
                 else {
                     cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
                 }
+
+                cy.get('#csvLink')
             })
 
             it(`statistics box has correct content [${viewportInfo.displayName}]`, function () {
@@ -3330,6 +3421,94 @@ viewportInfos.forEach(viewportInfo => {
                     .should('match', new RegExp('http://localhost:[0-9]+/myReaderId'))
 
                 cy.get('#writerLinkButton').should('not.exist')
+            })
+
+            it(`page can be opened and has working CSV download link [${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD',
+                        'PlayerE',
+                        'PlayerF',
+                        'PlayerG'
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: [
+                        2,
+                        4
+                    ]
+                }
+
+                const deal = {
+                    kind: 'deal',
+                    events: 0,
+                    changes: [
+                        {
+                            name: 'PlayerA',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerB',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerD',
+                            diff: -1
+                        },
+                        {
+                            name: 'PlayerF',
+                            diff: -1
+                        }
+                    ],
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet, deal],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/myReaderId')
+
+                cy.get('#cash_PlayerA').contains('0,00')
+                cy.get('#cash_PlayerB').contains('0,00')
+                cy.get('#cash_PlayerC').contains('0,00')
+                cy.get('#cash_PlayerD').contains('0,01')
+                cy.get('#cash_PlayerE').contains('0,00')
+                cy.get('#cash_PlayerF').contains('0,01')
+                cy.get('#cash_PlayerG').contains('0,00')
+
+                const expectedLink = 'http://localhost:3001/api/game/myReaderId/csv'
+
+                cy
+                    .get('#csvLink')
+                    .invoke('attr', 'href')
+                    .should('eq', expectedLink)
+
+                cy
+                    .request('GET', expectedLink)
+                    .its('body')
+                    .should('include', '"Name";"Zu zahlen in Euro')
+                    .should('include', '"PlayerA";0,00')
+                    .should('include', '"PlayerB";0,00')
+                    .should('include', '"PlayerC";0,00')
+                    .should('include', '"PlayerD";0,01')
+                    .should('include', '"PlayerE";0,00')
+                    .should('include', '"PlayerF";0,01')
+                    .should('include', '"PlayerG";0,00')
             })
         })
     })

@@ -1,4 +1,6 @@
 const gamesRouter = require('express').Router()
+const { Parser } = require('@json2csv/plainjs')
+const { number: NumberFormatter } = require('@json2csv/formatters')
 const Game = require('../models/game')
 const logger = require('../utils/logger')
 const config = require('../utils/config')
@@ -26,8 +28,29 @@ const createApiModel = game => {
         readerId: game.readerId,
         creationDate: game.creationDate,
         poppableEntry: game.data.length > 1 ? game.data[game.data.length - 1].kind : null,
+        csvLink: `${config.BACKEND_URL}/api/game/${game.readerId}/csv`,
         ...data
     }
+}
+
+const createCsvModel = game => {
+
+    const data = calculatePlayerData(game.data)
+    const selectedData = data.playerData.map(singlePlayerData => { return { name: singlePlayerData.name, euros: singlePlayerData.cents / 100 } })
+
+    const opts = {
+        fields: [
+            { label: 'Name', value: 'name' },
+            { label: 'Zu zahlen in Euro', value: 'euros' }
+        ],
+        formatters: {
+            number: NumberFormatter({ decimals: 2, separator: ',' })
+        },
+        delimiter: ';'
+    }
+    const parser = new Parser(opts)
+
+    return parser.parse(selectedData)
 }
 
 gamesRouter.post('/', async (request, response, next) => {
@@ -230,6 +253,26 @@ gamesRouter.get('/:readerId', async (request, response, next) => {
         const apiModel = createApiModel(game)
 
         response.status(200).json(apiModel)
+    }
+    catch (error) {
+        return next(error)
+    }
+})
+
+gamesRouter.get('/:readerId/csv', async (request, response, next) => {
+    try {
+        const game = await Game.findOne({ readerId: request.params.readerId })
+
+        if (!game) {
+            logger.error(`game with readerId '${request.params.readerId}' not found`)
+            response.status(404).send({ error: `readerId not found: ${request.params.readerId}` })
+            return next()
+        }
+
+        const csv = createCsvModel(game)
+
+        response.attachment('data.csv')
+        response.status(200).send(csv)
     }
     catch (error) {
         return next(error)

@@ -15,20 +15,18 @@ const Writer = ({ data, scoreErrorMessage, addDeal, addMandatorySoloTrigger, add
             .addEventListener('change', e => setWideScreen(e.matches))
     }, [])
 
-
     if (wideScreen) {
-        return (
-            <WideScore
-                isWriter={true}
-                scoreErrorMessage={scoreErrorMessage}
-                data={data}
-                addDeal={addDeal}
-                addMandatorySoloTrigger={addMandatorySoloTrigger}
-                addPlayersSet={addPlayersSet}
-                popLastEntry={popLastEntry}
-                reloadAction={reloadAction}
-            />
-        )
+        return <WideScore
+            isWriter={true}
+            scoreErrorMessage={scoreErrorMessage}
+            data={data}
+            addDeal={addDeal}
+            addMandatorySoloTrigger={addMandatorySoloTrigger}
+            addPlayersSet={addPlayersSet}
+            popLastEntry={popLastEntry}
+            reloadAction={reloadAction}
+        />
+
     }
     else {
         return <NarrowScore

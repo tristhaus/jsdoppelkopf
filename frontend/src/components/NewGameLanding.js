@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 
 import gameService from '../services/game'
@@ -11,6 +11,18 @@ const NewGameLanding = () => {
     const [writerId, setWriterId] = useState(null)
     const [inputReaderId, setInputReaderId] = useState('')
     const [inputWriterId, setInputWriterId] = useState('')
+
+    const [width, setWidth] = useState(window.innerWidth)
+
+    useEffect(() => {
+        const handleWindowResize = () => {
+            setWidth(window.innerWidth)
+        }
+
+        window.addEventListener('resize', handleWindowResize)
+
+        return () => window.removeEventListener('resize', handleWindowResize)
+    }, [])
 
     const handleNewGameClick = async playerInformation => {
         setWriterId(null)
@@ -42,9 +54,26 @@ const NewGameLanding = () => {
         setWriterId(inputWriterId.toUpperCase())
     }
 
+    const banners = [
+        { src: 'homer-beer.gif', alt: 'Mmmmmh ... beer.' },
+        { src: 'ingo-ohne-flamingo-saufen.gif', alt: 'Ich kann schon wieder laufen!' },
+        { src: 'si-w-saufen.gif', alt: 'Saufen, Junge!' },
+        { src: 'alcohol-beer.gif', alt: 'Wir haben Pläne' },
+        { src: 'dinner-for-one-drink.gif', alt: 'Same procedure as every weekend.' },
+        { src: 'drinking-desperate.gif', alt: 'Mama braucht einen Cocktail.' },
+        { src: 'drinking-wasted.gif', alt: 'Papa braucht einen Cocktail.' },
+    ]
+
+    const bannerIndex = Math.floor(Date.now() / 60000) % banners.length
+
+    const effectiveBannerWidth = Math.min(400, Math.floor(width *0.9))
+
     const initial = () => (
         <div>
-            <h2>JSDoppelkopf Initial</h2>
+            <div className="centering">
+                <h4>Saufen und Kartenspielen</h4>
+                <img src={`banners/${banners[bannerIndex].src}`} width={effectiveBannerWidth} alt={banners[bannerIndex].alt} />
+            </div>
             <hr />
             <button onClick={() => setShowPlayerEntry(true)}>Neues Spiel beginnen</button>
             {showPlayerEntry && (<PlayerEntry closeAction={() => setShowPlayerEntry(false)} submitAction={handleNewGameClick} />)}

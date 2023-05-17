@@ -29,6 +29,13 @@ const resources = [
     'logo512.png',
     'manifest.json',
     'robots.txt',
+    'banners/homer-beer.gif',
+    'banners/ingo-ohne-flamingo-saufen.gif',
+    'banners/si-w-saufen.gif',
+    'banners/alcohol-beer.gif',
+    'banners/dinner-for-one-drink.gif',
+    'banners/drinking-desperate.gif',
+    'banners/drinking-wasted.gif',
 ]
 
 resources.forEach(resource => {

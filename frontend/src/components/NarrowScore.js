@@ -5,7 +5,7 @@ import { addPresentOrAbsent, completeDiffs, deduceBock, formatCents } from './Sc
 import NarrowStatistics from './NarrowStatistics'
 import NarrowPlot from './NarrowPlot'
 
-const PlayerLine = ({ isWriter, singlePlayerData, isDealer, handleEntryChanged, handleFocus }) => (
+const PlayerLine = ({ isWriter, singlePlayerData, diffEntries, isDealer, handleEntryChanged, handleFocus }) => (
     <>
         <div id={`name_${singlePlayerData.name}`} className={addPresentOrAbsent(`narrow ${isDealer ? 'playerNameDealer' : 'playerName'}`, singlePlayerData)}>{singlePlayerData.name}</div>
         <div id={`lastDeal_${singlePlayerData.name}`} className={addPresentOrAbsent('narrow lastDeal', singlePlayerData)} >{singlePlayerData.lastDealDiff ?? ''}</div>
@@ -15,6 +15,7 @@ const PlayerLine = ({ isWriter, singlePlayerData, isDealer, handleEntryChanged, 
                 size={3}
                 id={`currentDeal_${singlePlayerData.name}`}
                 className="currentDeal"
+                value={diffEntries[singlePlayerData.name] ?? ''}
                 onFocus={event => {
                     const playerName = singlePlayerData.name
                     handleFocus(playerName, event.target)
@@ -199,6 +200,7 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
                         key={`playerLine${index}`}
                         isWriter={isWriter}
                         singlePlayerData={singlePlayerData}
+                        diffEntries={diffEntries}
                         isDealer={singlePlayerData.name === data.dealerName}
                         handleEntryChanged={handleEntryChanged}
                         handleFocus={handleFocus}

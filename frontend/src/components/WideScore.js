@@ -121,7 +121,6 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
     const isPopDisabled = data.poppableEntry === null
 
     const handlePopClicked = () => {
-
         const mapPoppableEntry = poppableEntry => {
             switch (poppableEntry) {
                 case 'deal':

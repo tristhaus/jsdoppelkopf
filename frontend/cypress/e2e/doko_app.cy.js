@@ -454,11 +454,11 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.get('#lastDeal_PlayerA').contains('1')
                 cy.get('#lastDeal_PlayerB').contains('1')
-                cy.get('#lastDeal_PlayerC').should('be.empty')
+                cy.get('#lastDeal_PlayerC').should('have.value', '')
                 cy.get('#lastDeal_PlayerD').contains('-1')
-                cy.get('#lastDeal_PlayerE').should('be.empty')
+                cy.get('#lastDeal_PlayerE').should('have.value', '')
                 cy.get('#lastDeal_PlayerF').contains('-1')
-                cy.get('#lastDeal_PlayerG').should('be.empty')
+                cy.get('#lastDeal_PlayerG').should('have.value', '')
 
                 cy.get('#currentDeal_PlayerA').should('not.exist')
                 cy.get('#currentDeal_PlayerB')
@@ -1545,6 +1545,81 @@ viewportInfos.forEach(viewportInfo => {
                 cy.contains('Pflichtsolorunde konnte nicht gestartet werden.')
             })
 
+            it(`page can note a deal with four players [${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+                cy.intercept({
+                    method: 'POST',
+                    url: '/api/game/write/**',
+                }).as('push')
+                cy.intercept({
+                    method: 'DELETE',
+                    url: '/api/game/write/**',
+                }).as('pop')
+
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD'
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: [
+                        2,
+                        4
+                    ]
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/writer/myWriterId')
+
+                cy.get('#currentDeal_PlayerA').type('{selectAll}{backspace}5')
+                cy.get('#currentDeal_PlayerB').type('{selectAll}{backspace}5')
+                cy.get('#currentDeal_PlayerC')
+                cy.get('#currentDeal_PlayerD')
+
+                cy.get('#bockereignisse').type(2)
+
+                cy.get('.popButton').should('be.disabled')
+                cy.get('.dealButton').should('not.be.disabled').click()
+
+                cy.get('#currentDeal_PlayerA').should('have.value', '')
+                cy.get('#currentDeal_PlayerB').should('have.value', '')
+                cy.get('#currentDeal_PlayerC').should('have.value', '')
+                cy.get('#currentDeal_PlayerD').should('have.value', '')
+
+                cy.wait('@push')
+
+                cy.get('#currentBockStatus').contains('Doppelbock')
+                cy.get('#bockPreviewTriple').contains('0')
+                cy.get('#bockPreviewDouble').contains('4')
+                cy.get('#bockPreviewSingle').contains('0')
+
+                cy.get('#lastDeal_PlayerA').contains('5')
+                cy.get('#lastDeal_PlayerB').contains('5')
+                cy.get('#lastDeal_PlayerC').contains('-5')
+                cy.get('#lastDeal_PlayerD').contains('-5')
+
+                cy.get('#score_PlayerA').contains('5')
+                cy.get('#score_PlayerB').contains('5')
+                cy.get('#score_PlayerC').contains('-5')
+                cy.get('#score_PlayerD').contains('-5')
+            })
+
             it(`page can note a deal and pop it again on confirming [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.intercept({
@@ -1602,6 +1677,15 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.get('.popButton').should('be.disabled')
                 cy.get('.dealButton').should('not.be.disabled').click()
+
+                cy.get('#currentDeal_PlayerA').should('have.value', '')
+                cy.get('#currentDeal_PlayerB').should('have.value', '')
+                cy.get('#currentDeal_PlayerC').should('not.exist')
+                cy.get('#currentDeal_PlayerD').should('have.value', '')
+                cy.get('#currentDeal_PlayerE').should('not.exist')
+                cy.get('#currentDeal_PlayerF').should('have.value', '')
+                cy.get('#currentDeal_PlayerG').should('not.exist')
+
                 cy.wait('@push')
 
                 cy.get('#currentBockStatus').contains('Doppelbock')
@@ -1611,11 +1695,11 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.get('#lastDeal_PlayerA').contains('5')
                 cy.get('#lastDeal_PlayerB').contains('5')
-                cy.get('#lastDeal_PlayerC').should('be.empty')
+                cy.get('#lastDeal_PlayerC').should('have.value', '')
                 cy.get('#lastDeal_PlayerD').contains('-5')
-                cy.get('#lastDeal_PlayerE').should('be.empty')
+                cy.get('#lastDeal_PlayerE').should('have.value', '')
                 cy.get('#lastDeal_PlayerF').contains('-5')
-                cy.get('#lastDeal_PlayerG').should('be.empty')
+                cy.get('#lastDeal_PlayerG').should('have.value', '')
 
                 cy.get('#score_PlayerA').contains('5')
                 cy.get('#score_PlayerB').contains('5')
@@ -1638,13 +1722,13 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('#bockPreviewDouble').contains('0')
                 cy.get('#bockPreviewSingle').contains('0')
 
-                cy.get('#lastDeal_PlayerA').should('be.empty')
-                cy.get('#lastDeal_PlayerB').should('be.empty')
-                cy.get('#lastDeal_PlayerC').should('be.empty')
-                cy.get('#lastDeal_PlayerD').should('be.empty')
-                cy.get('#lastDeal_PlayerE').should('be.empty')
-                cy.get('#lastDeal_PlayerF').should('be.empty')
-                cy.get('#lastDeal_PlayerG').should('be.empty')
+                cy.get('#lastDeal_PlayerA').should('have.value', '')
+                cy.get('#lastDeal_PlayerB').should('have.value', '')
+                cy.get('#lastDeal_PlayerC').should('have.value', '')
+                cy.get('#lastDeal_PlayerD').should('have.value', '')
+                cy.get('#lastDeal_PlayerE').should('have.value', '')
+                cy.get('#lastDeal_PlayerF').should('have.value', '')
+                cy.get('#lastDeal_PlayerG').should('have.value', '')
 
                 cy.get('#score_PlayerA').contains('0')
                 cy.get('#score_PlayerB').contains('0')
@@ -1717,11 +1801,11 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.get('#lastDeal_PlayerA').contains('5')
                 cy.get('#lastDeal_PlayerB').contains('5')
-                cy.get('#lastDeal_PlayerC').should('be.empty')
+                cy.get('#lastDeal_PlayerC').should('have.value', '')
                 cy.get('#lastDeal_PlayerD').contains('-5')
-                cy.get('#lastDeal_PlayerE').should('be.empty')
+                cy.get('#lastDeal_PlayerE').should('have.value', '')
                 cy.get('#lastDeal_PlayerF').contains('-5')
-                cy.get('#lastDeal_PlayerG').should('be.empty')
+                cy.get('#lastDeal_PlayerG').should('have.value', '')
 
                 cy.get('#score_PlayerA').contains('5')
                 cy.get('#score_PlayerB').contains('5')
@@ -1976,13 +2060,13 @@ viewportInfos.forEach(viewportInfo => {
                 cy.contains('OK').should('not.be.disabled').click()
                 cy.wait('@push')
 
-                cy.get('#lastDeal_PlayerH').should('be.empty')
+                cy.get('#lastDeal_PlayerH').should('have.value', '')
                 cy.get('#lastDeal_PlayerB').contains('1')
-                cy.get('#lastDeal_PlayerC').should('be.empty')
+                cy.get('#lastDeal_PlayerC').should('have.value', '')
                 cy.get('#lastDeal_PlayerD').contains('-1')
-                cy.get('#lastDeal_PlayerE').should('be.empty')
+                cy.get('#lastDeal_PlayerE').should('have.value', '')
                 cy.get('#lastDeal_PlayerF').contains('-1')
-                cy.get('#lastDeal_PlayerG').should('be.empty')
+                cy.get('#lastDeal_PlayerG').should('have.value', '')
                 cy.get('#lastDeal_PlayerA').contains('1')
 
 
@@ -2079,13 +2163,13 @@ viewportInfos.forEach(viewportInfo => {
                 cy.contains('OK').should('not.be.disabled').click()
                 cy.wait('@push')
 
-                cy.get('#lastDeal_PlayerH').should('be.empty')
+                cy.get('#lastDeal_PlayerH').should('have.value', '')
                 cy.get('#lastDeal_PlayerB').contains('1')
-                cy.get('#lastDeal_PlayerC').should('be.empty')
+                cy.get('#lastDeal_PlayerC').should('have.value', '')
                 cy.get('#lastDeal_PlayerD').contains('-1')
-                cy.get('#lastDeal_PlayerE').should('be.empty')
+                cy.get('#lastDeal_PlayerE').should('have.value', '')
                 cy.get('#lastDeal_PlayerF').contains('-1')
-                cy.get('#lastDeal_PlayerG').should('be.empty')
+                cy.get('#lastDeal_PlayerG').should('have.value', '')
                 cy.get('#lastDeal_PlayerA').contains('1')
 
                 cy.get('#score_PlayerH').contains('0')
@@ -2107,11 +2191,11 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.get('#lastDeal_PlayerA').contains('1')
                 cy.get('#lastDeal_PlayerB').contains('1')
-                cy.get('#lastDeal_PlayerC').should('be.empty')
+                cy.get('#lastDeal_PlayerC').should('have.value', '')
                 cy.get('#lastDeal_PlayerD').contains('-1')
-                cy.get('#lastDeal_PlayerE').should('be.empty')
+                cy.get('#lastDeal_PlayerE').should('have.value', '')
                 cy.get('#lastDeal_PlayerF').contains('-1')
-                cy.get('#lastDeal_PlayerG').should('be.empty')
+                cy.get('#lastDeal_PlayerG').should('have.value', '')
 
                 cy.get('#lastDeal_PlayerH').should('not.exist')
 
@@ -2204,13 +2288,13 @@ viewportInfos.forEach(viewportInfo => {
                 cy.contains('OK').should('not.be.disabled').click()
                 cy.wait('@push')
 
-                cy.get('#lastDeal_PlayerH').should('be.empty')
+                cy.get('#lastDeal_PlayerH').should('have.value', '')
                 cy.get('#lastDeal_PlayerB').contains('1')
-                cy.get('#lastDeal_PlayerC').should('be.empty')
+                cy.get('#lastDeal_PlayerC').should('have.value', '')
                 cy.get('#lastDeal_PlayerD').contains('-1')
-                cy.get('#lastDeal_PlayerE').should('be.empty')
+                cy.get('#lastDeal_PlayerE').should('have.value', '')
                 cy.get('#lastDeal_PlayerF').contains('-1')
-                cy.get('#lastDeal_PlayerG').should('be.empty')
+                cy.get('#lastDeal_PlayerG').should('have.value', '')
                 cy.get('#lastDeal_PlayerA').contains('1')
 
                 cy.get('#score_PlayerH').contains('0')
@@ -2229,13 +2313,13 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.get('.popButton').should('not.be.disabled').click()
 
-                cy.get('#lastDeal_PlayerH').should('be.empty')
+                cy.get('#lastDeal_PlayerH').should('have.value', '')
                 cy.get('#lastDeal_PlayerB').contains('1')
-                cy.get('#lastDeal_PlayerC').should('be.empty')
+                cy.get('#lastDeal_PlayerC').should('have.value', '')
                 cy.get('#lastDeal_PlayerD').contains('-1')
-                cy.get('#lastDeal_PlayerE').should('be.empty')
+                cy.get('#lastDeal_PlayerE').should('have.value', '')
                 cy.get('#lastDeal_PlayerF').contains('-1')
-                cy.get('#lastDeal_PlayerG').should('be.empty')
+                cy.get('#lastDeal_PlayerG').should('have.value', '')
                 cy.get('#lastDeal_PlayerA').contains('1')
 
                 cy.get('#score_PlayerH').contains('0')
@@ -2884,11 +2968,11 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.get('#lastDeal_PlayerA').contains('1')
                 cy.get('#lastDeal_PlayerB').contains('1')
-                cy.get('#lastDeal_PlayerC').should('be.empty')
+                cy.get('#lastDeal_PlayerC').should('have.value', '')
                 cy.get('#lastDeal_PlayerD').contains('-1')
-                cy.get('#lastDeal_PlayerE').should('be.empty')
+                cy.get('#lastDeal_PlayerE').should('have.value', '')
                 cy.get('#lastDeal_PlayerF').contains('-1')
-                cy.get('#lastDeal_PlayerG').should('be.empty')
+                cy.get('#lastDeal_PlayerG').should('have.value', '')
 
                 cy.get('#currentDeal_PlayerA').should('not.exist')
                 cy.get('#currentDeal_PlayerB').should('not.exist')

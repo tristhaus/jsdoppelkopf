@@ -11,14 +11,14 @@
           */
 
 /*!
-                    * Determine if an object is a Buffer
-                    *
-                    * @author   Feross Aboukhadijeh <https://feross.org>
-                    * @license  MIT
-                    */
+                                                   * The buffer module from node.js, for the browser.
+                                                   *
+                                                   * @author   Feross Aboukhadijeh <https://feross.org>
+                                                   * @license  MIT
+                                                   */
 
 /*!
-                    * The buffer module from node.js, for the browser.
+                    * Determine if an object is a Buffer
                     *
                     * @author   Feross Aboukhadijeh <https://feross.org>
                     * @license  MIT
@@ -53,9 +53,9 @@
            */
 
 /*! Native Promise Only
-          v0.8.1 (c) Kyle Simpson
-          MIT License: http://getify.mit-license.org
-          */
+                                             v0.8.1 (c) Kyle Simpson
+                                             MIT License: http://getify.mit-license.org
+                                             */
 
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 

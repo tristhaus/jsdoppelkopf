@@ -341,6 +341,7 @@ describe('determine dealer', () => {
 describe('calculate player data', () => {
 
     test('4: everyone plays', () => {
+        process.env.USE_BOCK = true
         const playersSet = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D'],
@@ -369,6 +370,7 @@ describe('calculate player data', () => {
     })
 
     test('5: dealer sits out', () => {
+        process.env.USE_BOCK = true
         const playersSet = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D', 'E'],
@@ -401,6 +403,7 @@ describe('calculate player data', () => {
     })
 
     test('7: sit out scheme applied', () => {
+        process.env.USE_BOCK = true
         const playersSet = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
@@ -441,6 +444,7 @@ describe('calculate player data', () => {
     })
 
     test('4-6-5: one player absent', () => {
+        process.env.USE_BOCK = true
         const playersSet1 = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D'],
@@ -491,6 +495,7 @@ describe('calculate player data', () => {
     })
 
     test('4-d-5-dd: deals correctly used', () => {
+        process.env.USE_BOCK = true
         const playersSet1 = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D'],
@@ -664,6 +669,7 @@ describe('calculate player data', () => {
     })
 
     test('6a-d-6b-d: no players entirely absent', () => {
+        process.env.USE_BOCK = true
         const playersSet1 = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D'],
@@ -870,6 +876,7 @@ describe('calculate player data', () => {
     })
 
     test('7-d-6-5: handle two players leaving consecutively', () => {
+        process.env.USE_BOCK = true
         const playersSet1 = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
@@ -1046,6 +1053,7 @@ describe('calculate player data', () => {
     })
 
     test('4-d-solo: solo and Bock', () => {
+        process.env.USE_BOCK = true
         const playersSet1 = {
             kind: 'playersSet',
             playerNames: ['A', 'B', 'C', 'D'],
@@ -1175,11 +1183,144 @@ describe('calculate player data', () => {
         expect(totalCash).toBe(50 + 4 * 12)
         expect(absentPlayerCents).toBe(12)
     })
+
+    test('4-d-solo: solo (useBock: false)', () => {
+        process.env.USE_BOCK = false
+        const playersSet1 = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D'],
+            dealerName: 'B',
+            sitOutScheme: []
+        }
+
+        const deal1 = {
+            kind: 'deal',
+            events: 0,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 1
+                },
+                {
+                    name: 'B',
+                    diff: 1
+                },
+                {
+                    name: 'C',
+                    diff: -1
+                },
+                {
+                    name: 'D',
+                    diff: -1
+                }
+            ]
+        }
+
+        const deal2 = {
+            kind: 'deal',
+            events: 0,
+            changes: [
+                {
+                    name: 'A',
+                    diff: 6
+                },
+                {
+                    name: 'B',
+                    diff: -2
+                },
+                {
+                    name: 'C',
+                    diff: -2
+                },
+                {
+                    name: 'D',
+                    diff: -2
+                }
+            ]
+        }
+
+        const data = [playersSet1, deal1, deal2]
+
+        const { playerData, dealerName, totalCash, absentPlayerCents, } = calculatePlayerData(data)
+        expect(playerData[0].name).toBe('A')
+        expect(playerData[0].present).toBe(true)
+        expect(playerData[0].playing).toBe(true)
+        expect(playerData[0].score).toBe(7)
+        expect(playerData[0].lastDealDiff).toBe(6)
+        expect(playerData[0].cents).toBe(0)
+        expect(playerData[0].maxWin).toBe(6)
+        expect(playerData[0].maxLoss).toBe(0)
+        expect(playerData[0].noBockScore).toBe(7)
+        expect(playerData[0].num).toBe(2)
+        expect(playerData[0].numWin).toBe(2)
+        expect(playerData[0].numLoss).toBe(0)
+        expect(playerData[0].soloScore).toBe(6)
+        expect(playerData[0].numWonSolo).toBe(1)
+        expect(playerData[0].numLostSolo).toBe(0)
+        expect(playerData[0].history).toStrictEqual([1, 7])
+
+        expect(playerData[1].name).toBe('B')
+        expect(playerData[1].present).toBe(true)
+        expect(playerData[1].playing).toBe(true)
+        expect(playerData[1].score).toBe(-1)
+        expect(playerData[1].lastDealDiff).toBe(-2)
+        expect(playerData[1].cents).toBe(4)
+        expect(playerData[1].maxWin).toBe(1)
+        expect(playerData[1].maxLoss).toBe(-2)
+        expect(playerData[1].noBockScore).toBe(-1)
+        expect(playerData[1].num).toBe(2)
+        expect(playerData[1].numWin).toBe(1)
+        expect(playerData[1].numLoss).toBe(1)
+        expect(playerData[1].soloScore).toBe(0)
+        expect(playerData[1].numWonSolo).toBe(0)
+        expect(playerData[1].numLostSolo).toBe(0)
+        expect(playerData[1].history).toStrictEqual([1, -1])
+
+        expect(playerData[2].name).toBe('C')
+        expect(playerData[2].present).toBe(true)
+        expect(playerData[2].playing).toBe(true)
+        expect(playerData[2].score).toBe(-3)
+        expect(playerData[2].lastDealDiff).toBe(-2)
+        expect(playerData[2].cents).toBe(5)
+        expect(playerData[2].maxWin).toBe(0)
+        expect(playerData[2].maxLoss).toBe(-2)
+        expect(playerData[2].noBockScore).toBe(-3)
+        expect(playerData[2].num).toBe(2)
+        expect(playerData[2].numWin).toBe(0)
+        expect(playerData[2].numLoss).toBe(2)
+        expect(playerData[2].soloScore).toBe(0)
+        expect(playerData[2].numWonSolo).toBe(0)
+        expect(playerData[2].numLostSolo).toBe(0)
+        expect(playerData[2].history).toStrictEqual([-1, -3])
+
+        expect(playerData[3].name).toBe('D')
+        expect(playerData[3].present).toBe(true)
+        expect(playerData[3].playing).toBe(true)
+        expect(playerData[3].score).toBe(-3)
+        expect(playerData[3].lastDealDiff).toBe(-2)
+        expect(playerData[3].cents).toBe(5)
+        expect(playerData[3].maxWin).toBe(0)
+        expect(playerData[3].maxLoss).toBe(-2)
+        expect(playerData[3].noBockScore).toBe(-3)
+        expect(playerData[3].num).toBe(2)
+        expect(playerData[3].numWin).toBe(0)
+        expect(playerData[3].numLoss).toBe(2)
+        expect(playerData[3].soloScore).toBe(0)
+        expect(playerData[3].numWonSolo).toBe(0)
+        expect(playerData[3].numLostSolo).toBe(0)
+        expect(playerData[3].history).toStrictEqual([-1, -3])
+
+        expect(dealerName).toBe('D')
+
+        expect(totalCash).toBe(14 + 4 * 3)
+        expect(absentPlayerCents).toBe(3)
+    })
 })
 
 describe('validate deal', () => {
 
-    test('correct deal is validated', () => {
+    test('correct deal is validated (useBock: true)', () => {
+        process.env.USE_BOCK = true
 
         const playersSet = {
             kind: 'playersSet',
@@ -1193,7 +1334,7 @@ describe('validate deal', () => {
         {
             const candidate = {
                 kind: 'deal',
-                events: 0,
+                events: 1,
                 changes: [
                     {
                         name: 'A',
@@ -1247,7 +1388,77 @@ describe('validate deal', () => {
         }
     })
 
+    test('correct deal is validated (useBock: false)', () => {
+        process.env.USE_BOCK = false
+
+        const playersSet = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D', 'E', 'F'],
+            dealerName: 'B',
+            sitOutScheme: [3]
+        }
+
+        const data = [playersSet]
+
+        {
+            const candidate = {
+                kind: 'deal',
+                events: 1,
+                changes: [
+                    {
+                        name: 'A',
+                        diff: 1
+                    },
+                    {
+                        name: 'C',
+                        diff: 1
+                    },
+                    {
+                        name: 'D',
+                        diff: -1
+                    },
+                    {
+                        name: 'F',
+                        diff: -1
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(false)
+        }
+
+        {
+            const candidate = {
+                kind: 'deal',
+                events: 0,
+                changes: [
+                    {
+                        name: 'A',
+                        diff: 6
+                    },
+                    {
+                        name: 'C',
+                        diff: -2
+                    },
+                    {
+                        name: 'D',
+                        diff: -2
+                    },
+                    {
+                        name: 'F',
+                        diff: -2
+                    }
+                ]
+            }
+
+            const result = validateDeal(data, candidate)
+            expect(result).toBe(true)
+        }
+    })
+
     test('standalone validations work without data', () => {
+        process.env.USE_BOCK = true
 
         const data = null
 
@@ -1414,6 +1625,7 @@ describe('validate deal', () => {
     })
 
     test('standalone validation of zero-sum condition works', () => {
+        process.env.USE_BOCK = true
 
         const data = null
 
@@ -1447,6 +1659,7 @@ describe('validate deal', () => {
     })
 
     test('standalone validation of diffs consistent within parties works', () => {
+        process.env.USE_BOCK = true
 
         const data = null
 
@@ -1508,6 +1721,7 @@ describe('validate deal', () => {
     })
 
     test('all-zero deal is validated', () => {
+        process.env.USE_BOCK = true
 
         const playersSet = {
             kind: 'playersSet',
@@ -1548,6 +1762,7 @@ describe('validate deal', () => {
     })
 
     test('duplicate player fails', () => {
+        process.env.USE_BOCK = true
 
         const playersSet = {
             kind: 'playersSet',
@@ -1588,6 +1803,7 @@ describe('validate deal', () => {
     })
 
     test('non-active player fails', () => {
+        process.env.USE_BOCK = true
 
         const playersSet = {
             kind: 'playersSet',
@@ -1631,6 +1847,7 @@ describe('validate deal', () => {
 describe('calculate bock', () => {
 
     test('getMultiplier can handle sparse array bockHelper', () => {
+        process.env.USE_BOCK = true
 
         const bockHelper = []
 
@@ -1646,7 +1863,25 @@ describe('calculate bock', () => {
         expect(getMultiplier(bockHelper, 4)).toBe(8)
     })
 
+    test('getMultiplier returns 1 if bock is disabled', () => {
+        process.env.USE_BOCK = false
+
+        const bockHelper = []
+
+        bockHelper[1] = 0
+        bockHelper[2] = 1
+        bockHelper[3] = 2
+        bockHelper[4] = 3
+
+        expect(getMultiplier(bockHelper, 0)).toBe(1)
+        expect(getMultiplier(bockHelper, 1)).toBe(1)
+        expect(getMultiplier(bockHelper, 2)).toBe(1)
+        expect(getMultiplier(bockHelper, 3)).toBe(1)
+        expect(getMultiplier(bockHelper, 4)).toBe(1)
+    })
+
     test('bockHelper, bockPreview logic correct: simple', () => {
+        process.env.USE_BOCK = true
 
         const playersSet = {
             kind: 'playersSet',
@@ -1729,6 +1964,7 @@ describe('calculate bock', () => {
     })
 
     test('bockHelper, bockPreview logic correct: change players', () => {
+        process.env.USE_BOCK = true
 
         const playersSet1 = {
             kind: 'playersSet',
@@ -1824,6 +2060,7 @@ describe('calculate bock', () => {
     })
 
     test('bockHelper, bockPreview logic correct: overload', () => {
+        process.env.USE_BOCK = true
 
         const playersSet = {
             kind: 'playersSet',
@@ -1907,6 +2144,7 @@ describe('calculate bock', () => {
     })
 
     test('bockHelper, bockPreview logic correct: mandatory solo trigger', () => {
+        process.env.USE_BOCK = true
 
         const playersSet = {
             kind: 'playersSet',
@@ -1998,7 +2236,8 @@ describe('calculate bock', () => {
 
 describe('validate mandatorySoloTrigger', () => {
 
-    test('correct mandatorySoloTrigger is validated', () => {
+    test('correct mandatorySoloTrigger is validated (useBock: true)', () => {
+        process.env.USE_BOCK = true
 
         const playersSet = {
             kind: 'playersSet',
@@ -2017,7 +2256,28 @@ describe('validate mandatorySoloTrigger', () => {
         expect(result).toBe(true)
     })
 
-    test('standalone validation works without data', () => {
+    test('mandatorySoloTrigger fails validation (useBock: false)', () => {
+        process.env.USE_BOCK = false
+
+        const playersSet = {
+            kind: 'playersSet',
+            playerNames: ['A', 'B', 'C', 'D', 'E', 'F'],
+            dealerName: 'B',
+            sitOutScheme: [3]
+        }
+
+        const data = [playersSet]
+
+        const candidate = {
+            kind: 'mandatorySoloTrigger',
+        }
+
+        const result = validateMandatorySoloTrigger(data, candidate)
+        expect(result).toBe(false)
+    })
+
+    test('standalone validation works without data (useBock: true)', () => {
+        process.env.USE_BOCK = true
 
         const data = null
 
@@ -2031,7 +2291,23 @@ describe('validate mandatorySoloTrigger', () => {
         }
     })
 
-    test('too early trigger is handled', () => {
+    test('standalone validation without data fails (useBock: false)', () => {
+        process.env.USE_BOCK = false
+
+        const data = null
+
+        {
+            const candidate = {
+                kind: 'deal',
+            }
+
+            const result = validateMandatorySoloTrigger(data, candidate)
+            expect(result).toBe(false)
+        }
+    })
+
+    test('too early trigger is handled (useBock: true)', () => {
+        process.env.USE_BOCK = true
 
         const playersSet = {
             kind: 'playersSet',

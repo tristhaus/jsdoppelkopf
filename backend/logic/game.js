@@ -61,6 +61,11 @@ const constructBockHelper = data => {
 }
 
 const getMultiplier = (bockHelper, gameIndex) => {
+
+    if (!config.USE_BOCK()) {
+        return 1
+    }
+
     switch (bockHelper[gameIndex]) {
         default:
             return 1
@@ -81,19 +86,21 @@ const createBockPreview = (bockHelper, currentGameIndex) => {
         triple: 0,
     }
 
-    const future = bockHelper.slice(currentGameIndex)
+    if (config.USE_BOCK()) {
+        const future = bockHelper.slice(currentGameIndex)
 
-    for (const value of future) {
-        switch (value) {
-            case 1:
-                preview.single++
-                break
-            case 2:
-                preview.double++
-                break
-            case 3:
-                preview.triple++
-                break
+        for (const value of future) {
+            switch (value) {
+                case 1:
+                    preview.single++
+                    break
+                case 2:
+                    preview.double++
+                    break
+                case 3:
+                    preview.triple++
+                    break
+            }
         }
     }
 
@@ -116,7 +123,7 @@ const isMandatorySolo = data => {
 }
 
 const pointDifferenceToCents = difference => {
-    return Number(BigInt.asIntN(64, BigInt(difference) * BigInt(config.POINT_TO_CENT_NUMERATOR) / BigInt(config.POINT_TO_CENT_DENOMINATOR)))
+    return Number(BigInt.asIntN(64, BigInt(difference) * BigInt(config.POINT_TO_CENT_NUMERATOR()) / BigInt(config.POINT_TO_CENT_DENOMINATOR())))
 }
 
 const findSoloPlayer = changes => {
@@ -230,7 +237,7 @@ const calculatePlayerData = data => {
         player.cents = pointDifferenceToCents(leaderScore - player.score)
     })
 
-    const numberOfAbsentPlayers = config.TOTAL_NUMBER_OF_PLAYERS - allPlayers.length
+    const numberOfAbsentPlayers = config.TOTAL_NUMBER_OF_PLAYERS() - allPlayers.length
 
     const absentPlayerCents = numberOfAbsentPlayers > 0 ? pointDifferenceToCents(leaderScore - 0) : null
 
@@ -312,7 +319,11 @@ const applyPlayersSet = (data, playersSet) => {
 
 const validateDeal = (data, deal) => {
 
-    if (!deal || deal.kind !== 'deal' || !deal.changes || !Object.prototype.hasOwnProperty.call(deal, 'events') || !Number.isInteger(deal.events) || deal.events < 0) {
+    if (!deal || deal.kind !== 'deal' || !deal.changes) {
+        return false
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(deal, 'events') || !Number.isInteger(deal.events) || (config.USE_BOCK() && deal.events < 0) || (!config.USE_BOCK() && deal.events !== 0)) {
         return false
     }
 
@@ -351,6 +362,10 @@ const applyDeal = (data, deal) => {
 }
 
 const validateMandatorySoloTrigger = (data, mandatorySoloTrigger) => {
+
+    if (!config.USE_BOCK()) {
+        return false
+    }
 
     if (!mandatorySoloTrigger || mandatorySoloTrigger.kind !== 'mandatorySoloTrigger') {
         return false

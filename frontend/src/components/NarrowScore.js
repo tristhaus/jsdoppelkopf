@@ -30,22 +30,43 @@ const PlayerLine = ({ isWriter, singlePlayerData, diffEntries, isDealer, handleE
         <div id={`cash_${singlePlayerData.name}`} className={addPresentOrAbsent('narrow cash', singlePlayerData)}>{formatCents(singlePlayerData.cents)}</div>
     </>)
 
-const ScoreControls = ({ numberOfEvents, setNumberOfEvents, isPopDisabled, handlePopClicked, isDealDisabled, handleDealClicked }) => (
-    <>
-        <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
-            <span style={{ justifySelf: 'left' }}>Bockereignisse <input type="number" id="bockereignisse" min="0" value={numberOfEvents} onChange={event => setNumberOfEvents(event.target.value)} size={3} /></span>
-        </div>
-        < div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-            <button className="popButton" disabled={isPopDisabled} onClick={handlePopClicked}>Zurücksetzen</button>
-            <button className="dealButton" disabled={isDealDisabled} onClick={handleDealClicked}>Übernehmen</button>
-        </div >
-    </>)
+const ScoreControls = ({ data, numberOfEvents, setNumberOfEvents, isPopDisabled, handlePopClicked, isDealDisabled, handleDealClicked }) => {
+    const visibility = data.useBock ? 'visible' : 'hidden'
+    return (
+        <>
+            <div style={{ visibility: visibility, gridColumn: '1 / -1', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
+                <span style={{ justifySelf: 'left' }}>Bockereignisse <input type="number" id="bockereignisse" min="0" value={numberOfEvents} onChange={event => setNumberOfEvents(event.target.value)} size={3} /></span>
+            </div>
+            <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+                <button className="popButton" disabled={isPopDisabled} onClick={handlePopClicked}>Zurücksetzen</button>
+                <button className="dealButton" disabled={isDealDisabled} onClick={handleDealClicked}>Übernehmen</button>
+            </div>
+        </>)
+}
+
+const BockDisplay = ({ data }) => (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'right' }}>
+    <span id="currentBockStatus">{deduceBock(data)}</span>
+    <table style={{ margin: '0px 15px' }}>
+        <tbody>
+            <tr>
+                <td>Dreifachbock:</td><td id="bockPreviewTriple">{data.bockPreview.triple}</td>
+            </tr>
+            <tr>
+                <td>Doppelbock:</td><td id="bockPreviewDouble">{data.bockPreview.double}</td>
+            </tr>
+            <tr>
+                <td>Bock:</td><td id="bockPreviewSingle">{data.bockPreview.single}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>)
 
 const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal, addMandatorySoloTrigger, addPlayersSet, popLastEntry, }) => {
 
     const gridTemplateColumns = `repeat(${(isWriter ? 5 : 4)}, auto)`
 
     const playerData = data.playerData
+    const useBock = data.useBock
 
     const [message, setMessage] = useState('')
     const [showPlayerEntry, setShowPlayerEntry] = useState(false)
@@ -164,31 +185,16 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
     return (
         <>
             {showPlayerEntry && (<PlayerEntry playerInformation={{ dealerName: data.dealerName, playerData: data.playerData, }} closeAction={() => setShowPlayerEntry(false)} submitAction={submitNewPlayersAction} />)}
-            {showStatistics && (<NarrowStatistics playerData={data.playerData} closeAction={() => setShowStatistics(false)} />)}
+            {showStatistics && (<NarrowStatistics data={data} closeAction={() => setShowStatistics(false)} />)}
             {showPlot && (<NarrowPlot playerData={data.playerData} closeAction={() => setShowPlot(false)} />)}
             <div style={{ display: 'grid', gap: '10px', gridTemplateColumns: 'repeat(3, auto)' }}>
                 <button id="readerLinkButton" className='shareButton' onClick={shareReaderLink}>Reader-Link teilen</button>
                 {isWriter && (<button id="writerLinkButton" className='shareButton' onClick={shareWriterLink}>Writer-Link teilen</button>)}
                 <button id="reloadButton" className='reloadButton' onClick={reloadAction}>&#x27F3;</button>
                 {isWriter && (<button className="changePlayersButton" disabled={isChangePlayersDisabled} onClick={handleChangePlayersClicked}>Spieler ausw&auml;hlen ...</button>)}
-                {isWriter && (<button className="mandatorySoloButton" disabled={isMandatorySoloDisabled} onClick={handleMandatorySoloClicked}>Pflichtsolorunde</button>)}
+                {isWriter && useBock && (<button className="mandatorySoloButton" disabled={isMandatorySoloDisabled} onClick={handleMandatorySoloClicked}>Pflichtsolorunde</button>)}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'right' }}>
-                <span id="currentBockStatus">{deduceBock(data)}</span>
-                <table style={{ margin: '0px 15px' }}>
-                    <tbody>
-                        <tr>
-                            <td>Dreifachbock:</td><td id="bockPreviewTriple">{data.bockPreview.triple}</td>
-                        </tr>
-                        <tr>
-                            <td>Doppelbock:</td><td id="bockPreviewDouble">{data.bockPreview.double}</td>
-                        </tr>
-                        <tr>
-                            <td>Bock:</td><td id="bockPreviewSingle">{data.bockPreview.single}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            {useBock && <BockDisplay data={data} />}
             <div style={{ display: 'grid', gap: '5px 10px', gridTemplateColumns: gridTemplateColumns }}>
                 <span>Namen</span>
                 <span style={{ justifySelf: 'right' }}>Letztes</span>
@@ -206,6 +212,7 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
                         handleFocus={handleFocus}
                     />)}
                 {isWriter && (<ScoreControls
+                    data={data}
                     numberOfEvents={numberOfEvents}
                     setNumberOfEvents={setNumberOfEvents}
                     isPopDisabled={isPopDisabled}

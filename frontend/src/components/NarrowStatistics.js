@@ -11,8 +11,8 @@ const StatisticsColumn = ({ label, playerData, selector, idTemplate, }) => {
     )
 }
 
-const NarrowStatistics = ({ playerData, closeAction }) => {
-
+const NarrowStatistics = ({ data, closeAction }) => {
+    const playerData = data.playerData
     return (
         <>
             <div className="darkBG overlayOutside" onClick={closeAction} />
@@ -24,15 +24,15 @@ const NarrowStatistics = ({ playerData, closeAction }) => {
                             {playerData.map(player => (<span key={player.name} id={`statistics_name_${player.name}`} className={addPresentOrAbsent('narrow statistics_playerName', player)}>{player.name}</span>))}
                         </div>
                         <div className="narrow statistics_dataColumns">
-                            <StatisticsColumn label='Gewonnen' playerData={playerData} selector={player => player.numWin} idTemplate='statistics_numWin'/>
-                            <StatisticsColumn label='Verloren' playerData={playerData} selector={player => player.numLoss} idTemplate='statistics_numLoss'/>
-                            <StatisticsColumn label='# Spiele' playerData={playerData} selector={player => player.num} idTemplate='statistics_num'/>
-                            <StatisticsColumn label='# +Solo' playerData={playerData} selector={player => player.numWonSolo} idTemplate='statistics_numWonSolo'/>
-                            <StatisticsColumn label='# -Solo' playerData={playerData} selector={player => player.numLostSolo} idTemplate='statistics_numLostSolo'/>
-                            <StatisticsColumn label='Solo Punkte' playerData={playerData} selector={player => player.soloScore} idTemplate='statistics_soloScore'/>
-                            <StatisticsColumn label='Höchstes +' playerData={playerData} selector={player => player.maxWin} idTemplate='statistics_maxWin'/>
-                            <StatisticsColumn label='Höchstes -' playerData={playerData} selector={player => player.maxLoss} idTemplate='statistics_maxLoss'/>
-                            <StatisticsColumn label='Ohne Bock' playerData={playerData} selector={player => player.noBockScore} idTemplate='statistics_noBockScore'/>
+                            <StatisticsColumn label='Gewonnen' playerData={playerData} selector={player => player.numWin} idTemplate='statistics_numWin' />
+                            <StatisticsColumn label='Verloren' playerData={playerData} selector={player => player.numLoss} idTemplate='statistics_numLoss' />
+                            <StatisticsColumn label='# Spiele' playerData={playerData} selector={player => player.num} idTemplate='statistics_num' />
+                            <StatisticsColumn label='# +Solo' playerData={playerData} selector={player => player.numWonSolo} idTemplate='statistics_numWonSolo' />
+                            <StatisticsColumn label='# -Solo' playerData={playerData} selector={player => player.numLostSolo} idTemplate='statistics_numLostSolo' />
+                            <StatisticsColumn label='Solo Punkte' playerData={playerData} selector={player => player.soloScore} idTemplate='statistics_soloScore' />
+                            <StatisticsColumn label='Höchstes +' playerData={playerData} selector={player => player.maxWin} idTemplate='statistics_maxWin' />
+                            <StatisticsColumn label='Höchstes -' playerData={playerData} selector={player => player.maxLoss} idTemplate='statistics_maxLoss' />
+                            {data.useBock && <StatisticsColumn label='Ohne Bock' playerData={playerData} selector={player => player.noBockScore} idTemplate='statistics_noBockScore' />}
                         </div>
                     </div>
                     <div>

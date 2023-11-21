@@ -34,18 +34,38 @@ const CurrentGame = ({ playerData, diffEntries, handleFocus, handleEntryChanged 
         })}
     </>)
 
-const ScoreControls = ({ numberOfEvents, setNumberOfEvents, isPopDisabled, handlePopClicked, isDealDisabled, handleDealClicked }) => (
-    <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <span style={{ justifySelf: 'left' }}>Bockereignisse <input type="number" id="bockereignisse" min="0" value={numberOfEvents} onChange={event => setNumberOfEvents(event.target.value)} size={3} /></span>
-        <span>
-            <button className="popButton" disabled={isPopDisabled} onClick={handlePopClicked}>Zurücksetzen</button>
-            <button className="dealButton" disabled={isDealDisabled} onClick={handleDealClicked}>Übernehmen</button>
-        </span>
-    </div>)
+const ScoreControls = ({ data, numberOfEvents, setNumberOfEvents, isPopDisabled, handlePopClicked, isDealDisabled, handleDealClicked }) => {
+    const visibility = data.useBock ? 'visible' : 'hidden'
+    return (
+        <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <span style={{ visibility: visibility, justifySelf: 'left' }}>Bockereignisse <input type="number" id="bockereignisse" min="0" value={numberOfEvents} onChange={event => setNumberOfEvents(event.target.value)} size={3} /></span>
+            <span>
+                <button className="popButton" disabled={isPopDisabled} onClick={handlePopClicked}>Zurücksetzen</button>
+                <button className="dealButton" disabled={isDealDisabled} onClick={handleDealClicked}>Übernehmen</button>
+            </span>
+        </div>)
+}
+
+const BockDisplay = ({ data }) => (<>
+    <span id="currentBockStatus">{deduceBock(data)}</span>
+    <table style={{ margin: '0px 15px' }}>
+        <tbody>
+            <tr>
+                <td>Dreifachbock:</td><td id="bockPreviewTriple">{data.bockPreview.triple}</td>
+            </tr>
+            <tr>
+                <td>Doppelbock:</td><td id="bockPreviewDouble">{data.bockPreview.double}</td>
+            </tr>
+            <tr>
+                <td>Bock:</td><td id="bockPreviewSingle">{data.bockPreview.single}</td>
+            </tr>
+        </tbody>
+    </table></>)
 
 const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySoloTrigger, addPlayersSet, popLastEntry, reloadAction, }) => {
 
     const playerData = data.playerData
+    const useBock = data.useBock
 
     const numberOfPlayers = playerData.length
 
@@ -167,7 +187,7 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
     return (
         <>
             {showPlayerEntry && (<PlayerEntry playerInformation={{ dealerName: data.dealerName, playerData: data.playerData, }} closeAction={() => setShowPlayerEntry(false)} submitAction={submitNewPlayersAction} />)}
-            {showStatistics && (<WideStatistics playerData={data.playerData} closeAction={() => setShowStatistics(false)} />)}
+            {showStatistics && (<WideStatistics data={data} closeAction={() => setShowStatistics(false)} />)}
             {showPlot && (<WidePlot playerData={data.playerData} closeAction={() => setShowPlot(false)} />)}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span>
@@ -180,21 +200,8 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'right' }}>
                 {isWriter && (<button className="changePlayersButton" disabled={isChangePlayersDisabled} onClick={handleChangePlayersClicked}>Spieler ausw&auml;hlen ...</button>)}
-                {isWriter && (<button className="mandatorySoloButton" disabled={isMandatorySoloDisabled} onClick={handleMandatorySoloClicked}>Pflichtsolorunde</button>)}
-                <span id="currentBockStatus">{deduceBock(data)}</span>
-                <table style={{ margin: '0px 15px' }}>
-                    <tbody>
-                        <tr>
-                            <td>Dreifachbock:</td><td id="bockPreviewTriple">{data.bockPreview.triple}</td>
-                        </tr>
-                        <tr>
-                            <td>Doppelbock:</td><td id="bockPreviewDouble">{data.bockPreview.double}</td>
-                        </tr>
-                        <tr>
-                            <td>Bock:</td><td id="bockPreviewSingle">{data.bockPreview.single}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                {isWriter && useBock && (<button className="mandatorySoloButton" disabled={isMandatorySoloDisabled} onClick={handleMandatorySoloClicked}>Pflichtsolorunde</button>)}
+                {useBock && <BockDisplay data={data} />}
             </div>
             <div style={{ display: 'grid', gap: '5px 10px', gridTemplateColumns: gridTemplateColumns, }}>
                 <span>Name</span>
@@ -208,6 +215,7 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
                     handleEntryChanged={handleEntryChanged}
                 />)}
                 {isWriter && (<ScoreControls
+                    data={data}
                     numberOfEvents={numberOfEvents}
                     setNumberOfEvents={setNumberOfEvents}
                     isPopDisabled={isPopDisabled}

@@ -27,9 +27,21 @@ viewportInfos.forEach(viewportInfo => {
 
         describe(`main landing page [${viewportInfo.displayName}]`, function () {
 
+            it(`set USE_BOCK to 'true' [${viewportInfo.displayName}]`, function () {
+                cy.request('POST', 'http://localhost:3000/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock').its('body.useBock').should('eq', 'true')
+            })
+
+            it(`set USE_BOCK to 'false' [${viewportInfo.displayName}]`, function () {
+                cy.request('POST', 'http://localhost:3000/api/testing/usebock', { useBock: 'false' }).as('usebock')
+                cy.get('@usebock').its('body.useBock').should('eq', 'false')
+            })
+
             it(`page can be opened and has a working New Game button [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3000/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
                 cy.contains('Neues Spiel beginnen').click()
             })
@@ -37,6 +49,8 @@ viewportInfos.forEach(viewportInfo => {
             it(`player entry dialog can be opened and cancelled [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
                 cy.contains('Neues Spiel beginnen').click()
                 cy.contains('Abbrechen').click()
@@ -50,6 +64,8 @@ viewportInfos.forEach(viewportInfo => {
                 }).as('createGame')
 
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
                 cy.contains('Neues Spiel beginnen').click()
                 cy.contains('OK').should('be.disabled')
@@ -70,6 +86,8 @@ viewportInfos.forEach(viewportInfo => {
             it(`player entry dialog can remove and add player lines within it [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
                 cy.contains('Neues Spiel beginnen').click()
 
@@ -108,6 +126,8 @@ viewportInfos.forEach(viewportInfo => {
             it(`player entry dialog has drag and drop-based swapping of the boxes [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
                 cy.contains('Neues Spiel beginnen').click()
                 cy.contains('OK').should('be.disabled')
@@ -159,6 +179,8 @@ viewportInfos.forEach(viewportInfo => {
             it(`player entry dialog with duplicated player name has disabled OK [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
                 cy.contains('Neues Spiel beginnen').click()
                 cy.contains('OK').should('be.disabled')
@@ -177,6 +199,8 @@ viewportInfos.forEach(viewportInfo => {
             it(`player entry dialog with empty player name has disabled OK [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
                 cy.contains('Neues Spiel beginnen').click()
                 cy.contains('OK').should('be.disabled')
@@ -196,6 +220,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -251,6 +277,8 @@ viewportInfos.forEach(viewportInfo => {
             it(`page validates the entered writer ID: works [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
 
                 cy.get('#inputWriterId').type('WaBcDeF')
@@ -260,6 +288,8 @@ viewportInfos.forEach(viewportInfo => {
             it(`page validates the entered writer ID: too short [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
 
                 cy.get('#inputWriterId').type('Wshort')
@@ -269,6 +299,8 @@ viewportInfos.forEach(viewportInfo => {
             it(`page validates the entered writer ID: too long [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
 
                 cy.get('#inputWriterId').type('Wtoolong')
@@ -278,6 +310,8 @@ viewportInfos.forEach(viewportInfo => {
             it(`page validates the entered writer ID: wrong characters [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
 
                 cy.get('#inputWriterId').type('W123456')
@@ -288,6 +322,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -343,6 +379,8 @@ viewportInfos.forEach(viewportInfo => {
             it(`page validates the entered reader ID: works [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
 
                 cy.get('#inputReaderId').type('RaBcDeF')
@@ -352,6 +390,8 @@ viewportInfos.forEach(viewportInfo => {
             it(`page validates the entered reader ID: too short [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
 
                 cy.get('#inputReaderId').type('Rshort')
@@ -361,6 +401,8 @@ viewportInfos.forEach(viewportInfo => {
             it(`page validates the entered reader ID: too long [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
 
                 cy.get('#inputReaderId').type('Rtoolong')
@@ -370,6 +412,8 @@ viewportInfos.forEach(viewportInfo => {
             it(`page validates the entered reader ID: wrong characters [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
                 cy.visit('http://localhost:3000')
 
                 cy.get('#inputReaderId').type('R123456')
@@ -379,10 +423,12 @@ viewportInfos.forEach(viewportInfo => {
 
         describe(`write landing page  [${viewportInfo.displayName}]`, function () {
 
-            it(`page can be opened and has correct content [${viewportInfo.displayName}]`, function () {
+            it(`page can be opened and has correct content [(useBock: true) ${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -495,10 +541,130 @@ viewportInfos.forEach(viewportInfo => {
                 }
             })
 
-            it(`statistics box has correct content [${viewportInfo.displayName}]`, function () {
+            it(`page can be opened and has correct content [(useBock: false) ${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'false' }).as('usebock')
+                cy.get('@usebock')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD',
+                        'PlayerE',
+                        'PlayerF',
+                        'PlayerG'
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: [
+                        2,
+                        4
+                    ]
+                }
+
+                const deal = {
+                    kind: 'deal',
+                    events: 0,
+                    changes: [
+                        {
+                            name: 'PlayerA',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerB',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerD',
+                            diff: -1
+                        },
+                        {
+                            name: 'PlayerF',
+                            diff: -1
+                        }
+                    ],
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet, deal],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/writer/myWriterId')
+
+                cy.get('.mandatorySoloButton').should('not.exist')
+                cy.get('#currentBockStatus').should('not.exist')
+                cy.get('#bockPreviewTriple').should('not.exist')
+                cy.get('#bockPreviewDouble').should('not.exist')
+                cy.get('#bockPreviewSingle').should('not.exist')
+
+                cy.get('#name_PlayerA').contains('PlayerA')
+                cy.get('#name_PlayerB').contains('PlayerB')
+                cy.get('#name_PlayerC').contains('PlayerC')
+                cy.get('#name_PlayerD').contains('PlayerD')
+                cy.get('#name_PlayerE').contains('PlayerE')
+                cy.get('#name_PlayerF').contains('PlayerF')
+                cy.get('#name_PlayerG').contains('PlayerG')
+
+                cy.get('#lastDeal_PlayerA').contains('1')
+                cy.get('#lastDeal_PlayerB').contains('1')
+                cy.get('#lastDeal_PlayerC').should('have.value', '')
+                cy.get('#lastDeal_PlayerD').contains('-1')
+                cy.get('#lastDeal_PlayerE').should('have.value', '')
+                cy.get('#lastDeal_PlayerF').contains('-1')
+                cy.get('#lastDeal_PlayerG').should('have.value', '')
+
+                cy.get('#currentDeal_PlayerA').should('not.exist')
+                cy.get('#currentDeal_PlayerB')
+                cy.get('#currentDeal_PlayerC')
+                cy.get('#currentDeal_PlayerD').should('not.exist')
+                cy.get('#currentDeal_PlayerE')
+                cy.get('#currentDeal_PlayerF').should('not.exist')
+                cy.get('#currentDeal_PlayerG')
+
+                cy.get('.popButton').should('not.be.disabled')
+                cy.get('.dealButton').should('be.disabled')
+
+                cy.get('#score_PlayerA').contains('1')
+                cy.get('#score_PlayerB').contains('1')
+                cy.get('#score_PlayerC').contains('0')
+                cy.get('#score_PlayerD').contains('-1')
+                cy.get('#score_PlayerE').contains('0')
+                cy.get('#score_PlayerF').contains('-1')
+                cy.get('#score_PlayerG').contains('0')
+
+                cy.get('#cash_PlayerA').contains('0,00')
+                cy.get('#cash_PlayerB').contains('0,00')
+                cy.get('#cash_PlayerC').contains('0,00')
+                cy.get('#cash_PlayerD').contains('0,01')
+                cy.get('#cash_PlayerE').contains('0,00')
+                cy.get('#cash_PlayerF').contains('0,01')
+                cy.get('#cash_PlayerG').contains('0,00')
+
+                if (viewportInfo.isNarrow) {
+                    cy.get('#totalCash').contains('0,02 (inkl. 0,00 / Abw.)')
+                }
+                else {
+                    cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
+                }
+            })
+
+            it(`statistics box has correct content [(useBock: true) ${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -664,10 +830,183 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('#statistics_name_PlayerA').should('not.exist')
             })
 
+            it(`statistics box has correct content [(useBock: false) ${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'false' }).as('usebock')
+                cy.get('@usebock')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD',
+                        'PlayerE',
+                        'PlayerF',
+                        'PlayerG'
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: [
+                        2,
+                        4
+                    ]
+                }
+
+                const deal1 = {
+                    kind: 'deal',
+                    events: 0,
+                    changes: [
+                        {
+                            name: 'PlayerA',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerB',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerD',
+                            diff: -1
+                        },
+                        {
+                            name: 'PlayerF',
+                            diff: -1
+                        }
+                    ],
+                }
+
+                const deal2 = {
+                    kind: 'deal',
+                    events: 0,
+                    changes: [
+                        {
+                            name: 'PlayerB',
+                            diff: -2
+                        },
+                        {
+                            name: 'PlayerC',
+                            diff: -2
+                        },
+                        {
+                            name: 'PlayerE',
+                            diff: 6
+                        },
+                        {
+                            name: 'PlayerG',
+                            diff: -2
+                        }
+                    ],
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet, deal1, deal2],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/writer/myWriterId')
+
+                cy.get('#statisticsButton').click()
+
+                cy.get('#statistics_name_PlayerA').contains('PlayerA')
+                cy.get('#statistics_name_PlayerB').contains('PlayerB')
+                cy.get('#statistics_name_PlayerC').contains('PlayerC')
+                cy.get('#statistics_name_PlayerD').contains('PlayerD')
+                cy.get('#statistics_name_PlayerE').contains('PlayerE')
+                cy.get('#statistics_name_PlayerF').contains('PlayerF')
+                cy.get('#statistics_name_PlayerG').contains('PlayerG')
+
+                cy.get('#statistics_numWin_PlayerA').contains('1')
+                cy.get('#statistics_numWin_PlayerB').contains('1')
+                cy.get('#statistics_numWin_PlayerC').contains('0')
+                cy.get('#statistics_numWin_PlayerD').contains('0')
+                cy.get('#statistics_numWin_PlayerE').contains('1')
+                cy.get('#statistics_numWin_PlayerF').contains('0')
+                cy.get('#statistics_numWin_PlayerG').contains('0')
+
+                cy.get('#statistics_numLoss_PlayerA').contains('0')
+                cy.get('#statistics_numLoss_PlayerB').contains('1')
+                cy.get('#statistics_numLoss_PlayerC').contains('1')
+                cy.get('#statistics_numLoss_PlayerD').contains('1')
+                cy.get('#statistics_numLoss_PlayerE').contains('0')
+                cy.get('#statistics_numLoss_PlayerF').contains('1')
+                cy.get('#statistics_numLoss_PlayerG').contains('1')
+
+                cy.get('#statistics_num_PlayerA').contains('1')
+                cy.get('#statistics_num_PlayerB').contains('2')
+                cy.get('#statistics_num_PlayerC').contains('1')
+                cy.get('#statistics_num_PlayerD').contains('1')
+                cy.get('#statistics_num_PlayerE').contains('1')
+                cy.get('#statistics_num_PlayerF').contains('1')
+                cy.get('#statistics_num_PlayerG').contains('1')
+
+                cy.get('#statistics_numWonSolo_PlayerA').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerB').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerC').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerD').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerE').contains('1')
+                cy.get('#statistics_numWonSolo_PlayerF').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerG').contains('0')
+
+                cy.get('#statistics_numLostSolo_PlayerA').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerB').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerC').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerD').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerE').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerF').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerG').contains('0')
+
+                cy.get('#statistics_soloScore_PlayerA').contains('0')
+                cy.get('#statistics_soloScore_PlayerB').contains('0')
+                cy.get('#statistics_soloScore_PlayerC').contains('0')
+                cy.get('#statistics_soloScore_PlayerD').contains('0')
+                cy.get('#statistics_soloScore_PlayerE').contains('6')
+                cy.get('#statistics_soloScore_PlayerF').contains('0')
+                cy.get('#statistics_soloScore_PlayerG').contains('0')
+
+                cy.get('#statistics_maxWin_PlayerA').contains('1')
+                cy.get('#statistics_maxWin_PlayerB').contains('1')
+                cy.get('#statistics_maxWin_PlayerC').contains('0')
+                cy.get('#statistics_maxWin_PlayerD').contains('0')
+                cy.get('#statistics_maxWin_PlayerE').contains('6')
+                cy.get('#statistics_maxWin_PlayerF').contains('0')
+                cy.get('#statistics_maxWin_PlayerG').contains('0')
+
+                cy.get('#statistics_maxLoss_PlayerA').contains('0')
+                cy.get('#statistics_maxLoss_PlayerB').contains('-2')
+                cy.get('#statistics_maxLoss_PlayerC').contains('-2')
+                cy.get('#statistics_maxLoss_PlayerD').contains('-1')
+                cy.get('#statistics_maxLoss_PlayerE').contains('0')
+                cy.get('#statistics_maxLoss_PlayerF').contains('-1')
+                cy.get('#statistics_maxLoss_PlayerG').contains('-2')
+
+                cy.get('#statistics_noBockScore_PlayerA').should('not.exist')
+                cy.get('#statistics_noBockScore_PlayerB').should('not.exist')
+                cy.get('#statistics_noBockScore_PlayerC').should('not.exist')
+                cy.get('#statistics_noBockScore_PlayerD').should('not.exist')
+                cy.get('#statistics_noBockScore_PlayerE').should('not.exist')
+                cy.get('#statistics_noBockScore_PlayerF').should('not.exist')
+                cy.get('#statistics_noBockScore_PlayerG').should('not.exist')
+
+                cy.get('#statitistics_OkButton').click()
+
+                cy.get('#statistics_name_PlayerA').should('not.exist')
+            })
+
             it(`plot box can be opened, closed, has plot [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -759,6 +1098,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 cy.visit('http://localhost:3000/writer/WNONEXISTENT')
 
@@ -774,6 +1115,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -856,6 +1199,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -904,6 +1249,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -952,6 +1299,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1000,6 +1349,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1048,6 +1399,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1096,6 +1449,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1144,6 +1499,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1192,6 +1549,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1240,6 +1599,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1290,6 +1651,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1333,6 +1696,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1372,7 +1737,7 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('.dealButton').should('not.be.disabled')
             })
 
-            it(`page can start mandatory solo round and pop it again [${viewportInfo.displayName}]`, function () {
+            it(`page can start mandatory solo round and pop it again [(useBock: true) ${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.intercept({
                     method: 'POST',
@@ -1385,6 +1750,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1435,7 +1802,7 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('#currentBockStatus').contains('Kein Bock')
             })
 
-            it(`page can start mandatory solo round and not pop it on cancelling [${viewportInfo.displayName}]`, function () {
+            it(`page can start mandatory solo round and not pop it on cancelling [(useBock: true) ${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.intercept({
                     method: 'POST',
@@ -1444,6 +1811,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1493,7 +1862,7 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('#currentBockStatus').contains('Pflichtsolo')
             })
 
-            it(`page displays error if unable to start mandatory solo round [${viewportInfo.displayName}]`, function () {
+            it(`page displays error if unable to start mandatory solo round [(useBock: true) ${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.intercept(
                     {
@@ -1507,6 +1876,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1558,6 +1929,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1633,6 +2006,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1748,6 +2123,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1845,6 +2222,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1898,6 +2277,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1942,6 +2323,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -1995,6 +2378,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -2098,6 +2483,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -2223,6 +2610,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -2346,6 +2735,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -2392,6 +2783,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -2477,6 +2870,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -2561,6 +2956,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -2668,6 +3065,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -2742,6 +3141,8 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -2823,6 +3224,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -2892,11 +3295,13 @@ viewportInfos.forEach(viewportInfo => {
 
         describe(`read landing page  [${viewportInfo.displayName}]`, function () {
 
-            it(`page can be opened and has correct content [${viewportInfo.displayName}]`, function () {
+            it(`page can be opened and has correct content [(useBock: true) ${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -3009,10 +3414,131 @@ viewportInfos.forEach(viewportInfo => {
                 }
             })
 
-            it(`statistics box has correct content [${viewportInfo.displayName}]`, function () {
+            it(`page can be opened and has correct content [(useBock: false) ${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'false' }).as('usebock')
+                cy.get('@usebock')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD',
+                        'PlayerE',
+                        'PlayerF',
+                        'PlayerG'
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: [
+                        2,
+                        4
+                    ]
+                }
+
+                const deal = {
+                    kind: 'deal',
+                    events: 0,
+                    changes: [
+                        {
+                            name: 'PlayerA',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerB',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerD',
+                            diff: -1
+                        },
+                        {
+                            name: 'PlayerF',
+                            diff: -1
+                        }
+                    ],
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet, deal],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/myReaderId')
+
+                cy.get('.mandatorySoloButton').should('not.exist')
+                cy.get('#currentBockStatus').should('not.exist')
+                cy.get('#bockPreviewTriple').should('not.exist')
+                cy.get('#bockPreviewDouble').should('not.exist')
+                cy.get('#bockPreviewSingle').should('not.exist')
+
+                cy.get('#name_PlayerA').contains('PlayerA')
+                cy.get('#name_PlayerB').contains('PlayerB')
+                cy.get('#name_PlayerC').contains('PlayerC')
+                cy.get('#name_PlayerD').contains('PlayerD')
+                cy.get('#name_PlayerE').contains('PlayerE')
+                cy.get('#name_PlayerF').contains('PlayerF')
+                cy.get('#name_PlayerG').contains('PlayerG')
+
+                cy.get('#lastDeal_PlayerA').contains('1')
+                cy.get('#lastDeal_PlayerB').contains('1')
+                cy.get('#lastDeal_PlayerC').should('have.value', '')
+                cy.get('#lastDeal_PlayerD').contains('-1')
+                cy.get('#lastDeal_PlayerE').should('have.value', '')
+                cy.get('#lastDeal_PlayerF').contains('-1')
+                cy.get('#lastDeal_PlayerG').should('have.value', '')
+
+                cy.get('#currentDeal_PlayerA').should('not.exist')
+                cy.get('#currentDeal_PlayerB').should('not.exist')
+                cy.get('#currentDeal_PlayerC').should('not.exist')
+                cy.get('#currentDeal_PlayerD').should('not.exist')
+                cy.get('#currentDeal_PlayerE').should('not.exist')
+                cy.get('#currentDeal_PlayerF').should('not.exist')
+                cy.get('#currentDeal_PlayerG').should('not.exist')
+
+                cy.get('.popButton').should('not.exist')
+                cy.get('.dealButton').should('not.exist')
+
+                cy.get('#score_PlayerA').contains('1')
+                cy.get('#score_PlayerB').contains('1')
+                cy.get('#score_PlayerC').contains('0')
+                cy.get('#score_PlayerD').contains('-1')
+                cy.get('#score_PlayerE').contains('0')
+                cy.get('#score_PlayerF').contains('-1')
+                cy.get('#score_PlayerG').contains('0')
+
+                cy.get('#cash_PlayerA').contains('0,00')
+                cy.get('#cash_PlayerB').contains('0,00')
+                cy.get('#cash_PlayerC').contains('0,00')
+                cy.get('#cash_PlayerD').contains('0,01')
+                cy.get('#cash_PlayerE').contains('0,00')
+                cy.get('#cash_PlayerF').contains('0,01')
+                cy.get('#cash_PlayerG').contains('0,00')
+
+                if (viewportInfo.isNarrow) {
+                    cy.get('#totalCash').contains('0,02 (inkl. 0,00 / Abw.)')
+                }
+                else {
+                    cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
+                }
+            })
+
+            it(`statistics box has correct content [(useBock: true) ${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -3178,10 +3704,183 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('#statistics_name_PlayerA').should('not.exist')
             })
 
+            it(`statistics box has correct content [(useBock: false) ${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'false' }).as('usebock')
+                cy.get('@usebock')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD',
+                        'PlayerE',
+                        'PlayerF',
+                        'PlayerG'
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: [
+                        2,
+                        4
+                    ]
+                }
+
+                const deal1 = {
+                    kind: 'deal',
+                    events: 0,
+                    changes: [
+                        {
+                            name: 'PlayerA',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerB',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerD',
+                            diff: -1
+                        },
+                        {
+                            name: 'PlayerF',
+                            diff: -1
+                        }
+                    ],
+                }
+
+                const deal2 = {
+                    kind: 'deal',
+                    events: 0,
+                    changes: [
+                        {
+                            name: 'PlayerB',
+                            diff: -2
+                        },
+                        {
+                            name: 'PlayerC',
+                            diff: -2
+                        },
+                        {
+                            name: 'PlayerE',
+                            diff: 6
+                        },
+                        {
+                            name: 'PlayerG',
+                            diff: -2
+                        }
+                    ],
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet, deal1, deal2],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/myReaderId')
+
+                cy.get('#statisticsButton').click()
+
+                cy.get('#statistics_name_PlayerA').contains('PlayerA')
+                cy.get('#statistics_name_PlayerB').contains('PlayerB')
+                cy.get('#statistics_name_PlayerC').contains('PlayerC')
+                cy.get('#statistics_name_PlayerD').contains('PlayerD')
+                cy.get('#statistics_name_PlayerE').contains('PlayerE')
+                cy.get('#statistics_name_PlayerF').contains('PlayerF')
+                cy.get('#statistics_name_PlayerG').contains('PlayerG')
+
+                cy.get('#statistics_numWin_PlayerA').contains('1')
+                cy.get('#statistics_numWin_PlayerB').contains('1')
+                cy.get('#statistics_numWin_PlayerC').contains('0')
+                cy.get('#statistics_numWin_PlayerD').contains('0')
+                cy.get('#statistics_numWin_PlayerE').contains('1')
+                cy.get('#statistics_numWin_PlayerF').contains('0')
+                cy.get('#statistics_numWin_PlayerG').contains('0')
+
+                cy.get('#statistics_numLoss_PlayerA').contains('0')
+                cy.get('#statistics_numLoss_PlayerB').contains('1')
+                cy.get('#statistics_numLoss_PlayerC').contains('1')
+                cy.get('#statistics_numLoss_PlayerD').contains('1')
+                cy.get('#statistics_numLoss_PlayerE').contains('0')
+                cy.get('#statistics_numLoss_PlayerF').contains('1')
+                cy.get('#statistics_numLoss_PlayerG').contains('1')
+
+                cy.get('#statistics_num_PlayerA').contains('1')
+                cy.get('#statistics_num_PlayerB').contains('2')
+                cy.get('#statistics_num_PlayerC').contains('1')
+                cy.get('#statistics_num_PlayerD').contains('1')
+                cy.get('#statistics_num_PlayerE').contains('1')
+                cy.get('#statistics_num_PlayerF').contains('1')
+                cy.get('#statistics_num_PlayerG').contains('1')
+
+                cy.get('#statistics_numWonSolo_PlayerA').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerB').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerC').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerD').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerE').contains('1')
+                cy.get('#statistics_numWonSolo_PlayerF').contains('0')
+                cy.get('#statistics_numWonSolo_PlayerG').contains('0')
+
+                cy.get('#statistics_numLostSolo_PlayerA').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerB').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerC').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerD').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerE').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerF').contains('0')
+                cy.get('#statistics_numLostSolo_PlayerG').contains('0')
+
+                cy.get('#statistics_soloScore_PlayerA').contains('0')
+                cy.get('#statistics_soloScore_PlayerB').contains('0')
+                cy.get('#statistics_soloScore_PlayerC').contains('0')
+                cy.get('#statistics_soloScore_PlayerD').contains('0')
+                cy.get('#statistics_soloScore_PlayerE').contains('6')
+                cy.get('#statistics_soloScore_PlayerF').contains('0')
+                cy.get('#statistics_soloScore_PlayerG').contains('0')
+
+                cy.get('#statistics_maxWin_PlayerA').contains('1')
+                cy.get('#statistics_maxWin_PlayerB').contains('1')
+                cy.get('#statistics_maxWin_PlayerC').contains('0')
+                cy.get('#statistics_maxWin_PlayerD').contains('0')
+                cy.get('#statistics_maxWin_PlayerE').contains('6')
+                cy.get('#statistics_maxWin_PlayerF').contains('0')
+                cy.get('#statistics_maxWin_PlayerG').contains('0')
+
+                cy.get('#statistics_maxLoss_PlayerA').contains('0')
+                cy.get('#statistics_maxLoss_PlayerB').contains('-2')
+                cy.get('#statistics_maxLoss_PlayerC').contains('-2')
+                cy.get('#statistics_maxLoss_PlayerD').contains('-1')
+                cy.get('#statistics_maxLoss_PlayerE').contains('0')
+                cy.get('#statistics_maxLoss_PlayerF').contains('-1')
+                cy.get('#statistics_maxLoss_PlayerG').contains('-2')
+
+                cy.get('#statistics_noBockScore_PlayerA').should('not.exist')
+                cy.get('#statistics_noBockScore_PlayerB').should('not.exist')
+                cy.get('#statistics_noBockScore_PlayerC').should('not.exist')
+                cy.get('#statistics_noBockScore_PlayerD').should('not.exist')
+                cy.get('#statistics_noBockScore_PlayerE').should('not.exist')
+                cy.get('#statistics_noBockScore_PlayerF').should('not.exist')
+                cy.get('#statistics_noBockScore_PlayerG').should('not.exist')
+
+                cy.get('#statitistics_OkButton').click()
+
+                cy.get('#statistics_name_PlayerA').should('not.exist')
+            })
+
             it(`plot box can be opened, closed, has plot [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -3274,6 +3973,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 cy.visit('http://localhost:3000/RNONEXISTENT')
 
@@ -3290,6 +3991,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',
@@ -3374,6 +4077,8 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
 
                 const playersSet = {
                     kind: 'playersSet',

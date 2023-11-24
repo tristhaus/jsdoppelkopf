@@ -23,4 +23,16 @@ testingRouter.post('/setup', async (request, response) => {
     response.status(204).end()
 })
 
+testingRouter.post('/usebock', async (request, response) => {
+    const content = request.body
+
+    process.env.USE_BOCK = content.useBock
+
+    const result = { useBock: process.env.USE_BOCK }
+
+    console.log('/USEBOCK', result)
+
+    response.status(200).json(result)
+})
+
 module.exports = testingRouter

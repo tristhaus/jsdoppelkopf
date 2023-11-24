@@ -22,7 +22,8 @@ const createApiModel = game => {
     const data = calculatePlayerData(game.data)
 
     return {
-        deploymentUrl: `${config.DEPLOYMENT_URL}`,
+        deploymentUrl: `${config.DEPLOYMENT_URL()}`,
+        useBock: config.USE_BOCK(),
         readerId: game.readerId,
         creationDate: game.creationDate,
         poppableEntry: game.data.length > 1 ? game.data[game.data.length - 1].kind : null,

@@ -2,7 +2,9 @@ import { PropTypes } from 'prop-types'
 import React from 'react'
 import { addPresentOrAbsent } from './Score'
 
-const WideStatistics = ({ playerData, closeAction }) => {
+const WideStatistics = ({ data, closeAction }) => {
+
+    const playerData = data.playerData
 
     const okAction = () => {
         closeAction()
@@ -52,10 +54,10 @@ const WideStatistics = ({ playerData, closeAction }) => {
                                     <td className='statistics_dataLabel'>Höchstes -</td>
                                     {playerData.map(player => (<td key={player.name} id={`statistics_maxLoss_${player.name}`} className={addPresentOrAbsent('statistics_data', player)}>{player.maxLoss}</td>))}
                                 </tr>
-                                <tr>
-                                    <td className='statistics_dataLabel'>Höchstes -</td>
+                                {data.useBock && <tr>
+                                    <td className='statistics_dataLabel'>Ohne Bock</td>
                                     {playerData.map(player => (<td key={player.name} id={`statistics_noBockScore_${player.name}`} className={addPresentOrAbsent('statistics_data', player)}>{player.noBockScore}</td>))}
-                                </tr>
+                                </tr>}
                             </tbody>
                         </table>
                     </div>

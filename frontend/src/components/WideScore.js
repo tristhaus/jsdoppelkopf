@@ -5,7 +5,7 @@ import { addPresentOrAbsent, completeDiffs, deduceBock, formatCents } from './Sc
 import WideStatistics from './WideStatistics'
 import WidePlot from './WidePlot'
 
-const CurrentGame = ({ playerData, diffEntries, handleFocus, handleEntryChanged }) => (
+const CurrentGame = ({ playerData, diffEntries, handleFocus, handleEntryChanged, handleMouseDown }) => (
     <>
         <span>Aktuelles Spiel</span>
         {playerData.map((player, index) => {
@@ -26,6 +26,11 @@ const CurrentGame = ({ playerData, diffEntries, handleFocus, handleEntryChanged 
                             const playerName = player.name
                             handleEntryChanged(playerName, event.target.value)
                         }}
+                        onMouseDown={event => {
+                            const playerName = player.name
+                            handleMouseDown(event, playerName)
+                        }}
+                        onContextMenu={event => { event.preventDefault() }}
                     />)
             }
             else {
@@ -138,6 +143,24 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
         }
     }
 
+    const changeScoreBy = (playerName, value) => {
+        const oldStringValue = diffEntries[playerName] ?? '0'
+        const oldNumberValue = parseInt(oldStringValue, 10)
+        const newNumberValue = oldNumberValue + value
+        const newStringValue = `${newNumberValue}`
+
+        changeEntry(playerName, newStringValue)
+    }
+
+    const handleMouseDown = (mouseEvent, playerName) => {
+        if (mouseEvent.button === 0) { return }
+
+        mouseEvent.preventDefault()
+
+        if (mouseEvent.button === 1) { changeScoreBy(playerName, 1) }
+        else if (mouseEvent.button === 2) { changeScoreBy(playerName, -1) }
+    }
+
     const isPopDisabled = data.poppableEntry === null
 
     const handlePopClicked = () => {
@@ -213,6 +236,7 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
                     diffEntries={diffEntries}
                     handleFocus={handleFocus}
                     handleEntryChanged={handleEntryChanged}
+                    handleMouseDown={handleMouseDown}
                 />)}
                 {isWriter && (<ScoreControls
                     data={data}

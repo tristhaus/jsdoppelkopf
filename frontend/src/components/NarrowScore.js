@@ -5,7 +5,7 @@ import { addPresentOrAbsent, completeDiffs, deduceBock, formatCents } from './Sc
 import NarrowStatistics from './NarrowStatistics'
 import NarrowPlot from './NarrowPlot'
 
-const PlayerLine = ({ isWriter, singlePlayerData, diffEntries, isDealer, handleEntryChanged, handleFocus }) => (
+const PlayerLine = ({ isWriter, singlePlayerData, diffEntries, isDealer, handleEntryChanged, handleFocus, handleMouseDown }) => (
     <>
         <div id={`name_${singlePlayerData.name}`} className={addPresentOrAbsent(`narrow ${isDealer ? 'playerNameDealer' : 'playerName'}`, singlePlayerData)}>{singlePlayerData.name}</div>
         <div id={`lastDeal_${singlePlayerData.name}`} className={addPresentOrAbsent('narrow lastDeal', singlePlayerData)} >{singlePlayerData.lastDealDiff ?? ''}</div>
@@ -24,6 +24,11 @@ const PlayerLine = ({ isWriter, singlePlayerData, diffEntries, isDealer, handleE
                     const playerName = singlePlayerData.name
                     handleEntryChanged(playerName, event.target.value)
                 }}
+                onMouseDown={event => {
+                    const playerName = singlePlayerData.name
+                    handleMouseDown(event, playerName)
+                }}
+                onContextMenu={event => { event.preventDefault() }}
             />)
             : <div></div>)}
         <div id={`score_${singlePlayerData.name}`} className={addPresentOrAbsent('narrow score', singlePlayerData)}>{singlePlayerData.score}</div>
@@ -135,6 +140,24 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
         }
     }
 
+    const changeScoreBy = (playerName, value) => {
+        const oldStringValue = diffEntries[playerName] ?? '0'
+        const oldNumberValue = parseInt(oldStringValue, 10)
+        const newNumberValue = oldNumberValue + value
+        const newStringValue = `${newNumberValue}`
+
+        changeEntry(playerName, newStringValue)
+    }
+
+    const handleMouseDown = (mouseEvent, playerName) => {
+        if (mouseEvent.button === 0) { return }
+
+        mouseEvent.preventDefault()
+
+        if (mouseEvent.button === 1) { changeScoreBy(playerName, 1) }
+        else if (mouseEvent.button === 2) { changeScoreBy(playerName, -1) }
+    }
+
     const isPopDisabled = data.poppableEntry === null
 
     const handlePopClicked = () => {
@@ -210,6 +233,7 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
                         isDealer={singlePlayerData.name === data.dealerName}
                         handleEntryChanged={handleEntryChanged}
                         handleFocus={handleFocus}
+                        handleMouseDown={handleMouseDown}
                     />)}
                 {isWriter && (<ScoreControls
                     data={data}

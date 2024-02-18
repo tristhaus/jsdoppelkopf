@@ -1692,6 +1692,64 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('.dealButton').should('be.disabled')
             })
 
+            it(`page changes entries based on middle, right mouse clicks [${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD',
+                        'PlayerE',
+                        'PlayerF',
+                        'PlayerG'
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: [
+                        2,
+                        4
+                    ]
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/writer/myWriterId')
+
+                cy.get('#currentDeal_PlayerA').focus()
+
+                cy.get('#currentDeal_PlayerA').trigger('mousedown', { button: 1 })
+                cy.get('#currentDeal_PlayerA').trigger('mousedown', { button: 1 })
+
+                cy.get('#currentDeal_PlayerA').trigger('mousedown', { button: 2 })
+
+                cy.get('#currentDeal_PlayerB').focus()
+
+                cy.get('.dealButton').click()
+
+                cy.get('#score_PlayerA').contains('1')
+                cy.get('#score_PlayerB').contains('1')
+                cy.get('#score_PlayerC').contains('0')
+                cy.get('#score_PlayerD').contains('-1')
+                cy.get('#score_PlayerE').contains('0')
+                cy.get('#score_PlayerF').contains('-1')
+                cy.get('#score_PlayerG').contains('0')
+            })
+
             it(`page allows to note a deal after deleting an erroneously copied entry [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')

@@ -13,6 +13,18 @@ describe('validate PlayerSet', () => {
         expect(result).toBe(true)
     })
 
+    test('player names can have non-ASCII alphanumeric', () => {
+        const candidate = {
+            kind: 'playersSet',
+            playerNames: ['Äüöß2', 'Ŋ', 'χ', '大阪', 'дㄈ', 'ﺽה', 'G'],
+            dealerName: 'G',
+            sitOutScheme: [2, 4],
+            previousDealerName: 'G',
+        }
+        const result = validatePlayerSet([], candidate)
+        expect(result).toBe(true)
+    })
+
     test('null data, wrong kind or missing member fail', () => {
         {
             const result = validatePlayerSet([], null)
@@ -92,16 +104,66 @@ describe('validate PlayerSet', () => {
         expect(result).toBe(false)
     })
 
-    test('wrong type in player names fails', () => {
-        const candidate = {
-            kind: 'playersSet',
-            playerNames: ['A', 'B', 'C', 'D', 'E', 1337, 'G'],
-            dealerName: 'A',
-            sitOutScheme: [2, 4, 6],
-            previousDealerName: 'A',
+    test('bad data in player names fails', () => {
+        {
+            const candidate = {
+                kind: 'playersSet',
+                playerNames: ['A', 'B', 'C', 'D', 'E', 1337, 'G'],
+                dealerName: 'A',
+                sitOutScheme: [2, 4],
+                previousDealerName: 'A',
+            }
+            const result = validatePlayerSet([], candidate)
+            expect(result).toBe(false)
         }
-        const result = validatePlayerSet([], candidate)
-        expect(result).toBe(false)
+
+        {
+            const candidate = {
+                kind: 'playersSet',
+                playerNames: ['<>', 'B', 'C', 'D', 'E', 'F', 'G'],
+                dealerName: 'B',
+                sitOutScheme: [2, 4],
+                previousDealerName: 'B',
+            }
+            const result = validatePlayerSet([], candidate)
+            expect(result).toBe(false)
+        }
+
+        {
+            const candidate = {
+                kind: 'playersSet',
+                playerNames: ['\\', 'B', 'C', 'D', 'E', 'F', 'G'],
+                dealerName: 'B',
+                sitOutScheme: [2, 4],
+                previousDealerName: 'B',
+            }
+            const result = validatePlayerSet([], candidate)
+            expect(result).toBe(false)
+        }
+
+        {
+            const candidate = {
+                kind: 'playersSet',
+                playerNames: ['.', 'B', 'C', 'D', 'E', 'F', 'G'],
+                dealerName: 'B',
+                sitOutScheme: [2, 4],
+                previousDealerName: 'B',
+            }
+            const result = validatePlayerSet([], candidate)
+            expect(result).toBe(false)
+        }
+
+        {
+            const candidate = {
+                kind: 'playersSet',
+                playerNames: ['-', 'B', 'C', 'D', 'E', 'F', 'G'],
+                dealerName: 'B',
+                sitOutScheme: [2, 4, 6],
+                previousDealerName: 'B',
+            }
+            const result = validatePlayerSet([], candidate)
+            expect(result).toBe(false)
+        }
     })
 
     test('duplicate player name fails', () => {

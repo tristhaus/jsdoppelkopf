@@ -268,7 +268,9 @@ const validatePlayerSet = (data, playersSet) => {
         return false
     }
 
-    if (playersSet.playerNames.some(playerName => !isString(playerName))) {
+    const letterRegex = new RegExp('^[\\p{General_Category=Letter}0-9]+$', 'mu')
+
+    if (playersSet.playerNames.some(playerName => (!isString(playerName) || !letterRegex.test(playerName)))) {
         return false
     }
 

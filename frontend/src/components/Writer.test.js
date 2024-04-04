@@ -30,6 +30,15 @@ describe('writer view unit tests', () => {
 
         const { container } = render(<Writer data={data} />)
 
+        const readerLinkButton = container.querySelector('#readerLinkButton')
+        expect(readerLinkButton).not.toBeNull()
+
+        const readerIdDisplay = container.querySelector('#readerIdDisplay')
+        expect(readerIdDisplay).toHaveTextContent('Reader ID: bbbbbb')
+
+        const writerLinkButton = container.querySelector('#writerLinkButton')
+        expect(writerLinkButton).not.toBeNull()
+
         const mandatorySoloButton = container.querySelector('.mandatorySoloButton')
         expect(mandatorySoloButton).not.toBeDisabled()
 
@@ -124,6 +133,15 @@ describe('writer view unit tests', () => {
         }
 
         const { container } = render(<Writer data={data} />)
+
+        const readerLinkButton = container.querySelector('#readerLinkButton')
+        expect(readerLinkButton).not.toBeNull()
+
+        const readerIdDisplay = container.querySelector('#readerIdDisplay')
+        expect(readerIdDisplay).toHaveTextContent('Reader ID: bbbbbb')
+
+        const writerLinkButton = container.querySelector('#writerLinkButton')
+        expect(writerLinkButton).not.toBeNull()
 
         const mandatorySoloButton = container.querySelector('.mandatorySoloButton')
         expect(mandatorySoloButton).toBeNull()

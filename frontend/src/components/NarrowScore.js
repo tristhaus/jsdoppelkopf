@@ -214,6 +214,7 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
                 <button id="readerLinkButton" className='shareButton' onClick={shareReaderLink}>Reader-Link teilen</button>
                 {isWriter && (<button id="writerLinkButton" className='shareButton' onClick={shareWriterLink}>Writer-Link teilen</button>)}
                 <button id="reloadButton" className='reloadButton' onClick={reloadAction}>&#x27F3;</button>
+                <span id="readerIdDisplay">{`Reader ID: ${data.readerId}`}</span>
                 {isWriter && (<button className="changePlayersButton" disabled={isChangePlayersDisabled} onClick={handleChangePlayersClicked}>Spieler ausw&auml;hlen ...</button>)}
                 {isWriter && useBock && (<button className="mandatorySoloButton" disabled={isMandatorySoloDisabled} onClick={handleMandatorySoloClicked}>Pflichtsolorunde</button>)}
             </div>

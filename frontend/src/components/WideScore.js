@@ -215,6 +215,7 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span>
                     <button id="readerLinkButton" className='shareButton' onClick={shareReaderLink}>Reader-Link teilen</button>
+                    <span id="readerIdDisplay">{`Reader ID: ${data.readerId}`}</span>
                     {isWriter && (<button id="writerLinkButton" className='shareButton' onClick={shareWriterLink}>Writer-Link teilen</button>)}
                     <span>{message}</span>
                     <span className='errorMessage'>{scoreErrorMessage ?? ''}</span>

@@ -484,6 +484,10 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.visit('http://localhost:3000/writer/myWriterId')
 
+                cy.get('#readerLinkButton')
+                cy.get('#readerIdDisplay').contains('Reader ID: myReaderId')
+                cy.get('#writerLinkButton')
+
                 cy.get('.mandatorySoloButton').should('not.be.disabled')
                 cy.get('#currentBockStatus').contains('Kein Bock')
                 cy.get('#bockPreviewTriple').contains('0')
@@ -601,6 +605,10 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('@create')
 
                 cy.visit('http://localhost:3000/writer/myWriterId')
+
+                cy.get('#readerLinkButton')
+                cy.get('#readerIdDisplay').contains('Reader ID: myReaderId')
+                cy.get('#writerLinkButton')
 
                 cy.get('.mandatorySoloButton').should('not.exist')
                 cy.get('#currentBockStatus').should('not.exist')
@@ -3415,6 +3423,10 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.visit('http://localhost:3000/myReaderId')
 
+                cy.get('#readerLinkButton')
+                cy.get('#readerIdDisplay').contains('Reader ID: myReaderId')
+                cy.get('#writerLinkButton').should('not.exist')
+
                 cy.get('.mandatorySoloButton').should('not.exist')
                 cy.get('#currentBockStatus').contains('Kein Bock')
                 cy.get('#bockPreviewTriple').contains('0')
@@ -3533,6 +3545,10 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('@create')
 
                 cy.visit('http://localhost:3000/myReaderId')
+
+                cy.get('#readerLinkButton')
+                cy.get('#readerIdDisplay').contains('Reader ID: myReaderId')
+                cy.get('#writerLinkButton').should('not.exist')
 
                 cy.get('.mandatorySoloButton').should('not.exist')
                 cy.get('#currentBockStatus').should('not.exist')

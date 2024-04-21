@@ -2,7 +2,7 @@
 
 Copyright tristhaus 2023 and later.
 
-A program to note down the scores in a game of Doppelkopf following the house rules of a group of friends.
+A web site to note down the scores in a game of Doppelkopf following the house rules of a group of friends.
 
 ## License
 

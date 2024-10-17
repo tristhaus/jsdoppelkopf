@@ -2506,12 +2506,12 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.get('.changePlayersButton').should('not.be.disabled').click()
 
-                cy.get('#text-0').type('{selectall}{backspace}PlayerH')
+                cy.get('#text-0').type('{selectall}{backspace}Playerル')
 
                 cy.contains('OK').should('not.be.disabled').click()
                 cy.wait('@push')
 
-                cy.get('#lastDeal_PlayerH').should('have.value', '')
+                cy.get('#lastDeal_Playerル').should('have.value', '')
                 cy.get('#lastDeal_PlayerB').contains('1')
                 cy.get('#lastDeal_PlayerC').should('have.value', '')
                 cy.get('#lastDeal_PlayerD').contains('-1')
@@ -2521,7 +2521,7 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('#lastDeal_PlayerA').contains('1')
 
 
-                cy.get('#score_PlayerH').contains('0')
+                cy.get('#score_Playerル').contains('0')
                 cy.get('#score_PlayerB').contains('1')
                 cy.get('#score_PlayerC').contains('0')
                 cy.get('#score_PlayerD').contains('-1')

@@ -1,17 +1,42 @@
 import { useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import Writer from './Writer'
 
 import gameService from '../services/game'
 
+// all in milliseconds
+// how long to keep alive
+const expirationPeriod = 30 * 60 * 1000
+// minimal wait time between requests
+const minWaitTime = 25 * 1000
+// maximal increment of wait time
+const maxWaitIncrement = 35 * 1000 - minWaitTime
+
 const WriterLanding = () => {
+
+    const timeoutRef = useRef(null)
+    const expirationTimeRef = useRef(0)
 
     const inputWriterId = useParams().id
 
     const [data, setData] = useState(null)
     const [landingErrorMessage, setLandingErrorMessage] = useState('')
     const [scoreErrorMessage, setScoreErrorMessage] = useState('')
+
+    const runCheckHealth = async () => {
+        if (Date.now() < expirationTimeRef.current) {
+            await gameService.getHealth()
+            const duration = minWaitTime + Math.floor(Math.random() * maxWaitIncrement)
+            clearTimeout(timeoutRef.current)
+            timeoutRef.current = setTimeout(async () => { await runCheckHealth() }, duration)
+        }
+    }
+
+    const startCheckHealth = async () => {
+        expirationTimeRef.current = Date.now() + expirationPeriod
+        runCheckHealth()
+    }
 
     const loadData = async () => {
         setLandingErrorMessage('')
@@ -20,6 +45,7 @@ const WriterLanding = () => {
         if (response) {
             setScoreErrorMessage('')
             setData(response)
+            startCheckHealth()
         }
         else {
             setLandingErrorMessage(`kann nicht laden, writer ID: '${inputWriterId}'`)
@@ -35,6 +61,7 @@ const WriterLanding = () => {
 
         if (response) {
             setData(response)
+            startCheckHealth()
         }
         else {
             setScoreErrorMessage('Spiel konnte nicht notiert werden.')
@@ -46,6 +73,7 @@ const WriterLanding = () => {
 
         if (response) {
             setData(response)
+            startCheckHealth()
         }
         else {
             setScoreErrorMessage('Pflichtsolorunde konnte nicht gestartet werden.')
@@ -57,6 +85,7 @@ const WriterLanding = () => {
 
         if (response) {
             setData(response)
+            startCheckHealth()
         }
         else {
             setScoreErrorMessage('Spieler konnten nicht geändert werden.')
@@ -68,6 +97,7 @@ const WriterLanding = () => {
 
         if (response) {
             setData(response)
+            startCheckHealth()
         }
         else {
             setScoreErrorMessage('Letzter Eintrag konnte nicht gelöscht werden.')

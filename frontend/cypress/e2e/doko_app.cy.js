@@ -1118,6 +1118,12 @@ viewportInfos.forEach(viewportInfo => {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.intercept({
                     method: 'GET',
+                    url: '/api/health/',
+                }, req => {
+                    delete req.headers['if-none-match']
+                }).as('keepAlive')
+                cy.intercept({
+                    method: 'GET',
                     url: '/api/game/write/**',
                 }).as('load')
 
@@ -1193,6 +1199,7 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.get('#reloadButton').click()
                 cy.wait('@load')
+                cy.wait('@keepAlive')
 
                 cy.get('#score_PlayerA').contains('1')
                 cy.get('#score_PlayerB').contains('1')
@@ -1806,6 +1813,12 @@ viewportInfos.forEach(viewportInfo => {
             it(`page can start mandatory solo round and pop it again [(useBock: true) ${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.intercept({
+                    method: 'GET',
+                    url: '/api/health/',
+                }, req => {
+                    delete req.headers['if-none-match']
+                }).as('keepAlive')
+                cy.intercept({
                     method: 'POST',
                     url: '/api/game/write/**',
                 }).as('push')
@@ -1852,6 +1865,7 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.get('.mandatorySoloButton').should('not.be.disabled').click()
                 cy.wait('@push')
+                cy.wait('@keepAlive')
 
                 cy.get('.mandatorySoloButton').should('be.disabled')
                 cy.get('#currentBockStatus').contains('Pflichtsolo')
@@ -1863,6 +1877,7 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.get('.popButton').should('not.be.disabled').click()
                 cy.wait('@pop')
+                cy.wait('@keepAlive')
 
                 cy.get('.mandatorySoloButton').should('not.be.disabled')
                 cy.get('#currentBockStatus').contains('Kein Bock')
@@ -1985,13 +2000,15 @@ viewportInfos.forEach(viewportInfo => {
             it(`page can note a deal with four players [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.intercept({
+                    method: 'GET',
+                    url: '/api/health/',
+                }, req => {
+                    delete req.headers['if-none-match']
+                }).as('keepAlive')
+                cy.intercept({
                     method: 'POST',
                     url: '/api/game/write/**',
                 }).as('push')
-                cy.intercept({
-                    method: 'DELETE',
-                    url: '/api/game/write/**',
-                }).as('pop')
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
@@ -2042,6 +2059,7 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('#currentDeal_PlayerD').should('have.value', '')
 
                 cy.wait('@push')
+                cy.wait('@keepAlive')
 
                 cy.get('#currentBockStatus').contains('Doppelbock')
                 cy.get('#bockPreviewTriple').contains('0')
@@ -2061,6 +2079,12 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`page can note a deal and pop it again on confirming [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
+                cy.intercept({
+                    method: 'GET',
+                    url: '/api/health/',
+                }, req => {
+                    delete req.headers['if-none-match']
+                }).as('keepAlive')
                 cy.intercept({
                     method: 'POST',
                     url: '/api/game/write/**',
@@ -2119,15 +2143,16 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('.popButton').should('be.disabled')
                 cy.get('.dealButton').should('not.be.disabled').click()
 
-                cy.get('#currentDeal_PlayerA').should('have.value', '')
-                cy.get('#currentDeal_PlayerB').should('have.value', '')
-                cy.get('#currentDeal_PlayerC').should('not.exist')
-                cy.get('#currentDeal_PlayerD').should('have.value', '')
-                cy.get('#currentDeal_PlayerE').should('not.exist')
-                cy.get('#currentDeal_PlayerF').should('have.value', '')
-                cy.get('#currentDeal_PlayerG').should('not.exist')
-
                 cy.wait('@push')
+                cy.wait('@keepAlive')
+
+                cy.get('#currentDeal_PlayerA').should('not.exist')
+                cy.get('#currentDeal_PlayerB').should('have.value', '')
+                cy.get('#currentDeal_PlayerC').should('have.value', '')
+                cy.get('#currentDeal_PlayerD').should('not.exist')
+                cy.get('#currentDeal_PlayerE').should('have.value', '')
+                cy.get('#currentDeal_PlayerF').should('not.exist')
+                cy.get('#currentDeal_PlayerG').should('have.value', '')
 
                 cy.get('#currentBockStatus').contains('Doppelbock')
                 cy.get('#bockPreviewTriple').contains('0')
@@ -2157,6 +2182,7 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.get('.popButton').should('not.be.disabled').click()
                 cy.wait('@pop')
+                cy.wait('@keepAlive')
 
                 cy.get('#currentBockStatus').contains('Kein Bock')
                 cy.get('#bockPreviewTriple').contains('0')
@@ -2434,13 +2460,15 @@ viewportInfos.forEach(viewportInfo => {
             it(`after a deal, page can change player and shows now-absent player in gray [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.intercept({
+                    method: 'GET',
+                    url: '/api/health/',
+                }, req => {
+                    delete req.headers['if-none-match']
+                }).as('keepAlive')
+                cy.intercept({
                     method: 'POST',
                     url: '/api/game/write/**',
                 }).as('push')
-                cy.intercept({
-                    method: 'DELETE',
-                    url: '/api/game/write/**',
-                }).as('pop')
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
@@ -2510,6 +2538,7 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.contains('OK').should('not.be.disabled').click()
                 cy.wait('@push')
+                cy.wait('@keepAlive')
 
                 cy.get('#lastDeal_Playerル').should('have.value', '')
                 cy.get('#lastDeal_PlayerB').contains('1')
@@ -2519,7 +2548,6 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('#lastDeal_PlayerF').contains('-1')
                 cy.get('#lastDeal_PlayerG').should('have.value', '')
                 cy.get('#lastDeal_PlayerA').contains('1')
-
 
                 cy.get('#score_Playerル').contains('0')
                 cy.get('#score_PlayerB').contains('1')
@@ -2669,10 +2697,6 @@ viewportInfos.forEach(viewportInfo => {
                     method: 'POST',
                     url: '/api/game/write/**',
                 }).as('push')
-                cy.intercept({
-                    method: 'DELETE',
-                    url: '/api/game/write/**',
-                }).as('pop')
 
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
                 cy.get('@delete')
@@ -3273,11 +3297,6 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`after a deal, page displays error if unable to pop again [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.intercept(
-                    {
-                        method: 'POST',
-                        url: '/api/game/write/**',
-                    }).as('push')
                 cy.intercept(
                     {
                         method: 'DELETE',
@@ -4057,7 +4076,12 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`page has a working reload button [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-
+                cy.intercept({
+                    method: 'GET',
+                    url: '/api/health/',
+                }, req => {
+                    delete req.headers['if-none-match']
+                }).as('keepAlive')
                 cy.intercept({
                     method: 'GET',
                     url: '/api/game/**',
@@ -4135,6 +4159,7 @@ viewportInfos.forEach(viewportInfo => {
 
                 cy.get('#reloadButton').click()
                 cy.wait('@load')
+                cy.wait('@keepAlive')
 
                 cy.get('#score_PlayerA').contains('1')
                 cy.get('#score_PlayerB').contains('1')

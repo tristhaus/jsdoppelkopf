@@ -1,6 +1,17 @@
 import axios from 'axios'
 const baseUrl = '/api/game'
 
+const getHealth = async () => {
+    try {
+        const getHealth = '/api/health/'
+
+        await axios.get(getHealth)
+
+    } catch (error) {
+        console.error('error in getHealth', error)
+    }
+}
+
 const startGame = async playerInformation => {
     try {
         const playersSet = {
@@ -165,6 +176,7 @@ export default {
     addPlayersSetEntryByWriterId,
     getGameByReaderId,
     getGameByWriterId,
+    getHealth,
     popLastEntryOnGameByWriterId,
     startGame
 }

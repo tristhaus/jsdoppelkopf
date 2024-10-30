@@ -1,6 +1,7 @@
 const path = require('node:path')
 const config = require('./utils/config')
 const logger = require('./utils/logger')
+const healthRouter = require('./controllers/health')
 const gamesRouter = require('./controllers/games')
 const middleware = require('./utils/middleware')
 
@@ -8,10 +9,13 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 
+app.set('etag', false)
+
 app.use(cors())
 app.use(express.json())
 app.use(middleware.requestLogger)
 
+app.use('/api/health', healthRouter)
 app.use('/api/game', gamesRouter)
 
 if (process.env.NODE_ENV === 'test') {

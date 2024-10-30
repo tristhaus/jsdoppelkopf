@@ -85,6 +85,13 @@ afterAll(async () => {
 
 describe('game API', () => {
 
+    test('GET health returns', async () => {
+        const response = await api.get('/api/health')
+
+        expect(response.status).toBe(200)
+        expect(response.body).toBeDefined()
+    })
+
     test('POST creates new game (USE_BOCK true)', async () => {
         process.env.USE_BOCK = true
         const response = await api.post('/api/game').send(testData.validPlayersSet)

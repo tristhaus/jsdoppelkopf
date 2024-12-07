@@ -1,7 +1,6 @@
-import React from 'react'
+import { act } from 'react'
 import '@testing-library/jest-dom/extend-expect'
 import { render } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
 import PlayerEntry from './PlayerEntry'
 
 describe('PlayerEntry view unit tests', () => {

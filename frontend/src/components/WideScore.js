@@ -6,7 +6,7 @@ import { addPresentOrAbsent, completeDiffs, deduceBock, formatCents } from './Sc
 import WideStatistics from './WideStatistics'
 import WidePlot from './WidePlot'
 
-const CurrentGame = ({ playerData, diffEntries, handleFocus, handleEntryChanged, handleMouseDown }) => (
+const CurrentGame = ({ playerData, diffEntries, handleFocus, handleEntryChanged, handleMouseDown, handleEnterKeyDown }) => (
     <>
         <span>Aktuelles Spiel</span>
         {playerData.map((player, index) => {
@@ -32,6 +32,11 @@ const CurrentGame = ({ playerData, diffEntries, handleFocus, handleEntryChanged,
                             handleMouseDown(event, playerName)
                         }}
                         onContextMenu={event => { event.preventDefault() }}
+                        onKeyDown={event => {
+                            if (event.key === 'Enter') {
+                                handleEnterKeyDown()
+                            }
+                        }}
                     />)
             }
             else {
@@ -198,7 +203,7 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
 
     const isDealDisabled = !diffEntriesAreValid()
 
-    const handleDealClicked = () => {
+    const handleSubmitDeal = () => {
         const playerNames = playerData.filter(player => player.playing).map(player => player.name)
         const completedDiffEntries = completeDiffs(diffEntries, playerNames)
 
@@ -206,6 +211,16 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
         addDeal(changes, parseInt(numberOfEvents, 10))
         setNumberOfEvents(0)
         setDiffEntries({})
+    }
+
+    const handleDealClicked = () => {
+        handleSubmitDeal()
+    }
+
+    const handleEnterKeyDown = () => {
+        if (!isDealDisabled) {
+            handleSubmitDeal()
+        }
     }
 
     return (
@@ -239,6 +254,7 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
                     handleFocus={handleFocus}
                     handleEntryChanged={handleEntryChanged}
                     handleMouseDown={handleMouseDown}
+                    handleEnterKeyDown={handleEnterKeyDown}
                 />)}
                 {isWriter && (<ScoreControls
                     data={data}
@@ -265,7 +281,7 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
             </div>
             <hr />
             <p className="centering">
-                <Link to={`${data.deploymentUrl}/datenschutz.html`}  target="_blank" rel="noopener noreferrer">Datenschutzerklärung</Link>
+                <Link to={`${data.deploymentUrl}/datenschutz.html`} target="_blank" rel="noopener noreferrer">Datenschutzerklärung</Link>
             </p>
         </>
     )

@@ -6,7 +6,7 @@ import { addPresentOrAbsent, completeDiffs, deduceBock, formatCents } from './Sc
 import NarrowStatistics from './NarrowStatistics'
 import NarrowPlot from './NarrowPlot'
 
-const PlayerLine = ({ isWriter, singlePlayerData, diffEntries, isDealer, handleEntryChanged, handleFocus, handleMouseDown }) => (
+const PlayerLine = ({ isWriter, singlePlayerData, diffEntries, isDealer, handleEntryChanged, handleFocus, handleMouseDown, handleEnterKeyDown }) => (
     <>
         <div id={`name_${singlePlayerData.name}`} className={addPresentOrAbsent(`narrow ${isDealer ? 'playerNameDealer' : 'playerName'}`, singlePlayerData)}>{singlePlayerData.name}</div>
         <div id={`lastDeal_${singlePlayerData.name}`} className={addPresentOrAbsent('narrow lastDeal', singlePlayerData)} >{singlePlayerData.lastDealDiff ?? ''}</div>
@@ -30,6 +30,11 @@ const PlayerLine = ({ isWriter, singlePlayerData, diffEntries, isDealer, handleE
                     handleMouseDown(event, playerName)
                 }}
                 onContextMenu={event => { event.preventDefault() }}
+                onKeyDown={event => {
+                    if (event.key === 'Enter') {
+                        handleEnterKeyDown()
+                    }
+                }}
             />)
             : <div></div>)}
         <div id={`score_${singlePlayerData.name}`} className={addPresentOrAbsent('narrow score', singlePlayerData)}>{singlePlayerData.score}</div>
@@ -196,7 +201,7 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
 
     const isDealDisabled = !diffEntriesAreValid()
 
-    const handleDealClicked = () => {
+    const handleSubmitDeal = () => {
         const playerNames = playerData.filter(player => player.playing).map(player => player.name)
         const completedDiffEntries = completeDiffs(diffEntries, playerNames)
 
@@ -204,6 +209,16 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
         addDeal(changes, parseInt(numberOfEvents, 10))
         setNumberOfEvents(0)
         setDiffEntries({})
+    }
+
+    const handleDealClicked = () => {
+        handleSubmitDeal()
+    }
+
+    const handleEnterKeyDown = () => {
+        if (!isDealDisabled) {
+            handleSubmitDeal()
+        }
     }
 
     return (
@@ -236,6 +251,7 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
                         handleEntryChanged={handleEntryChanged}
                         handleFocus={handleFocus}
                         handleMouseDown={handleMouseDown}
+                        handleEnterKeyDown={handleEnterKeyDown}
                     />)}
                 {isWriter && (<ScoreControls
                     data={data}
@@ -261,7 +277,7 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
             </div>
             <hr />
             <p className="centering">
-                <Link to={`${data.deploymentUrl}/datenschutz.html`}  target="_blank" rel="noopener noreferrer">Datenschutzerklärung</Link>
+                <Link to={`${data.deploymentUrl}/datenschutz.html`} target="_blank" rel="noopener noreferrer">Datenschutzerklärung</Link>
             </p>
         </>
     )

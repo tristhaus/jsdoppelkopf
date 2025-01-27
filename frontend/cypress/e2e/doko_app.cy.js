@@ -37,12 +37,13 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('@usebock').its('body.useBock').should('eq', 'false')
             })
 
-            it(`page can be opened and has a working New Game button [${viewportInfo.displayName}]`, function () {
+            it(`page can be opened, has a data protection link and a working New Game button [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
                 cy.request('POST', 'http://localhost:3000/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
+                cy.contains('a', 'Datenschutzerklärung').should('have.attr', 'href', '/datenschutz.html')
                 cy.contains('Neues Spiel beginnen').click()
             })
 
@@ -551,6 +552,8 @@ viewportInfos.forEach(viewportInfo => {
                 else {
                     cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
                 }
+
+                cy.contains('a', 'Datenschutzerklärung').should('have.attr', 'href', '/datenschutz.html')
             })
 
             it(`page can be opened and has correct content [(useBock: false) ${viewportInfo.displayName}]`, function () {
@@ -3589,6 +3592,8 @@ viewportInfos.forEach(viewportInfo => {
                 else {
                     cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
                 }
+
+                cy.contains('a', 'Datenschutzerklärung').should('have.attr', 'href', '/datenschutz.html')
             })
 
             it(`page can be opened and has correct content [(useBock: false) ${viewportInfo.displayName}]`, function () {

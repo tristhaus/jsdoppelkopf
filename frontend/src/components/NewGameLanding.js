@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 
 import gameService from '../services/game'
 import PlayerEntry from './PlayerEntry'
@@ -66,7 +66,7 @@ const NewGameLanding = () => {
 
     const bannerIndex = Math.floor(Date.now() / 60000) % banners.length
 
-    const effectiveBannerWidth = Math.min(400, Math.floor(width *0.9))
+    const effectiveBannerWidth = Math.min(400, Math.floor(width * 0.9))
 
     const initial = () => (
         <div>
@@ -110,6 +110,9 @@ const NewGameLanding = () => {
                 </button>
             </div>
             <hr />
+            <p className="centering">
+                <Link to="datenschutz.html" target="_blank" rel="noopener noreferrer">Datenschutzerklärung</Link>
+            </p>
         </div >
     )
 

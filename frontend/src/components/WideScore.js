@@ -1,5 +1,6 @@
 import { PropTypes } from 'prop-types'
 import { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import PlayerEntry from './PlayerEntry'
 import { addPresentOrAbsent, completeDiffs, deduceBock, formatCents } from './Score'
 import WideStatistics from './WideStatistics'
@@ -262,6 +263,10 @@ const WideScore = ({ isWriter, data, scoreErrorMessage, addDeal, addMandatorySol
                 <button id="statisticsButton" className="bottomButton" onClick={() => { setShowStatistics(true) }}>Statistiken ...</button>
                 <button id="plotButton" className="bottomButton" onClick={() => { setShowPlot(true) }}>Graph ...</button>
             </div>
+            <hr />
+            <p className="centering">
+                <Link to={`${data.deploymentUrl}/datenschutz.html`}  target="_blank" rel="noopener noreferrer">Datenschutzerklärung</Link>
+            </p>
         </>
     )
 }

@@ -27,6 +27,7 @@ app.use('/static', express.static(path.join(__dirname, './build/static')))
 
 const resources = [
     'asset-manifest.json',
+    'datenschutz.html',
     'favicon.ico',
     'index.html',
     'logo192.png',

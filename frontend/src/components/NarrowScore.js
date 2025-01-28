@@ -1,5 +1,6 @@
 import { PropTypes } from 'prop-types'
 import { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import PlayerEntry from './PlayerEntry'
 import { addPresentOrAbsent, completeDiffs, deduceBock, formatCents } from './Score'
 import NarrowStatistics from './NarrowStatistics'
@@ -258,6 +259,10 @@ const NarrowScore = ({ isWriter, data, scoreErrorMessage, reloadAction, addDeal,
             <div className='narrow errorMessage'>
                 {scoreErrorMessage ?? ''}
             </div>
+            <hr />
+            <p className="centering">
+                <Link to={`${data.deploymentUrl}/datenschutz.html`}  target="_blank" rel="noopener noreferrer">Datenschutzerklärung</Link>
+            </p>
         </>
     )
 }

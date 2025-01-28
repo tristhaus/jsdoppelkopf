@@ -37,12 +37,13 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('@usebock').its('body.useBock').should('eq', 'false')
             })
 
-            it(`page can be opened and has a working New Game button [${viewportInfo.displayName}]`, function () {
+            it(`page can be opened, has a data protection link and a working New Game button [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3000/api/testing/reset')
                 cy.request('POST', 'http://localhost:3000/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
+                cy.contains('a', 'Datenschutzerklärung').should('have.attr', 'href', '/datenschutz.html')
                 cy.contains('Neues Spiel beginnen').click()
             })
 
@@ -494,6 +495,14 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('#bockPreviewDouble').contains('0')
                 cy.get('#bockPreviewSingle').contains('0')
 
+                cy.get('.playerName,.playerNameDealer').eq(0).contains('PlayerA')
+                cy.get('.playerName,.playerNameDealer').eq(1).contains('PlayerB')
+                cy.get('.playerName,.playerNameDealer').eq(2).contains('PlayerC')
+                cy.get('.playerName,.playerNameDealer').eq(3).contains('PlayerD')
+                cy.get('.playerName,.playerNameDealer').eq(4).contains('PlayerE')
+                cy.get('.playerName,.playerNameDealer').eq(5).contains('PlayerF')
+                cy.get('.playerName,.playerNameDealer').eq(6).contains('PlayerG')
+
                 cy.get('#name_PlayerA').contains('PlayerA')
                 cy.get('#name_PlayerB').contains('PlayerB')
                 cy.get('#name_PlayerC').contains('PlayerC')
@@ -543,6 +552,8 @@ viewportInfos.forEach(viewportInfo => {
                 else {
                     cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
                 }
+
+                cy.contains('a', 'Datenschutzerklärung').should('have.attr', 'href', '/datenschutz.html')
             })
 
             it(`page can be opened and has correct content [(useBock: false) ${viewportInfo.displayName}]`, function () {
@@ -3151,6 +3162,86 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('#radio-1').should('be.checked')
             })
 
+            it(`in the player entry dialog, reordering of players by deleting and retyping names is possible [${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+                cy.intercept({
+                    method: 'POST',
+                    url: '/api/game/write/**',
+                }).as('push')
+
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD',
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: []
+                }
+
+                const deal = {
+                    kind: 'deal',
+                    events: 0,
+                    changes: [
+                        {
+                            name: 'PlayerA',
+                            diff: -1
+                        },
+                        {
+                            name: 'PlayerB',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerC',
+                            diff: 1
+                        },
+                        {
+                            name: 'PlayerD',
+                            diff: -1
+                        }
+                    ],
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet, deal],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/writer/myWriterId')
+
+                cy.get('.changePlayersButton').click()
+
+                cy.get('#text-0').type('{selectAll}{backspace}PlayerB')
+                cy.get('#text-1').type('{selectAll}{backspace}PlayerA')
+
+                cy.contains('OK').should('not.be.disabled').click()
+                cy.wait('@push')
+
+                cy.get('#score_PlayerB').contains('1')
+                cy.get('#score_PlayerA').contains('-1')
+                cy.get('#score_PlayerC').contains('1')
+                cy.get('#score_PlayerD').contains('-1')
+
+                cy.get('.playerName,.playerNameDealer').eq(0).contains('PlayerB')
+                cy.get('.playerName,.playerNameDealer').eq(1).contains('PlayerA')
+                cy.get('.playerName,.playerNameDealer').eq(2).contains('PlayerC')
+                cy.get('.playerName,.playerNameDealer').eq(3).contains('PlayerD')
+            })
+
+
             it(`player entry dialog with duplicated player name has disabled OK [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
@@ -3501,6 +3592,8 @@ viewportInfos.forEach(viewportInfo => {
                 else {
                     cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
                 }
+
+                cy.contains('a', 'Datenschutzerklärung').should('have.attr', 'href', '/datenschutz.html')
             })
 
             it(`page can be opened and has correct content [(useBock: false) ${viewportInfo.displayName}]`, function () {

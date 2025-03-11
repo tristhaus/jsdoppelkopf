@@ -3,6 +3,7 @@ import '@testing-library/jest-dom/extend-expect'
 import { render } from '@testing-library/react'
 import 'jest-canvas-mock'
 import Reader from './Reader'
+import { BrowserRouter } from 'react-router-dom'
 
 describe('reader view unit tests', () => {
 
@@ -29,7 +30,7 @@ describe('reader view unit tests', () => {
             writerId: 'aaaaaa'
         }
 
-        const { container } = render(<Reader data={data} />)
+        const { container } = render(<BrowserRouter><Reader data={data} /></BrowserRouter>)
 
         const readerLinkButton = container.querySelector('#readerLinkButton')
         expect(readerLinkButton).not.toBeNull()
@@ -133,7 +134,7 @@ describe('reader view unit tests', () => {
             writerId: 'aaaaaa'
         }
 
-        const { container } = render(<Reader data={data} />)
+        const { container } = render(<BrowserRouter><Reader data={data} /></BrowserRouter>)
 
         const readerLinkButton = container.querySelector('#readerLinkButton')
         expect(readerLinkButton).not.toBeNull()
@@ -236,7 +237,7 @@ describe('reader view unit tests', () => {
             absentPlayerCents: 7,
         }
 
-        const { container } = render(<Reader data={data} />)
+        const { container } = render(<BrowserRouter><Reader data={data} /></BrowserRouter>)
 
         const currentBockStatus = container.querySelector('#currentBockStatus')
         expect(currentBockStatus).toHaveTextContent('Pflichtsolo')
@@ -273,7 +274,7 @@ describe('reader view unit tests', () => {
             absentPlayerCents: 7,
         }
 
-        const { container } = render(<Reader data={data} />)
+        const { container } = render(<BrowserRouter><Reader data={data} /></BrowserRouter>)
 
         const currentBockStatus = container.querySelector('#currentBockStatus')
         expect(currentBockStatus).toHaveTextContent('Dreifachbock')
@@ -310,7 +311,7 @@ describe('reader view unit tests', () => {
             absentPlayerCents: 7,
         }
 
-        const { container } = render(<Reader data={data} />)
+        const { container } = render(<BrowserRouter><Reader data={data} /></BrowserRouter>)
 
         const currentBockStatus = container.querySelector('#currentBockStatus')
         expect(currentBockStatus).toHaveTextContent('Doppelbock')
@@ -347,7 +348,7 @@ describe('reader view unit tests', () => {
             absentPlayerCents: 7,
         }
 
-        const { container } = render(<Reader data={data} />)
+        const { container } = render(<BrowserRouter><Reader data={data} /></BrowserRouter>)
 
         const currentBockStatus = container.querySelector('#currentBockStatus')
         expect(currentBockStatus).toHaveTextContent('Bock')

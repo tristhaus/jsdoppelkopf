@@ -3,6 +3,7 @@ import '@testing-library/jest-dom/extend-expect'
 import { render } from '@testing-library/react'
 import 'jest-canvas-mock'
 import Writer from './Writer'
+import { BrowserRouter } from 'react-router-dom'
 
 describe('writer view unit tests', () => {
 
@@ -29,7 +30,7 @@ describe('writer view unit tests', () => {
             writerId: 'aaaaaa'
         }
 
-        const { container } = render(<Writer data={data} />)
+        const { container } = render(<BrowserRouter><Writer data={data} /></BrowserRouter>)
 
         const readerLinkButton = container.querySelector('#readerLinkButton')
         expect(readerLinkButton).not.toBeNull()
@@ -133,7 +134,7 @@ describe('writer view unit tests', () => {
             writerId: 'aaaaaa'
         }
 
-        const { container } = render(<Writer data={data} />)
+        const { container } = render(<BrowserRouter><Writer data={data} /></BrowserRouter>)
 
         const readerLinkButton = container.querySelector('#readerLinkButton')
         expect(readerLinkButton).not.toBeNull()
@@ -237,7 +238,7 @@ describe('writer view unit tests', () => {
             writerId: 'aaaaaa'
         }
 
-        const { container } = render(<Writer data={data} />)
+        const { container } = render(<BrowserRouter><Writer data={data} /></BrowserRouter>)
 
         const mandatorySoloButton = container.querySelector('.mandatorySoloButton')
         expect(mandatorySoloButton).toBeDisabled()
@@ -278,7 +279,7 @@ describe('writer view unit tests', () => {
             writerId: 'aaaaaa'
         }
 
-        const { container } = render(<Writer data={data} />)
+        const { container } = render(<BrowserRouter><Writer data={data} /></BrowserRouter>)
 
         const mandatorySoloButton = container.querySelector('.mandatorySoloButton')
         expect(mandatorySoloButton).not.toBeDisabled()
@@ -319,7 +320,7 @@ describe('writer view unit tests', () => {
             writerId: 'aaaaaa'
         }
 
-        const { container } = render(<Writer data={data} />)
+        const { container } = render(<BrowserRouter><Writer data={data} /></BrowserRouter>)
 
         const mandatorySoloButton = container.querySelector('.mandatorySoloButton')
         expect(mandatorySoloButton).not.toBeDisabled()
@@ -360,7 +361,7 @@ describe('writer view unit tests', () => {
             writerId: 'aaaaaa'
         }
 
-        const { container } = render(<Writer data={data} />)
+        const { container } = render(<BrowserRouter><Writer data={data} /></BrowserRouter>)
 
         const mandatorySoloButton = container.querySelector('.mandatorySoloButton')
         expect(mandatorySoloButton).not.toBeDisabled()
@@ -401,7 +402,7 @@ describe('writer view unit tests', () => {
             writerId: 'aaaaaa'
         }
 
-        const { container } = render(<Writer data={data} />)
+        const { container } = render(<BrowserRouter><Writer data={data} /></BrowserRouter>)
 
         const popButton = container.querySelector('.popButton')
         expect(popButton).toBeDisabled()

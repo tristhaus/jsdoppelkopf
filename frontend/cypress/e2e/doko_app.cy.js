@@ -43,7 +43,7 @@ viewportInfos.forEach(viewportInfo => {
                 cy.request('POST', 'http://localhost:3000/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
-                cy.contains('a', 'Datenschutzerklärung').should('have.attr', 'href', '/datenschutz.html')
+                cy.contains('a', 'Datenschutzerklärung').should('have.attr', 'href').and('match', /datenschutz.html/)
                 cy.contains('Neues Spiel beginnen').click()
             })
 
@@ -553,7 +553,7 @@ viewportInfos.forEach(viewportInfo => {
                     cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
                 }
 
-                cy.contains('a', 'Datenschutzerklärung').should('have.attr', 'href', '/datenschutz.html')
+                cy.contains('a', 'Datenschutzerklärung').should('have.attr', 'href').and('match', /datenschutz.html/)
             })
 
             it(`page can be opened and has correct content [(useBock: false) ${viewportInfo.displayName}]`, function () {
@@ -3593,7 +3593,7 @@ viewportInfos.forEach(viewportInfo => {
                     cy.get('#totalCash').contains('0,02 (inkl. 0,00 pro Abwesender)')
                 }
 
-                cy.contains('a', 'Datenschutzerklärung').should('have.attr', 'href', '/datenschutz.html')
+                cy.contains('a', 'Datenschutzerklärung').should('have.attr', 'href').and('match', /datenschutz.html/)
             })
 
             it(`page can be opened and has correct content [(useBock: false) ${viewportInfo.displayName}]`, function () {

@@ -2008,7 +2008,7 @@ viewportInfos.forEach(viewportInfo => {
                 cy.contains('Pflichtsolorunde konnte nicht gestartet werden.')
             })
 
-            it(`page can note a deal with four players [${viewportInfo.displayName}]`, function () {
+            it(`page can note a deal with four players (using button) [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
                 cy.intercept({
                     method: 'GET',
@@ -2086,6 +2086,152 @@ viewportInfos.forEach(viewportInfo => {
                 cy.get('#score_PlayerB').contains('5')
                 cy.get('#score_PlayerC').contains('-5')
                 cy.get('#score_PlayerD').contains('-5')
+            })
+
+            it(`page can note a deal with four players (using Enter key) [${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+                cy.intercept({
+                    method: 'GET',
+                    url: '/api/health/',
+                }, req => {
+                    delete req.headers['if-none-match']
+                }).as('keepAlive')
+                cy.intercept({
+                    method: 'POST',
+                    url: '/api/game/write/**',
+                }).as('push')
+
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD'
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: [
+                        2,
+                        4
+                    ]
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/writer/myWriterId')
+
+                cy.get('#currentDeal_PlayerA').type('{selectAll}{backspace}5')
+                cy.get('#currentDeal_PlayerB').type('{selectAll}{backspace}5')
+                cy.get('#currentDeal_PlayerC')
+                cy.get('#currentDeal_PlayerD')
+
+                cy.get('#bockereignisse').type(2)
+
+                cy.get('.popButton').should('be.disabled')
+                cy.get('.dealButton').should('not.be.disabled')
+
+                cy.get('#currentDeal_PlayerA').type('{enter}')
+
+                cy.get('#currentDeal_PlayerA').should('have.value', '')
+                cy.get('#currentDeal_PlayerB').should('have.value', '')
+                cy.get('#currentDeal_PlayerC').should('have.value', '')
+                cy.get('#currentDeal_PlayerD').should('have.value', '')
+
+                cy.wait('@push')
+                cy.wait('@keepAlive')
+
+                cy.get('#currentBockStatus').contains('Doppelbock')
+                cy.get('#bockPreviewTriple').contains('0')
+                cy.get('#bockPreviewDouble').contains('4')
+                cy.get('#bockPreviewSingle').contains('0')
+
+                cy.get('#lastDeal_PlayerA').contains('5')
+                cy.get('#lastDeal_PlayerB').contains('5')
+                cy.get('#lastDeal_PlayerC').contains('-5')
+                cy.get('#lastDeal_PlayerD').contains('-5')
+
+                cy.get('#score_PlayerA').contains('5')
+                cy.get('#score_PlayerB').contains('5')
+                cy.get('#score_PlayerC').contains('-5')
+                cy.get('#score_PlayerD').contains('-5')
+            })
+
+            it(`page will not note a deal using Enter key if data invalid [${viewportInfo.displayName}]`, function () {
+                cy.viewport(viewportInfo.width, viewportInfo.height)
+                cy.intercept({
+                    method: 'GET',
+                    url: '/api/health/',
+                }, req => {
+                    delete req.headers['if-none-match']
+                }).as('keepAlive')
+                cy.intercept({
+                    method: 'POST',
+                    url: '/api/game/write/**',
+                }).as('push')
+
+                cy.request('POST', 'http://localhost:3001/api/testing/reset').as('delete')
+                cy.get('@delete')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.get('@usebock')
+
+                const playersSet = {
+                    kind: 'playersSet',
+                    playerNames: [
+                        'PlayerA',
+                        'PlayerB',
+                        'PlayerC',
+                        'PlayerD'
+                    ],
+                    dealerName: 'PlayerC',
+                    sitOutScheme: [
+                        2,
+                        4
+                    ]
+                }
+
+                const content = {
+                    readerId: 'myReaderId',
+                    writerId: 'myWriterId',
+                    dataVersion: 1,
+                    creationDate: Date.now(),
+                    data: [playersSet],
+                }
+
+                cy.request('POST', 'http://localhost:3001/api/testing/setup', content).as('create')
+                cy.get('@create')
+
+                cy.visit('http://localhost:3000/writer/myWriterId')
+
+                cy.get('#currentDeal_PlayerA').type('{selectAll}{backspace}5')
+                cy.get('#currentDeal_PlayerB').type('{selectAll}{backspace}4')
+                cy.get('#currentDeal_PlayerC')
+                cy.get('#currentDeal_PlayerD')
+
+                cy.get('#bockereignisse').type(2)
+
+                cy.get('.popButton').should('be.disabled')
+                cy.get('.dealButton').should('be.disabled')
+
+                cy.get('#currentDeal_PlayerA').type('{enter}')
+
+                cy.get('#currentDeal_PlayerA').should('have.value', '5')
+                cy.get('#currentDeal_PlayerB').should('have.value', '4')
+                cy.get('#currentDeal_PlayerC').should('have.value', '')
+                cy.get('#currentDeal_PlayerD').should('have.value', '')
             })
 
             it(`page can note a deal and pop it again on confirming [${viewportInfo.displayName}]`, function () {

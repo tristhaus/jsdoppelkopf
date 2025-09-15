@@ -23,24 +23,17 @@ if (process.env.NODE_ENV === 'test') {
     app.use('/api/testing', testingRouter)
 }
 
-app.use('/static', express.static(path.join(__dirname, './build/static')))
+app.use('/assets', express.static(path.join(__dirname, './build/assets')))
+app.use('/banners', express.static(path.join(__dirname, './build/banners')))
 
 const resources = [
-    'asset-manifest.json',
     'datenschutz.html',
+    'robots.txt',
     'favicon.ico',
-    'index.html',
     'logo192.png',
+    'index.html',
     'logo512.png',
     'manifest.json',
-    'robots.txt',
-    'banners/homer-beer.gif',
-    'banners/ingo-ohne-flamingo-saufen.gif',
-    'banners/si-w-saufen.gif',
-    'banners/alcohol-beer.gif',
-    'banners/dinner-for-one-drink.gif',
-    'banners/drinking-desperate.gif',
-    'banners/drinking-wasted.gif',
 ]
 
 resources.forEach(resource => {

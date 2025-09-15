@@ -4,14 +4,9 @@
   "description": "JSDoppelkopf frontend",
   "private": true,
   "dependencies": {
-    "@babel/core": "^7.16.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@svgr/webpack": "^8.1.0",
     "axios": "^1.8.2",
-    "babel-jest": "^27.4.2",
-    "babel-loader": "^8.2.3",
-    "babel-plugin-named-asset-import": "^0.3.8",
-    "babel-preset-react-app": "^10.0.1",
     "bfj": "^7.0.2",
     "browserslist": "^4.18.1",
     "camelcase": "^6.2.1",
@@ -54,18 +49,15 @@
     "style-loader": "^3.3.1",
     "tailwindcss": "^3.0.2",
     "terser-webpack-plugin": "^5.2.5",
-    "web-vitals": "^3.0.2",
-    "webpack": "^5.64.4",
-    "webpack-dev-server": "^4.6.0",
-    "webpack-manifest-plugin": "^4.0.2",
-    "workbox-webpack-plugin": "^6.4.1"
+    "web-vitals": "^3.0.2"
   },
   "scripts": {
-    "start": "node scripts/start.js",
-    "lint": "eslint .",
+    "build": "vite build",
     "cypress:open": "cypress open",
-    "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "dev": "vite",
+    "lint": "eslint . && echo 'SUCCESS'",
+    "preview": "vite preview",
+    "test": "jest"
   },
   "eslintConfig": {
     "extends": [
@@ -91,12 +83,16 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
+    "@vitejs/plugin-react": "^4.3.4",
     "cypress": "^13.3.3",
     "eslint": "^8.23.1",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-jest": "^27.0.4",
     "eslint-plugin-react": "^7.31.8",
-    "jest-canvas-mock": "^2.5.2"
+    "jest-canvas-mock": "^2.5.2",
+    "jsdom": "^26.1.0",
+    "vite": "^6.2.0",
+    "vitest": "^3.2.4"
   },
   "jest": {
     "roots": [
@@ -148,10 +144,5 @@
       "jest-watch-typeahead/testname"
     ],
     "resetMocks": true
-  },
-  "babel": {
-    "presets": [
-      "react-app"
-    ]
   }
 }

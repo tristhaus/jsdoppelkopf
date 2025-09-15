@@ -28,19 +28,19 @@ viewportInfos.forEach(viewportInfo => {
         describe(`main landing page [${viewportInfo.displayName}]`, function () {
 
             it(`set USE_BOCK to 'true' [${viewportInfo.displayName}]`, function () {
-                cy.request('POST', 'http://localhost:3000/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock').its('body.useBock').should('eq', 'true')
             })
 
             it(`set USE_BOCK to 'false' [${viewportInfo.displayName}]`, function () {
-                cy.request('POST', 'http://localhost:3000/api/testing/usebock', { useBock: 'false' }).as('usebock')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'false' }).as('usebock')
                 cy.get('@usebock').its('body.useBock').should('eq', 'false')
             })
 
             it(`page can be opened, has a data protection link and a working New Game button [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
-                cy.request('POST', 'http://localhost:3000/api/testing/usebock', { useBock: 'true' }).as('usebock')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
                 cy.contains('a', 'Datenschutzerklärung').should('have.attr', 'href').and('match', /datenschutz.html/)
@@ -49,7 +49,7 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`player entry dialog can be opened and cancelled [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
                 cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
@@ -64,7 +64,7 @@ viewportInfos.forEach(viewportInfo => {
                     url: '/api/game',
                 }).as('createGame')
 
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
                 cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
@@ -86,7 +86,7 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`player entry dialog can remove and add player lines within it [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
                 cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
@@ -126,7 +126,7 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`player entry dialog has drag and drop-based swapping of the boxes [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
                 cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
@@ -179,7 +179,7 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`player entry dialog with duplicated player name has disabled OK [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
                 cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
@@ -199,7 +199,7 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`player entry dialog with empty player name has disabled OK [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
                 cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
@@ -277,7 +277,7 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`page validates the entered writer ID: works [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
                 cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
@@ -288,7 +288,7 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`page validates the entered writer ID: too short [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
                 cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
@@ -299,7 +299,7 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`page validates the entered writer ID: too long [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
                 cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
@@ -310,7 +310,7 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`page validates the entered writer ID: wrong characters [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
                 cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
@@ -379,7 +379,7 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`page validates the entered reader ID: works [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
                 cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
@@ -390,7 +390,7 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`page validates the entered reader ID: too short [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
                 cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
@@ -401,7 +401,7 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`page validates the entered reader ID: too long [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
                 cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')
@@ -412,7 +412,7 @@ viewportInfos.forEach(viewportInfo => {
 
             it(`page validates the entered reader ID: wrong characters [${viewportInfo.displayName}]`, function () {
                 cy.viewport(viewportInfo.width, viewportInfo.height)
-                cy.request('POST', 'http://localhost:3000/api/testing/reset')
+                cy.request('POST', 'http://localhost:3001/api/testing/reset')
                 cy.request('POST', 'http://localhost:3001/api/testing/usebock', { useBock: 'true' }).as('usebock')
                 cy.get('@usebock')
                 cy.visit('http://localhost:3000')

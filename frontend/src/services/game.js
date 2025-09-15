@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = '/api/game'
+const baseUrl = import.meta.env.VITE_BACKEND_URL + '/api/game'
 
 const getHealth = async () => {
     try {

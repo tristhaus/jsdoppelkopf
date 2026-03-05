@@ -1,5 +1,8 @@
-import '@testing-library/jest-dom/extend-expect'
+import { describe, expect, test } from 'vitest'
+import { cleanup } from '@testing-library/react'
 import { completeDiffs } from './Score'
+
+afterEach(() => { cleanup() })
 
 describe('score logic unit tests', () => {
 

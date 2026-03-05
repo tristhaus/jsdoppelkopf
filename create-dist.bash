@@ -13,12 +13,12 @@ fi
 
 cd ${anker}/frontend
 
-# npm run test
-# if [[ $? -ne 0 ]]
-# then
-#     echo 'frontend jest tests failed'
-#     exit 1
-# fi
+npm run test
+if [[ $? -ne 0 ]]
+then
+    echo 'frontend jest tests failed'
+    exit 1
+fi
 
 npm run build
 if [[ $? -ne 0 ]]

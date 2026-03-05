@@ -1,13 +1,14 @@
+import { describe, expect, test } from 'vitest'
 import React from 'react'
-import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
-import 'jest-canvas-mock'
-import Writer from './Writer'
+import { cleanup, render } from '@testing-library/react'
+import Reader from './Reader'
 import { BrowserRouter } from 'react-router-dom'
 
-describe('writer view unit tests', () => {
+afterEach(() => { cleanup() })
 
-    test('renders the content: general / with Bock', () => {
+describe('reader view unit tests', () => {
+
+    test('renders correct content / with Bock', () => {
         const data = {
             deploymentUrl: 'http://localhost:3001',
             readerId: 'bbbbbb',
@@ -30,7 +31,7 @@ describe('writer view unit tests', () => {
             writerId: 'aaaaaa'
         }
 
-        const { container } = render(<BrowserRouter><Writer data={data} /></BrowserRouter>)
+        const { container } = render(<BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}><Reader data={data} /></BrowserRouter>)
 
         const readerLinkButton = container.querySelector('#readerLinkButton')
         expect(readerLinkButton).not.toBeNull()
@@ -39,10 +40,10 @@ describe('writer view unit tests', () => {
         expect(readerIdDisplay).toHaveTextContent('Reader ID: bbbbbb')
 
         const writerLinkButton = container.querySelector('#writerLinkButton')
-        expect(writerLinkButton).not.toBeNull()
+        expect(writerLinkButton).toBeNull()
 
         const mandatorySoloButton = container.querySelector('.mandatorySoloButton')
-        expect(mandatorySoloButton).not.toBeDisabled()
+        expect(mandatorySoloButton).toBeNull()
 
         const currentBockStatus = container.querySelector('#currentBockStatus')
         expect(currentBockStatus).toHaveTextContent('Kein Bock')
@@ -77,21 +78,21 @@ describe('writer view unit tests', () => {
         expect(container.querySelector('#lastDeal_PlayerE')).toHaveTextContent('')
         expect(container.querySelector('#lastDeal_PlayerF')).toHaveTextContent('')
 
-        expect(container.querySelector('#currentDeal_PlayerA')).toBeDefined()
-        expect(container.querySelector('#currentDeal_PlayerB')).toBeDefined()
-        expect(container.querySelector('#currentDeal_PlayerC')).toBeDefined()
-        expect(container.querySelector('#currentDeal_PlayerD')).toBeDefined()
+        expect(container.querySelector('#currentDeal_PlayerA')).toBeNull()
+        expect(container.querySelector('#currentDeal_PlayerB')).toBeNull()
+        expect(container.querySelector('#currentDeal_PlayerC')).toBeNull()
+        expect(container.querySelector('#currentDeal_PlayerD')).toBeNull()
         expect(container.querySelector('#currentDeal_PlayerE')).toBeNull()
         expect(container.querySelector('#currentDeal_PlayerF')).toBeNull()
 
         const bockereignisse = container.querySelector('#bockereignisse')
-        expect(bockereignisse).toBeDefined()
+        expect(bockereignisse).toBeNull()
 
         const popButton = container.querySelector('.popButton')
-        expect(popButton).not.toBeDisabled()
+        expect(popButton).toBeNull()
 
         const dealButton = container.querySelector('.dealButton')
-        expect(dealButton).toBeDisabled()
+        expect(dealButton).toBeNull()
 
         expect(container.querySelector('#score_PlayerA')).toHaveTextContent('4')
         expect(container.querySelector('#score_PlayerB')).toHaveTextContent('-11')
@@ -111,7 +112,7 @@ describe('writer view unit tests', () => {
         expect(totalCash).toHaveTextContent('2,24 (inkl. 0,07 pro Abwesender)')
     })
 
-    test('renders the content: general / no Bock', () => {
+    test('renders correct content / no Bock', () => {
         const data = {
             deploymentUrl: 'http://localhost:3001',
             readerId: 'bbbbbb',
@@ -134,7 +135,7 @@ describe('writer view unit tests', () => {
             writerId: 'aaaaaa'
         }
 
-        const { container } = render(<BrowserRouter><Writer data={data} /></BrowserRouter>)
+        const { container } = render(<BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}><Reader data={data} /></BrowserRouter>)
 
         const readerLinkButton = container.querySelector('#readerLinkButton')
         expect(readerLinkButton).not.toBeNull()
@@ -143,7 +144,7 @@ describe('writer view unit tests', () => {
         expect(readerIdDisplay).toHaveTextContent('Reader ID: bbbbbb')
 
         const writerLinkButton = container.querySelector('#writerLinkButton')
-        expect(writerLinkButton).not.toBeNull()
+        expect(writerLinkButton).toBeNull()
 
         const mandatorySoloButton = container.querySelector('.mandatorySoloButton')
         expect(mandatorySoloButton).toBeNull()
@@ -181,21 +182,21 @@ describe('writer view unit tests', () => {
         expect(container.querySelector('#lastDeal_PlayerE')).toHaveTextContent('')
         expect(container.querySelector('#lastDeal_PlayerF')).toHaveTextContent('')
 
-        expect(container.querySelector('#currentDeal_PlayerA')).toBeDefined()
-        expect(container.querySelector('#currentDeal_PlayerB')).toBeDefined()
-        expect(container.querySelector('#currentDeal_PlayerC')).toBeDefined()
-        expect(container.querySelector('#currentDeal_PlayerD')).toBeDefined()
+        expect(container.querySelector('#currentDeal_PlayerA')).toBeNull()
+        expect(container.querySelector('#currentDeal_PlayerB')).toBeNull()
+        expect(container.querySelector('#currentDeal_PlayerC')).toBeNull()
+        expect(container.querySelector('#currentDeal_PlayerD')).toBeNull()
         expect(container.querySelector('#currentDeal_PlayerE')).toBeNull()
         expect(container.querySelector('#currentDeal_PlayerF')).toBeNull()
 
         const bockereignisse = container.querySelector('#bockereignisse')
-        expect(bockereignisse).toBeDefined()
+        expect(bockereignisse).toBeNull()
 
         const popButton = container.querySelector('.popButton')
-        expect(popButton).not.toBeDisabled()
+        expect(popButton).toBeNull()
 
         const dealButton = container.querySelector('.dealButton')
-        expect(dealButton).toBeDisabled()
+        expect(dealButton).toBeNull()
 
         expect(container.querySelector('#score_PlayerA')).toHaveTextContent('4')
         expect(container.querySelector('#score_PlayerB')).toHaveTextContent('-11')
@@ -235,13 +236,9 @@ describe('writer view unit tests', () => {
             isMandatorySolo: true,
             totalCash: 24,
             absentPlayerCents: 7,
-            writerId: 'aaaaaa'
         }
 
-        const { container } = render(<BrowserRouter><Writer data={data} /></BrowserRouter>)
-
-        const mandatorySoloButton = container.querySelector('.mandatorySoloButton')
-        expect(mandatorySoloButton).toBeDisabled()
+        const { container } = render(<BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}><Reader data={data} /></BrowserRouter>)
 
         const currentBockStatus = container.querySelector('#currentBockStatus')
         expect(currentBockStatus).toHaveTextContent('Pflichtsolo')
@@ -276,13 +273,9 @@ describe('writer view unit tests', () => {
             isMandatorySolo: false,
             totalCash: 24,
             absentPlayerCents: 7,
-            writerId: 'aaaaaa'
         }
 
-        const { container } = render(<BrowserRouter><Writer data={data} /></BrowserRouter>)
-
-        const mandatorySoloButton = container.querySelector('.mandatorySoloButton')
-        expect(mandatorySoloButton).not.toBeDisabled()
+        const { container } = render(<BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}><Reader data={data} /></BrowserRouter>)
 
         const currentBockStatus = container.querySelector('#currentBockStatus')
         expect(currentBockStatus).toHaveTextContent('Dreifachbock')
@@ -317,13 +310,9 @@ describe('writer view unit tests', () => {
             isMandatorySolo: false,
             totalCash: 24,
             absentPlayerCents: 7,
-            writerId: 'aaaaaa'
         }
 
-        const { container } = render(<BrowserRouter><Writer data={data} /></BrowserRouter>)
-
-        const mandatorySoloButton = container.querySelector('.mandatorySoloButton')
-        expect(mandatorySoloButton).not.toBeDisabled()
+        const { container } = render(<BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}><Reader data={data} /></BrowserRouter>)
 
         const currentBockStatus = container.querySelector('#currentBockStatus')
         expect(currentBockStatus).toHaveTextContent('Doppelbock')
@@ -358,13 +347,9 @@ describe('writer view unit tests', () => {
             isMandatorySolo: false,
             totalCash: 24,
             absentPlayerCents: 7,
-            writerId: 'aaaaaa'
         }
 
-        const { container } = render(<BrowserRouter><Writer data={data} /></BrowserRouter>)
-
-        const mandatorySoloButton = container.querySelector('.mandatorySoloButton')
-        expect(mandatorySoloButton).not.toBeDisabled()
+        const { container } = render(<BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}><Reader data={data} /></BrowserRouter>)
 
         const currentBockStatus = container.querySelector('#currentBockStatus')
         expect(currentBockStatus).toHaveTextContent('Bock')
@@ -377,34 +362,5 @@ describe('writer view unit tests', () => {
 
         const bockPreviewSingle = container.querySelector('#bockPreviewSingle')
         expect(bockPreviewSingle).toHaveTextContent('1')
-    })
-
-    test('renders the content: no popping possible', () => {
-        const data = {
-            deploymentUrl: 'http://localhost:3001',
-            readerId: 'bbbbbb',
-            creationDate: 1679695174984,
-            poppableEntry: null,
-            playerData: [
-                { name: 'PlayerA', present: true, playing: true, lastDealDiff: 6, score: 4, cents: 0 },
-                { name: 'PlayerB', present: true, playing: true, lastDealDiff: -6, score: -11, cents: 8 },
-                { name: 'PlayerC', present: true, playing: true, lastDealDiff: 6, score: 5, cents: 0 },
-                { name: 'PlayerD', present: true, playing: true, lastDealDiff: -6, score: -2, cents: 3 },
-                { name: 'PlayerE', present: true, playing: false, lastDealDiff: null, score: -1, cents: 3 },
-                { name: 'PlayerF', present: false, playing: false, lastDealDiff: null, score: -3, cents: 4 },
-            ],
-            dealerName: 'PlayerE',
-            useBock: true,
-            bockPreview: { 'single': 0, 'double': 0, 'triple': 0 },
-            isMandatorySolo: false,
-            totalCash: 224,
-            absentPlayerCents: 7,
-            writerId: 'aaaaaa'
-        }
-
-        const { container } = render(<BrowserRouter><Writer data={data} /></BrowserRouter>)
-
-        const popButton = container.querySelector('.popButton')
-        expect(popButton).toBeDisabled()
     })
 })

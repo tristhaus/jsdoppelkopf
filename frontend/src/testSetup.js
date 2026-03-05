@@ -1,11 +1,13 @@
-import '@testing-library/jest-dom/extend-expect'
+import { afterEach } from 'vitest'
+import { cleanup } from '@testing-library/react'
+import '@testing-library/jest-dom/vitest'
 
 if (typeof window.URL.createObjectURL === 'undefined') {
     window.URL.createObjectURL = () => {
     }
 }
 
-global.matchMedia = global.matchMedia || (() => {
+window.matchMedia = window.matchMedia || (() => {
     return {
         matches: true,
         addListener: () => {},
@@ -14,4 +16,8 @@ global.matchMedia = global.matchMedia || (() => {
         removeEventListener: () => {},
         dispatchEvent: () => {},
     }
+})
+
+afterEach(() => {
+    cleanup()
 })

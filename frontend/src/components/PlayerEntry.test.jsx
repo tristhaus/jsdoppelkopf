@@ -1,7 +1,10 @@
+import { afterEach, describe, expect, test } from 'vitest'
 import { act } from 'react'
-import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
+//import '@testing-library/jest-dom/extend-expect'
+import { cleanup, render } from '@testing-library/react'
 import PlayerEntry from './PlayerEntry'
+
+afterEach(() => { cleanup() })
 
 describe('PlayerEntry view unit tests', () => {
 
@@ -423,7 +426,7 @@ describe('PlayerEntry view unit tests', () => {
             ]
         }
 
-        const spy = jest.fn()
+        const spy = vi.fn()
 
         const { container } = render(<PlayerEntry playerInformation={playerInformation4} closeAction={() => { }} submitAction={spy} />)
 
@@ -472,7 +475,7 @@ describe('PlayerEntry view unit tests', () => {
             ]
         }
 
-        const spy = jest.fn()
+        const spy = vi.fn()
 
         const { container } = render(<PlayerEntry playerInformation={playerInformation5} closeAction={() => { }} submitAction={spy} />)
 
@@ -490,7 +493,7 @@ describe('PlayerEntry view unit tests', () => {
 
     test('given 6 players, submitAction is called with correct argument', () => {
 
-        const spy = jest.fn()
+        const spy = vi.fn()
 
         const { container } = render(<PlayerEntry playerInformation={getPlayerInformation6()} closeAction={() => { }} submitAction={spy} />)
 
@@ -508,7 +511,7 @@ describe('PlayerEntry view unit tests', () => {
 
     test('given 7 players, submitAction is called with correct argument', () => {
 
-        const spy = jest.fn()
+        const spy = vi.fn()
 
         const { container } = render(<PlayerEntry playerInformation={getPlayerInformation7()} closeAction={() => { }} submitAction={spy} />)
 
@@ -518,7 +521,7 @@ describe('PlayerEntry view unit tests', () => {
         })
 
         expect(spy).toHaveBeenCalledWith({
-            playerNames: ['A7', 'B7', 'C7', 'D7', 'E7', 'F7',  'G7'],
+            playerNames: ['A7', 'B7', 'C7', 'D7', 'E7', 'F7', 'G7'],
             dealerName: 'C7',
             sitOutScheme: [1, 5]
         })

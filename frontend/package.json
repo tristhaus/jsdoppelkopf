@@ -19,7 +19,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-plotly.js": "^2.6.0",
-    "react-router-dom": "^6.30.3"
+    "react-router-dom": "^7.18.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -30,7 +30,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "canvas": "^3.2.1",
     "cross-env": "^7.0.3",
-    "cypress": "^13.3.3",
+    "cypress": "^15.21.0",
     "eslint": "^9.22.0",
     "eslint-plugin-cypress": "^6.1.0",
     "eslint-plugin-react": "^7.37.4",
